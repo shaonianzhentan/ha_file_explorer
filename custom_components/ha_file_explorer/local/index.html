@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+
+</head>
+
+<body>
+
+    <div id="app">
+        <nav class="teal">
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo right">版本:{{ver}}&emsp;</a>
+                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <li> <a @click="opendir('')">HA根目录</a></li>
+                    <li v-for="item in dir">
+                        <a @click="opendir(item)">{{item}}</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container" v-show="!content.path">
+            <ul class="collection">
+                <li class="collection-item avatar" v-for="item in list" @click="show(item)">
+                    <i
+                        :class="`material-icons circle ${item.type == 'dir' ? '' : 'green'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
+                    <span class="title">{{item.name}}</span>
+                    <p> {{item.edit}}</p>
+                    <a href="#!" class="secondary-content">{{item.size | format}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div v-show="content.path" style="padding:10px;">
+
+
+            <a class="waves-effect waves-light btn" @click="cancel"><i class="material-icons left">cancel</i>取消</a>
+            <a class="waves-effect waves-light btn" @click="save"><i class="material-icons left">save</i>保存文件</a>
+
+
+            <textarea v-model="content.data" spellcheck="false" style="width:100%; margin-top:10px; height:calc(100vh - 135px);
+                caret-color:red;
+                white-space: nowrap;"></textarea>
+
+
+        </div>
+
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    // 版本
+                    ver: '',
+                    // 支持直接打开的文件
+                    ext: ['yaml', 'log', 'conf', 'py', 'json', 'js', 'html', 'css'],
+                    // 编辑内容
+                    content: {
+                        path: '',
+                        data: ''
+                    },
+                    // 目录
+                    dir: [],
+                    // 列表
+                    list: []
+                }
+            },
+            filters: {
+                format(value) {
+                    if (value == 0) return ''
+                    if (value >= 1024 * 1024) return `${(value / (1024 * 1024)).toFixed(2)} MB`
+                    if (value >= 1024) return `${(value / 1024).toFixed(2)} KB`
+                    return `${value} B`
+                }
+            },
+            created() {
+                let query = new URLSearchParams(location.search)
+                this.ver = query.get('ver')
+                this.getList('')
+            },
+            methods: {
+                show({ type, url }) {
+                    if (type === 'dir') {
+                        this.dir.push(url)
+                        let dir = this.dir.join('/')
+                        this.getList(dir)
+                    } else {
+                        let index = url.lastIndexOf('.')
+                        if (index > 0) {
+                            let ext = url.substr(index + 1)
+                            let isOpen = this.ext.includes(ext)
+                            if (isOpen == false) {
+                                isOpen = top.confirm("只能打开文本文件，确定编辑这个文件吗？")
+                            }
+                            if (isOpen) {
+                                this.getContent(this.dir.join('/') + '/' + url)
+                            }
+                        }
+                    }
+                },
+                opendir(item) {
+                    let index = this.dir.indexOf(item) + 1
+                    if (index == this.dir.length) return;
+                    this.dir.splice(index, this.dir.length - index)
+                    this.getList(this.dir.join('/'))
+                },
+                async http(params) {
+                    try {
+                        let hass = top.document.querySelector('home-assistant').hass
+                        let { expired } = hass.auth
+                        // 过期
+                        if (expired) {
+                            await hass.auth.refreshAccessToken()
+                        }
+                        return fetch(`${top.location.pathname}-api`, {
+                            method: 'post',
+                            headers: {
+                                authorization: `${hass.auth.data.token_type} ${hass.auth.accessToken}`
+                            },
+                            body: JSON.stringify(params)
+                        }).then(res => res.json())
+                    } catch (ex) {
+                        return Promise.reject(ex)
+                    }
+                },
+                toast(msg) {
+
+                    Materialize.toast(msg, 3000)
+
+                },
+                getContent(path) {
+                    this.http({
+                        type: 'content',
+                        path
+                    }).then(res => {
+                        if (res.code == 0) {
+                            this.content.path = path
+                            this.content.data = res.data
+                        } else {
+                            this.toast(res.msg)
+                        }
+                    })
+                },
+                save() {
+                    let { path, data } = this.content
+                    if (path) {
+                        this.http({
+                            type: 'set',
+                            path, data
+                        }).then(res => {
+                            this.toast(res.msg)
+
+                        })
+                    }
+                },
+                cancel() {
+                    this.content.path = ''
+                    this.content.data = ''
+                },
+                getList(path) {
+                    this.http({
+                        type: 'get',
+                        path
+                    }).then(res => {
+                        this.list = res
+                    })
+                }
+            }
+        })
+    </script>
+    <script>
+         $(".button-collapse").sideNav();
+        
+        // 设置全屏模式
+        try {
+            let haPanelIframe = top.document.body
+                .querySelector("home-assistant")
+                .shadowRoot.querySelector("home-assistant-main")
+                .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver ha-panel-iframe").shadowRoot
+            let ha_card = haPanelIframe.querySelector("iframe");
+            ha_card.style.position = 'absolute'
+
+
+        } catch (ex) {
+
+        }
+    </script>
+</body>
+
+</html>

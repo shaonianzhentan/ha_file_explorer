@@ -1,0 +1,8 @@
+{
+  "domain": "ha_voice",
+  "name": "ha_voice",
+  "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": []
+}
