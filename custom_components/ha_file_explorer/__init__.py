@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'ha_file_explorer'
 VERSION = '1.0'
 URL = '/' + DOMAIN +'-api'
-ROOT_PATH = URL + '/' + VERSION
+ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
 def setup(hass, config):        
     cfg  = config[DOMAIN]
