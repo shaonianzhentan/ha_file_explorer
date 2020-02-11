@@ -27,7 +27,7 @@ def setup(hass, config):
     hass.data[DOMAIN] = FileExplorer(hass)
     
     # 注册静态目录
-    local = hass.config.path("custom_components/" + DOMAIN + "/www")
+    local = hass.config.path("custom_components/" + DOMAIN + "/local")
     if os.path.isdir(local):
         hass.http.register_static_path(ROOT_PATH, local, False)
     
