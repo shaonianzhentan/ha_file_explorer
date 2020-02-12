@@ -38,7 +38,7 @@
                         :class="`material-icons circle ${item.type == 'dir' ? '' : 'green'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
                     <span class="title">{{item.name}}</span>
                     <p> {{item.edit}}</p>
-                    <a href="#!" class="secondary-content">{{item.size | format}}</a>
+                    <a href="#!" class="secondary-content" v-show="item.type != 'dir'">{{item.size | format}}</a>
                 </li>
             </ul>
         </div>
@@ -56,7 +56,66 @@
 
 
         </div>
+        <!-- loading -->
+        <div v-show="loading"
+            style="position: fixed;top:0;left:0;width:100%;height:100vh;
+            background:rgba(0,0,0,.8);
+            z-index:10000;
+            padding-top:200px;
+            text-align:center;">            
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
 
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p style="color:white;">
+                加载中...
+            </p>
+        </div>
     </div>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
@@ -67,6 +126,7 @@
             el: '#app',
             data() {
                 return {
+                    loading: false,
                     // 版本
                     ver: '',
                     // 支持直接打开的文件
@@ -122,6 +182,7 @@
                     this.getList(this.dir.join('/'))
                 },
                 async http(params) {
+                    this.loading = true
                     try {
                         let hass = top.document.querySelector('home-assistant').hass
                         let { expired } = hass.auth
@@ -135,8 +196,11 @@
                                 authorization: `${hass.auth.data.token_type} ${hass.auth.accessToken}`
                             },
                             body: JSON.stringify(params)
-                        }).then(res => res.json())
+                        }).then(res => res.json()).finally(()=>{
+                            this.loading = false
+                        })
                     } catch (ex) {
+                        this.loading = false
                         return Promise.reject(ex)
                     }
                 },
