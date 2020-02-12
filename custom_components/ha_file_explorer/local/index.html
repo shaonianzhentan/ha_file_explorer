@@ -15,7 +15,15 @@
         <nav class="teal">
             <div class="nav-wrapper">
                 <a href="#" class="brand-logo right">版本:{{ver}}&emsp;</a>
-                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+                <ul class="left hide-on-med-and-down">
+                    <li> <a @click="opendir('')">HA根目录</a></li>
+                    <li v-for="item in dir">
+                        <a @click="opendir(item)">{{item}}</a>
+                    </li>
+                </ul>
+                <!-- 手机 -->
+                <ul class="side-nav" id="nav-mobile">
                     <li> <a @click="opendir('')">HA根目录</a></li>
                     <li v-for="item in dir">
                         <a @click="opendir(item)">{{item}}</a>
@@ -178,8 +186,8 @@
         })
     </script>
     <script>
-         $(".button-collapse").sideNav();
-        
+        $(".button-collapse").sideNav();
+
         // 设置全屏模式
         try {
             let haPanelIframe = top.document.body
