@@ -46,23 +46,170 @@
         <div v-show="content.path" style="padding:10px;">
 
 
+
+			  <div class="input-field" style="display:inline-block;">
+					<select onchange="editor.setOption('mode', this.value)" id="mode">
+                      <option value="ace/mode/abap">abap</option>
+                      <option value="ace/mode/abc">abc</option>
+                      <option value="ace/mode/actionscript">actionscript</option>
+                      <option value="ace/mode/ada">ada</option>
+                      <option value="ace/mode/apache_conf">apache_conf</option>
+                      <option value="ace/mode/asciidoc">asciidoc</option>
+                      <option value="ace/mode/assembly_x86">assembly_x86</option>
+                      <option value="ace/mode/autohotkey">autohotkey</option>
+                      <option value="ace/mode/batchfile">batchfile</option>
+                      <option value="ace/mode/bro">bro</option>
+                      <option value="ace/mode/c_cpp">c_cpp</option>
+                      <option value="ace/mode/c9search">c9search</option>
+                      <option value="ace/mode/cirru">cirru</option>
+                      <option value="ace/mode/clojure">clojure</option>
+                      <option value="ace/mode/cobol">cobol</option>
+                      <option value="ace/mode/coffee">coffee</option>
+                      <option value="ace/mode/coldfusion">coldfusion</option>
+                      <option value="ace/mode/csharp">csharp</option>
+                      <option value="ace/mode/css">css</option>
+                      <option value="ace/mode/curly">curly</option>
+                      <option value="ace/mode/d">d</option>
+                      <option value="ace/mode/dart">dart</option>
+                      <option value="ace/mode/diff">diff</option>
+                      <option value="ace/mode/django">django</option>
+                      <option value="ace/mode/dockerfile">dockerfile</option>
+                      <option value="ace/mode/dot">dot</option>
+                      <option value="ace/mode/drools">drools</option>
+                      <option value="ace/mode/dummy">dummy</option>
+                      <option value="ace/mode/dummysyntax">dummysyntax</option>
+                      <option value="ace/mode/eiffel">eiffel</option>
+                      <option value="ace/mode/ejs">ejs</option>
+                      <option value="ace/mode/elixir">elixir</option>
+                      <option value="ace/mode/elm">elm</option>
+                      <option value="ace/mode/erlang">erlang</option>
+                      <option value="ace/mode/forth">forth</option>
+                      <option value="ace/mode/fortran">fortran</option>
+                      <option value="ace/mode/ftl">ftl</option>
+                      <option value="ace/mode/gcode">gcode</option>
+                      <option value="ace/mode/gherkin">gherkin</option>
+                      <option value="ace/mode/gitignore">gitignore</option>
+                      <option value="ace/mode/glsl">glsl</option>
+                      <option value="ace/mode/gobstones">gobstones</option>
+                      <option value="ace/mode/golang">golang</option>
+                      <option value="ace/mode/groovy">groovy</option>
+                      <option value="ace/mode/haml">haml</option>
+                      <option value="ace/mode/handlebars">handlebars</option>
+                      <option value="ace/mode/haskell">haskell</option>
+                      <option value="ace/mode/haskell_cabal">haskell_cabal</option>
+                      <option value="ace/mode/haxe">haxe</option>
+                      <option value="ace/mode/hjson">hjson</option>
+                      <option value="ace/mode/html">html</option>
+                      <option value="ace/mode/html_elixir">html_elixir</option>
+                      <option value="ace/mode/html_ruby">html_ruby</option>
+                      <option value="ace/mode/ini">ini</option>
+                      <option value="ace/mode/io">io</option>
+                      <option value="ace/mode/jack">jack</option>
+                      <option value="ace/mode/jade">jade</option>
+                      <option value="ace/mode/java">java</option>
+                      <option value="ace/mode/javascript">javascript</option>
+                      <option value="ace/mode/json">json</option>
+                      <option value="ace/mode/jsoniq">jsoniq</option>
+                      <option value="ace/mode/jsp">jsp</option>
+                      <option value="ace/mode/jsx">jsx</option>
+                      <option value="ace/mode/julia">julia</option>
+                      <option value="ace/mode/kotlin">kotlin</option>
+                      <option value="ace/mode/latex">latex</option>
+                      <option value="ace/mode/less">less</option>
+                      <option value="ace/mode/liquid">liquid</option>
+                      <option value="ace/mode/lisp">lisp</option>
+                      <option value="ace/mode/livescript">livescript</option>
+                      <option value="ace/mode/logiql">logiql</option>
+                      <option value="ace/mode/lsl">lsl</option>
+                      <option value="ace/mode/lua">lua</option>
+                      <option value="ace/mode/luapage">luapage</option>
+                      <option value="ace/mode/lucene">lucene</option>
+                      <option value="ace/mode/makefile">makefile</option>
+                      <option value="ace/mode/markdown">markdown</option>
+                      <option value="ace/mode/mask">mask</option>
+                      <option value="ace/mode/matlab">matlab</option>
+                      <option value="ace/mode/maze">maze</option>
+                      <option value="ace/mode/mel">mel</option>
+                      <option value="ace/mode/mushcode">mushcode</option>
+                      <option value="ace/mode/mysql">mysql</option>
+                      <option value="ace/mode/nix">nix</option>
+                      <option value="ace/mode/nsis">nsis</option>
+                      <option value="ace/mode/objectivec">objectivec</option>
+                      <option value="ace/mode/ocaml">ocaml</option>
+                      <option value="ace/mode/pascal">pascal</option>
+                      <option value="ace/mode/perl">perl</option>
+                      <option value="ace/mode/pgsql">pgsql</option>
+                      <option value="ace/mode/php">php</option>
+                      <option value="ace/mode/powershell">powershell</option>
+                      <option value="ace/mode/praat">praat</option>
+                      <option value="ace/mode/prolog">prolog</option>
+                      <option value="ace/mode/properties">properties</option>
+                      <option value="ace/mode/protobuf">protobuf</option>
+                      <option value="ace/mode/python">python</option>
+                      <option value="ace/mode/r">r</option>
+                      <option value="ace/mode/razor">razor</option>
+                      <option value="ace/mode/rdoc">rdoc</option>
+                      <option value="ace/mode/rhtml">rhtml</option>
+                      <option value="ace/mode/rst">rst</option>
+                      <option value="ace/mode/ruby">ruby</option>
+                      <option value="ace/mode/rust">rust</option>
+                      <option value="ace/mode/sass">sass</option>
+                      <option value="ace/mode/scad">scad</option>
+                      <option value="ace/mode/scala">scala</option>
+                      <option value="ace/mode/scheme">scheme</option>
+                      <option value="ace/mode/scss">scss</option>
+                      <option value="ace/mode/sh">sh</option>
+                      <option value="ace/mode/sjs">sjs</option>
+                      <option value="ace/mode/smarty">smarty</option>
+                      <option value="ace/mode/snippets">snippets</option>
+                      <option value="ace/mode/soy_template">soy_template</option>
+                      <option value="ace/mode/space">space</option>
+                      <option value="ace/mode/sql">sql</option>
+                      <option value="ace/mode/sqlserver">sqlserver</option>
+                      <option value="ace/mode/stylus">stylus</option>
+                      <option value="ace/mode/svg">svg</option>
+                      <option value="ace/mode/swift">swift</option>
+                      <option value="ace/mode/tcl">tcl</option>
+                      <option value="ace/mode/tex">tex</option>
+                      <option value="ace/mode/text">text</option>
+                      <option value="ace/mode/textile">textile</option>
+                      <option value="ace/mode/toml">toml</option>
+                      <option value="ace/mode/tsx">tsx</option>
+                      <option value="ace/mode/twig">twig</option>
+                      <option value="ace/mode/typescript">typescript</option>
+                      <option value="ace/mode/vala">vala</option>
+                      <option value="ace/mode/vbscript">vbscript</option>
+                      <option value="ace/mode/velocity">velocity</option>
+                      <option value="ace/mode/verilog">verilog</option>
+                      <option value="ace/mode/vhdl">vhdl</option>
+                      <option value="ace/mode/wollok">wollok</option>
+                      <option value="ace/mode/xml">xml</option>
+                      <option value="ace/mode/xquery">xquery</option>
+                      <option value="ace/mode/yaml">yaml</option>
+                  </select>
+				  <label>文件格式</label>
+			  </div>
+			
+			
             <a class="waves-effect waves-light btn" @click="cancel"><i class="material-icons left">cancel</i>取消</a>
             <a class="waves-effect waves-light btn" @click="save"><i class="material-icons left">save</i>保存文件</a>
 
 
+<!--
             <textarea v-model="content.data" spellcheck="false" style="width:100%; margin-top:10px; height:calc(100vh - 135px);
                 caret-color:red;
                 white-space: nowrap;"></textarea>
+-->
+<div id="editor-panel" style="width:100%; height:calc(100vh - 200px); "></div>
 
 
         </div>
         <!-- loading -->
-        <div v-show="loading"
-            style="position: fixed;top:0;left:0;width:100%;height:100vh;
+        <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
             background:rgba(0,0,0,.8);
             z-index:10000;
             padding-top:200px;
-            text-align:center;">            
+            text-align:center;">
             <div class="preloader-wrapper big active">
                 <div class="spinner-layer spinner-blue">
                     <div class="circle-clipper left">
@@ -119,7 +266,7 @@
     </div>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
-
+    <script src="https://unpkg.com/ace-builds@1.4.8/src-min-noconflict/ace.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
     <script>
         const app = new Vue({
@@ -196,7 +343,7 @@
                                 authorization: `${hass.auth.data.token_type} ${hass.auth.accessToken}`
                             },
                             body: JSON.stringify(params)
-                        }).then(res => res.json()).finally(()=>{
+                        }).then(res => res.json()).finally(() => {
                             this.loading = false
                         })
                     } catch (ex) {
@@ -215,16 +362,36 @@
                         path
                     }).then(res => {
                         if (res.code == 0) {
-                            this.content.path = path
-                            this.content.data = res.data
+                            this.content.path = path							
+							document.querySelector('#editor-panel').innerHTML = `<pre id="editor" style="width:100%;height:100%;" >${res.data}</pre>`
+							setTimeout(()=>{							
+								// 获取后缀
+								let index = path.lastIndexOf('.')
+								let ext = path.substr(index+1)
+								let mode = `ace/mode/${ext}`
+								let option = document.querySelector(`#mode option[value='${mode}']`)
+								if(!option){
+									let obj = {
+										'js': 'javascript'
+									}
+									mode = `ace/mode/${obj[ext] || 'text'}`
+								}		
+								console.log(mode)
+								window.editor = ace.edit("editor", {
+									theme: "ace/theme/chrome",
+									mode
+								});
+							}, 500)
+
                         } else {
                             this.toast(res.msg)
                         }
                     })
                 },
                 save() {
-                    let { path, data } = this.content
+                    let { path } = this.content
                     if (path) {
+						let data = window.editor.getValue()
                         this.http({
                             type: 'set',
                             path, data
@@ -249,9 +416,15 @@
             }
         })
     </script>
+	
+    
     <script>
-        $(".button-collapse").sideNav();
+          $(document).ready(function() {
+    $('select').material_select();
+	   $(".button-collapse").sideNav();
 
+  });
+     
         // 设置全屏模式
         try {
             let haPanelIframe = top.document.body
