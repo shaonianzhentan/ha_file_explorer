@@ -16,7 +16,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.1'
+VERSION = '1.2'
 URL = '/' + DOMAIN +'-api'
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
