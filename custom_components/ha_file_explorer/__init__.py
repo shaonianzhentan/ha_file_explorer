@@ -16,7 +16,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.1'
+VERSION = '1.1.3'
 URL = '/' + DOMAIN +'-api'
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -81,5 +81,9 @@ class HassGateView(HomeAssistantView):
         elif res['type'] == 'set':
             fileExplorer.setContent(_path, res['data'])
             return self.json({ 'code': 0, 'msg': '保存成功'})
+        elif res['type'] == 'delete':
+            # 这是过滤掉主文件，不让删除
+            fileExplorer.delete(_path)
+            return self.json({ 'code': 0, 'msg': '删除成功'})
         return self.json(res)
 

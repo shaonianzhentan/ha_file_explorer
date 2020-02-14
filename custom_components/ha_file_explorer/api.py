@@ -1,8 +1,6 @@
-import datetime
-import json
-import re
+import datetime, shutil, json, re
 
-from os         import listdir, stat
+from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
 
 class FileExplorer():
@@ -39,3 +37,12 @@ class FileExplorer():
         fp = open(_path, 'w+', encoding='UTF-8')
         fp.write(_content)
         fp.close()
+        
+    def delete(self, _path):
+        if exists(_path):
+            if isfile(_path):
+                # 删除文件
+                remove(_path)
+            elif isdir(_path):
+                # 删除目录
+                shutil.rmtree(_path, ignore_errors=True)

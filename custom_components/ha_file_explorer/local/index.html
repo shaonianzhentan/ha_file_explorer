@@ -39,12 +39,27 @@
         </nav>
         <div class="container" v-show="!content.path">
             <ul class="collection">
-                <li class="collection-item avatar" v-for="item in list" @click="show(item)">
+                <li class="collection-item avatar" v-for="(item,index) in list" >
                     <i
                         :class="`material-icons circle ${item.type == 'dir' ? '' : 'green'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
                     <span class="title">{{item.name}}</span>
-                    <p> {{item.edit}}</p>
-                    <a href="#!" class="secondary-content" v-show="item.type != 'dir'">{{item.size | format}}</a>
+                    <p style="margin-top:5px;"> 
+					<span class="chip" >
+					{{item.edit}}
+					</span>
+					  <span class="chip" v-show="item.type != 'dir' && item.size != 0">{{item.size | format}}</span>
+					  
+					  </p>
+					  <!--菜单-->
+                    <a href="#!" class='dropdown-button secondary-content' :data-activates='`dropdown${index}`'>						
+						 <i class="material-icons">more_vert</i>
+					</a>
+					<ul :id='`dropdown${index}`' class='dropdown-content'>					 
+						<li @click="show(item)" v-if="item.type == 'dir'"><a href="#!">打开</a></li>					 
+						<li @click="show(item)" v-else><a href="#!">编辑</a></li>
+						<li class="divider"></li>
+						<li @click="deleteClick(item)"><a href="#!">删除</a></li>
+					</ul>
                 </li>
             </ul>
         </div>
@@ -324,7 +339,32 @@
                             }
                         }
                     }
-                },
+                },				
+				deleteClick({ type, url }){
+				    
+					if(top.confirm(`确定删除${type === 'dir' ? '文件夹' : '文件'}【${url}】`)){
+					
+						if(this.dir.length > 0) url = this.dir.join('/') + '/' + url
+					
+						if (type === 'dir') {
+							console.log('删除目录',url)
+						} else {
+							console.log('删除文件',url)
+						}	
+						
+						this.http({
+						  type: 'delete',
+						  path: url
+						}).then(res=>{							
+                            this.toast(res.msg)
+							this.getList(this.dir.join('/'))
+						})
+						
+					}
+					
+					
+					
+				},
                 opendir(item) {
                     let index = this.dir.indexOf(item) + 1
                     if (index == this.dir.length) return;
@@ -415,7 +455,20 @@
                         type: 'get',
                         path
                     }).then(res => {
-                        this.list = res
+						if(res.length>0){
+							this.list = res
+							
+							setTimeout(()=>{
+							
+								$('.dropdown-button').dropdown();
+							
+							},500)
+							
+							  
+							  
+						}else{
+							this.toast('这是一个空目录')
+						}
                     })
                 }
             }
@@ -425,10 +478,10 @@
     
     <script>
           $(document).ready(function() {
-    $('select').material_select();
-	   $(".button-collapse").sideNav();
+			$('select').material_select();
+			   $(".button-collapse").sideNav();
 
-  });
+		  });
      
         // 设置全屏模式
         try {
@@ -446,6 +499,7 @@
 
         }
     </script>
+	<script>var _hmt=_hmt||[]window._hmt=_hmt;(function(){var hm=document.createElement('script')hm.src='https://hm.baidu.com/hm.js?52d57d8b7588a022f89c451d06e311f0'var s=document.getElementsByTagName('script')[0]s.parentNode.insertBefore(hm,s)})();</script>
 </body>
 
 </html>
