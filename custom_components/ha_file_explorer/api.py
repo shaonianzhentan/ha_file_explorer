@@ -13,8 +13,11 @@ class FileExplorer():
 
         for item in allcontent:
             hashInfo = {}
+            '''
+            print(item)
             if item.startswith('.'):
                 continue
+            '''
             listInfo = stat(join(dir,item))
             hashInfo['name'] = item
             hashInfo['url']  = item

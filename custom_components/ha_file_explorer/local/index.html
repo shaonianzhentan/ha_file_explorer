@@ -328,16 +328,17 @@
                         let dir = this.dir.join('/')
                         this.getList(dir)
                     } else {
+                        let isOpen = false
                         let index = url.lastIndexOf('.')
                         if (index > 0) {
                             let ext = url.substr(index + 1)
-                            let isOpen = this.ext.includes(ext)
-                            if (isOpen == false) {
-                                isOpen = top.confirm("只能打开文本文件，确定编辑这个文件吗？")
-                            }
-                            if (isOpen) {
-                                this.getContent(this.dir.join('/') + '/' + url)
-                            }
+                            isOpen = this.ext.includes(ext)                            
+                        }                        
+                        if (isOpen == false) {
+                            isOpen = top.confirm("只能打开文本文件，确定编辑这个文件吗？")
+                        }
+                        if (isOpen) {
+                            this.getContent(this.dir.join('/') + '/' + url)
                         }
                     }
                 },				
@@ -347,17 +348,17 @@
 					
 						if(this.dir.length > 0) url = this.dir.join('/') + '/' + url
 					
-						if (type === 'dir') {
-							console.log('删除目录',url)
-						} else {
-							console.log('删除文件',url)
-						}	
 						
 						this.http({
 						  type: 'delete',
 						  path: url
 						}).then(res=>{							
-                            this.toast(res.msg)
+                            this.toast(res.msg)                            
+                            if (type === 'dir') {
+                                console.log('删除目录',url)
+                            } else {
+                                console.log('删除文件',url)
+                            }                            
 							this.getList(this.dir.join('/'))
 						})
 						
