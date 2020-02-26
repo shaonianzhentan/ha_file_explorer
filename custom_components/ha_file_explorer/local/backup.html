@@ -163,7 +163,10 @@
                         console.log(res)
                         // 过滤掉不让备份的数据
                         this.list = res.filter(ele => {
-                            return ['home-assistant_v2.db', 'deps', 'custom_components'].includes(ele.name) === false
+                            return ['home-assistant_v2.db',
+                                'home-assistant_v2.db-shm',
+                                'home-assistant_v2.db-wal',
+                                'deps', 'custom_components'].includes(ele.name) === false
                         })
                     }).finally(() => {
                         this.loading = false
