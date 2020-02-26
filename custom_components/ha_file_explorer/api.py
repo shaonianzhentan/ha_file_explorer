@@ -65,7 +65,7 @@ class FileExplorer():
 
     # 创建文件夹
     def mkdir(self, path):
-        folders = []
+        folders = []        
         while not os.path.isdir(path):
             path, suffix = os.path.split(path)
             folders.append(suffix)
@@ -79,7 +79,8 @@ class FileExplorer():
         root_path = hass.config.path('./')
         local = hass.config.path("custom_components/ha_file_explorer/local/data")
         self.mkdir(local)
-        with zipfile.ZipFile(local + '/' + time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip", 'w', zipfile.ZIP_DEFLATED) as zip:
+        zf = local + '/' + time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
+        with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 dirpath = hass.config.path('./' + item) 
                 # 压缩目录
@@ -91,7 +92,7 @@ class FileExplorer():
                             zip.write(os.path.join(path,filename), os.path.join(fpath,filename))
                 else:
                     zip.write(dirpath, item)
-        return local
+        return zf
 
     # 上传
     def upload(self, localfile):
