@@ -77,9 +77,9 @@ class FileExplorer():
     def zip(self, _list):
         hass = self.hass
         root_path = hass.config.path('./')
-        local = hass.config.path("custom_components/ha_file_explorer/local/data/")
+        local = hass.config.path("custom_components/ha_file_explorer/local/data")
         self.mkdir(local)
-        with zipfile.ZipFile(local + time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip", 'w', zipfile.ZIP_DEFLATED) as zip:
+        with zipfile.ZipFile(local + '/' + time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip", 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 dirpath = hass.config.path('./' + item) 
                 # 压缩目录
