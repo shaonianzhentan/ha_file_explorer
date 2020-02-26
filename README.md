@@ -5,13 +5,30 @@
 
 ## 使用方式
 
-```
 
+```
+# 正常使用
 ha_file_explorer:
 
 ```
 
+```
+
+# 完整配置
+ha_file_explorer:
+  sidebar_title: 文件管理
+  sidebar_icon: mdi:folder
+  access_key: 七牛云配置
+  secret_key: 七牛云配置
+  bucket_name: 七牛云配置
+  prefix: 七牛云上传文件前缀(用来区分多个HA)
+```
+
+
 ## 更新日志
+
+### v1.4
+- 加入七牛云备份功能
 
 ### v1.3
 - 修复隐藏文件夹不显示的问题

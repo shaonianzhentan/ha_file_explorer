@@ -2,7 +2,9 @@
   "domain": "ha_file_explorer",
   "name": "ha_file_explorer",
   "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
-  "requirements": [],
+  "requirements": [
+    "qiniu==7.2.6"
+  ],
   "dependencies": [],
   "codeowners": []
 }

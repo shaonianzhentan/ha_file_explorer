@@ -22,23 +22,104 @@
 <body>
 
     <div id="app">
+        <!-- loading -->
+        <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
+            background:rgba(0,0,0,.8);
+            z-index:10000;
+            padding-top:200px;
+            text-align:center;">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p style="color:white;">
+                加载中...
+            </p>
+        </div>
+        <!-- 版本信息 -->
+        <div id="modal-info" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <h4>项目信息</h4>
+                <p>&nbsp;</p>
+                <p>项目介绍：在HA里使用的文件管理</p>
+                <p>项目版本：{{ver}}</p>
+                <p>项目地址：<a href="https://github.com/shaonianzhentan/ha_file_explorer" target="_blank">
+                        https://github.com/shaonianzhentan/ha_file_explorer</a></p>
+                <p>作者QQ：635147515</p>
+                <p>如果觉得此项目对你有用，请给项目点一个Star，谢谢</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
+            </div>
+        </div>
+
+        <!-- 导航 -->
         <nav class="teal">
             <div class="nav-wrapper">
-                <a href="#" class="brand-logo right">版本:{{ver}}&emsp;</a>
+                <a href="#modal-info" class="modal-trigger brand-logo right">版本:{{ver}}&emsp;</a>
                 <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
                 <ul class="left hide-on-med-and-down">
-                    <li> <a @click="opendir('')">HA根目录</a></li>
-                    <li v-for="item in dir">
-                        <a @click="opendir(item)">{{item}}</a>
-                    </li>
+                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
+                    <li> <a :href="`backup.html?ver=${ver}&r=${Date.now()}`">云备份</a></li>
                 </ul>
                 <!-- 手机 -->
                 <ul class="side-nav" id="nav-mobile">
-                    <li> <a @click="opendir('')">HA根目录</a></li>
-                    <li v-for="item in dir">
-                        <a @click="opendir(item)">{{item}}</a>
-                    </li>
+                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
+                    <li> <a :href="`backup.html?ver=${ver}&r=${Date.now()}`">云备份</a></li>
                 </ul>
+            </div>
+        </nav>
+        <nav class="teal" style="box-shadow: none;">
+            <div class="nav-wrapper container" style="overflow-x: auto;overflow-y: hidden;">
+                <div class="col s12" style="white-space: nowrap;">
+                    <a href="#!" class="breadcrumb" @click="opendir('')">HA根目录</a>
+                    <a href="#!" class="breadcrumb" @click="opendir(item)" v-for="item in dir">{{item}}</a>
+                </div>
             </div>
         </nav>
         <div class="container" v-show="!content.path">
@@ -227,66 +308,9 @@
 
 
         </div>
-        <!-- loading -->
-        <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
-            background:rgba(0,0,0,.8);
-            z-index:10000;
-            padding-top:200px;
-            text-align:center;">
-            <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
 
-                <div class="spinner-layer spinner-red">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-
-                <div class="spinner-layer spinner-yellow">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-
-                <div class="spinner-layer spinner-green">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-            </div>
-            <p style="color:white;">
-                加载中...
-            </p>
-        </div>
     </div>
+    <script src="ha.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/materialize/0.97.8/js/materialize.min.js"></script>
     <script src="https://unpkg.com/ace-builds@1.4.8/src-min-noconflict/ace.js"></script>
@@ -321,8 +345,7 @@
                 }
             },
             created() {
-                let query = new URLSearchParams(location.search)
-                this.ver = query.get('ver')
+                this.ver = ha.query('ver')
                 this.getList('')
             },
             methods: {
@@ -380,25 +403,7 @@
                 async http(params) {
                     this.loading = true
                     try {
-                        let hass = top.document.querySelector('home-assistant').hass
-                        let auth = hass.auth
-                        let authorization = ''
-                        if (auth._saveTokens) {
-                            // 过期
-                            if (auth.expired) {
-                                await auth.refreshAccessToken()
-                            }
-                            authorization = `${auth.data.token_type} ${auth.accessToken}`
-                        } else {
-                            authorization = `Bearer ${auth.data.access_token}`
-                        }
-                        return fetch(`${top.location.pathname}-api`, {
-                            method: 'post',
-                            headers: {
-                                authorization
-                            },
-                            body: JSON.stringify(params)
-                        }).then(res => res.json()).finally(() => {
+                        return ha.post(params).finally(() => {
                             this.loading = false
                         })
                     } catch (ex) {
@@ -493,23 +498,9 @@
         $(document).ready(function () {
             $('select').material_select();
             $(".button-collapse").sideNav();
+            $('.modal').modal();
         });
-
-        // 设置全屏模式
-        try {
-            let haPanelIframe = top.document.body
-                .querySelector("home-assistant")
-                .shadowRoot.querySelector("home-assistant-main")
-                .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver ha-panel-iframe").shadowRoot
-            let ha_card = haPanelIframe.querySelector("iframe");
-            ha_card.style.position = 'absolute'
-            haPanelIframe.querySelector('app-toolbar').style.display = 'none'
-            ha_card.style.top = '0'
-            ha_card.style.height = '100%'
-
-        } catch (ex) {
-
-        }
+        ha.fullscreen()
     </script>
     <script>var _hmt = _hmt || []; window._hmt = _hmt; (function () { var hm = document.createElement('script'); hm.src = 'https://hm.baidu.com/hm.js?52d57d8b7588a022f89c451d06e311f0'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(hm, s) })();</script>
 </body>

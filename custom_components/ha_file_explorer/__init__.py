@@ -16,7 +16,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.3'
+VERSION = '1.4'
 URL = '/' + DOMAIN +'-api'
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -24,7 +24,7 @@ def setup(hass, config):
     cfg  = config[DOMAIN]
     sidebar_title = cfg.get('sidebar_title', '文件管理')
     sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
-    hass.data[DOMAIN] = FileExplorer(hass)
+    hass.data[DOMAIN] = FileExplorer(hass,cfg)
     
     # 注册静态目录
     local = hass.config.path("custom_components/" + DOMAIN + "/local")
@@ -85,5 +85,15 @@ class HassGateView(HomeAssistantView):
             # 这是过滤掉主文件，不让删除
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
+        elif res['type'] == 'zip':
+            fileExplorer.zip(res['list'])
+            return self.json({ 'code': 0, 'msg': '备份成功'})
+        elif res['type'] == 'upload':
+            if fileExplorer.q is None:
+                return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
+            # 压缩文件
+            zf = fileExplorer.zip(res['list'])            
+            fileExplorer.upload(zf)
+            return self.json({ 'code': 0, 'msg': '上传成功'})
         return self.json(res)
 

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
+    <style>
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- loading -->
+        <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
+            background:rgba(0,0,0,.8);
+            z-index:10000;
+            padding-top:200px;
+            text-align:center;">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p style="color:white;">
+                加载中...
+            </p>
+        </div>
+        <!-- 版本信息 -->
+        <div id="modal-info" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <h4>项目信息</h4>
+                <p>&nbsp;</p>
+                <p>项目介绍：在HA里使用的文件管理</p>
+                <p>项目版本：{{ver}}</p>
+                <p>项目地址：<a href="https://github.com/shaonianzhentan/ha_file_explorer" target="_blank">
+                        https://github.com/shaonianzhentan/ha_file_explorer</a></p>
+                <p>作者QQ：635147515</p>
+                <p>如果觉得此项目对你有用，请给项目点一个Star，谢谢</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <nav class="teal">
+            <div class="nav-wrapper">
+                <a href="#modal-info" class="modal-trigger brand-logo right">版本:{{ver}}&emsp;</a>
+                <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+                <ul class="left hide-on-med-and-down">
+                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
+                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
+                </ul>
+                <!-- 手机 -->
+                <ul class="side-nav" id="nav-mobile">
+                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
+                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
+                </ul>
+            </div>
+        </nav>
+        <form class="container">
+            <div class="card">
+                <div class="card-content">
+                    <p class="card-title">请勾选需要备份的项</p>
+                    <p class="red lighten-5">为了避免压缩时间过长，这里去掉了一些大文件和目录</p>
+
+                    <ul class="collection">
+                        <li class="collection-item" v-for="(item,index) in list">
+                            <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
+                            <label :for="`file_${index}`">{{item.name}}</label>
+
+                            <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-action">
+                    <!-- <a class="waves-effect waves-light btn" @click="savecfgClick"><i
+                            class="material-icons left">save</i>保存上传配置</a> -->
+                    <a class="waves-effect waves-light btn" @click="uploadClick">
+                        <i class="material-icons left">cloud</i>立即上传备份到七牛云</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="ha.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/materialize/0.97.8/js/materialize.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loading: false,
+                    ver: ha.query('ver'),
+                    list: []
+                }
+            },
+            filters: {
+                format(value) {
+                    if (value == 0) return ''
+                    if (value >= 1024 * 1024) return `${(value / (1024 * 1024)).toFixed(2)} MB`
+                    if (value >= 1024) return `${(value / 1024).toFixed(2)} KB`
+                    return `${value} B`
+                }
+            },
+            created() {
+                this.loadData()
+            },
+            methods: {
+                loadData() {
+                    this.loading = true
+                    ha.post({
+                        type: 'get',
+                        path: ''
+                    }).then(res => {
+                        console.log(res)
+                        // 过滤掉不让备份的数据
+                        this.list = res.filter(ele => {
+                            return ['home-assistant_v2.db', 'deps', 'custom_components'].includes(ele.name) === false
+                        })
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                },
+                // 保存配置
+                savecfgClick() {
+                    let arr = this.list.filter(ele => !!ele.checked)
+                    let list = arr.map(ele => ele.name)
+                    console.log(list)
+                },
+                // 上传到七牛云
+                uploadClick() {
+                    let arr = this.list.filter(ele => !!ele.checked)
+                    if (arr.length === 0) {
+                        this.toast('请选择文件')
+                        return
+                    }
+                    let list = arr.map(ele => ele.name)
+                    this.loading = true
+                    ha.post({
+                        type: 'upload',
+                        list
+                    }).then(res => {
+                        this.toast(res.msg)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                },
+                toast(msg) {
+                    Materialize.toast(msg, 3000)
+                }
+            }
+        })
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('select').material_select();
+            $(".button-collapse").sideNav();
+            $('.modal').modal();
+        });
+        ha.fullscreen()
+    </script>
+    <script>var _hmt = _hmt || []; window._hmt = _hmt; (function () { var hm = document.createElement('script'); hm.src = 'https://hm.baidu.com/hm.js?52d57d8b7588a022f89c451d06e311f0'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(hm, s) })();</script>
+
+</body>
+
+</html>
