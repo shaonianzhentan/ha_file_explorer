@@ -104,28 +104,66 @@
                 </ul>
             </div>
         </nav>
+
         <form class="container">
-            <div class="card">
-                <div class="card-content">
-                    <p class="card-title">请勾选需要备份的项</p>
-                    <p class="red lighten-5">为了避免压缩时间过长，这里去掉了一些大文件和目录</p>
-
-                    <ul class="collection">
-                        <li class="collection-item" v-for="(item,index) in list">
-                            <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
-                            <label :for="`file_${index}`">{{item.name}}</label>
-
-                            <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
-                        </li>
+            <br />
+            <div class="row">
+                <div class="col s12">
+                    <ul class="tabs tabs-fixed-width">
+                        <li class="tab col s3"><a href="#tab-1">本地文件列表</a></li>
+                        <li class="tab col s3"><a href="#tab-2">云备份文件列表</a></li>
                     </ul>
                 </div>
-                <div class="card-action">
-                    <!-- <a class="waves-effect waves-light btn" @click="savecfgClick"><i
-                            class="material-icons left">save</i>保存上传配置</a> -->
-                    <a class="waves-effect waves-light btn" @click="uploadClick">
-                        <i class="material-icons left">cloud</i>立即上传备份到七牛云</a>
+                <div id="tab-1" class="col s12">
+                    <div class="card">
+                        <div class="card-content">
+                            <p class="card-title">请勾选需要备份的项</p>
+                            <p class="red lighten-5">为了避免压缩时间过长，这里去掉了一些大文件和目录</p>
+
+                            <ul class="collection">
+                                <li class="collection-item" v-for="(item,index) in list">
+                                    <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
+                                    <label :for="`file_${index}`">{{item.name}}</label>
+
+                                    <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-action">
+                            <!-- <a class="waves-effect waves-light btn" @click="savecfgClick"><i
+                                    class="material-icons left">save</i>保存上传配置</a> -->
+                            <a class="waves-effect waves-light btn" @click="uploadClick">
+                                <i class="material-icons left">cloud</i>立即上传备份到七牛云</a>
+                        </div>
+                    </div>
+
+
                 </div>
+                <div id="tab-2" class="col s12">
+
+                    <div class="card">
+                        <div class="card-content">
+                            <ul class="collection">
+                                <li class="collection-item avatar" v-for="(item,index) in upload_list">
+                                    <i :class="`material-icons circle green`">insert_drive_file</i>
+                                    <span class="title">{{item.key}}</span>
+                                    <p style="margin-top:5px;">
+                                        <span class="chip">
+                                            {{item.putTime}}
+                                        </span>
+                                        <span class="chip">{{item.fsize | format}}</span>
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
+
+
+
         </form>
     </div>
     <script src="ha.js"></script>
@@ -139,7 +177,8 @@
                 return {
                     loading: false,
                     ver: ha.query('ver'),
-                    list: []
+                    list: [],
+                    upload_list: []
                 }
             },
             filters: {
@@ -152,6 +191,7 @@
             },
             created() {
                 this.loadData()
+                this.loadUploadList()
             },
             methods: {
                 loadData() {
@@ -170,6 +210,16 @@
                         })
                     }).finally(() => {
                         this.loading = false
+                    })
+                },
+                loadUploadList() {
+                    ha.post({
+                        type: 'upload-list'
+                    }).then(res => {
+                        this.upload_list = res.data.items.map(ele => {
+                            ele.putTime = new Date(parseInt(ele.putTime / 1000)).toLocaleString()
+                            return ele
+                        })
                     })
                 },
                 // 保存配置
@@ -192,6 +242,7 @@
                         list
                     }).then(res => {
                         this.toast(res.msg)
+                        this.loadUploadList()
                     }).finally(() => {
                         this.loading = false
                     })
@@ -207,6 +258,7 @@
             $('select').material_select();
             $(".button-collapse").sideNav();
             $('.modal').modal();
+            $('ul.tabs').tabs();
         });
         ha.fullscreen()
     </script>

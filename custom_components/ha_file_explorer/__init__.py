@@ -16,7 +16,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.3'
+VERSION = '1.4'
 URL = '/' + DOMAIN +'-api'
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -91,9 +91,19 @@ class HassGateView(HomeAssistantView):
         elif res['type'] == 'upload':
             if fileExplorer.q is None:
                 return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
-            # 压缩文件
-            zf = fileExplorer.zip(res['list'])            
-            fileExplorer.upload(zf)
+            
+            if 'path' in res:
+                zf = fileExplorer.zipdir(res['path'])
+            elif 'list' in res:
+                # 压缩多个文件
+                zf = fileExplorer.zip(res['list'])
+            
+            fileExplorer.q.upload(zf)
+            # 上传成功，删除文件
+            fileExplorer.delete(zf)
             return self.json({ 'code': 0, 'msg': '上传成功'})
+        elif res['type'] == 'upload-list':
+            res = fileExplorer.q.get_list()
+            return self.json({ 'code': 0, 'msg': '上传成功', 'data': res})
         return self.json(res)
 

@@ -144,6 +144,8 @@
                         <li @click="show(item)" v-else><a href="#!">编辑</a></li>
                         <li class="divider"></li>
                         <li @click="deleteClick(item)"><a href="#!">删除</a></li>
+                        <li class="divider"></li>
+                        <li @click="uploadClick(item)"><a href="#!">云备份</a></li>
                     </ul>
                 </li>
             </ul>
@@ -390,9 +392,18 @@
                         })
 
                     }
-
-
-
+                },
+                // 上传到云端
+                uploadClick({ type, url }) {
+                    if (top.confirm(`确定上传【${url}】到云端？`)) {
+                        if (this.dir.length > 0) url = this.dir.join('/') + '/' + url
+                        this.http({
+                            type: 'upload',
+                            path: url
+                        }).then(res => {
+                            this.toast(res.msg)
+                        })
+                    }
                 },
                 opendir(item) {
                     let index = this.dir.indexOf(item) + 1

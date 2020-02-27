@@ -2,8 +2,7 @@ import datetime, shutil, json, re, zipfile, time, os, uuid
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
-from qiniu import Auth, put_file, etag
-import qiniu.config
+from .qn import Qn
 
 class FileExplorer():
     def __init__(self, hass, cfg):
@@ -16,7 +15,7 @@ class FileExplorer():
             #构建鉴权对象
             self.bucket_name = bucket_name
             self.prefix = prefix
-            self.q = Auth(access_key, secret_key)
+            self.q = Qn(access_key, secret_key, bucket_name, prefix)
         else:
             self.q = None   
 
@@ -72,14 +71,37 @@ class FileExplorer():
         for folder in folders[::-1]:
             path = os.path.join(path, folder)
             os.mkdir(path)
-            
+    
+    # 压缩单个项
+    def zipdir(self, dirname):
+        hass = self.hass
+        local = hass.config.path("custom_components/ha_file_explorer/local/data")
+        self.mkdir(local)
+        zipfilename = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
+        filelist = []
+        dirname = hass.config.path('./' + dirname)
+        if os.path.isfile(dirname):
+            filelist.append(dirname)
+        else :
+            for root, dirs, files in os.walk(dirname):
+                for name in files:
+                    filelist.append(os.path.join(root, name))
+        zf = zipfile.ZipFile(zipfilename, "w", zipfile.ZIP_DEFLATED)
+        for tar in filelist:
+            arcname = tar[len(dirname):]
+            #print arcname
+            zf.write(tar,arcname)
+        zf.close()
+
+        return zipfilename
+
     # 压缩
     def zip(self, _list):
         hass = self.hass
         root_path = hass.config.path('./')
         local = hass.config.path("custom_components/ha_file_explorer/local/data")
         self.mkdir(local)
-        zf = local + '/' + time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
+        zf = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 dirpath = hass.config.path('./' + item) 
@@ -93,10 +115,3 @@ class FileExplorer():
                 else:
                     zip.write(dirpath, item)
         return zf
-
-    # 上传
-    def upload(self, localfile):
-        key = 'HomeAssistant/' + self.prefix + os.path.basename(localfile)
-        token = self.q.upload_token(self.bucket_name, key, 3600)
-        res = put_file(token, key, localfile)
-        print(res)
