@@ -21,6 +21,23 @@ class HA {
         }
     }
 
+    // 触发事件
+    fire(type, data, ele = null) {
+        console.log(type, data)
+        const event = new top.Event(type, {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+        });
+        event.detail = data;
+        if (!ele) {
+            ele = top.document.querySelector("home-assistant")
+                .shadowRoot.querySelector("home-assistant-main")
+                .shadowRoot.querySelector("app-drawer-layout")
+        }
+        ele.dispatchEvent(event);
+    }
+
     post(params) {
         return this.http(top.location.pathname + '-api', params)
     }
