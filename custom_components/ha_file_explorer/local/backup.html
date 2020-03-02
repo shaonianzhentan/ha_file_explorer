@@ -84,6 +84,8 @@
                 <p>如果觉得此项目对你有用，请给项目点一个Star，谢谢</p>
             </div>
             <div class="modal-footer">
+                <a href="#!" @click="reloadClick" class="modal-action waves-effect waves-green btn-flat ">重新加载</a>
+
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
             </div>
         </div>
@@ -250,6 +252,14 @@
                 },
                 toast(msg) {
                     Materialize.toast(msg, 3000)
+                },
+                reloadClick() {
+                    this.loading = true
+                    ha.post({
+                        type: 'reload'
+                    }).then(res => {
+
+                    })
                 }
             }
         })

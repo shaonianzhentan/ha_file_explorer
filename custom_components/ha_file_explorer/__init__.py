@@ -1,23 +1,18 @@
-
-import os
-import logging
-import uuid
-import base64
-import json
-import string
+import os, yaml, uuid, logging, time, importlib, base64, json, string
 from aiohttp import web
 import voluptuous as vol
 from homeassistant.components.weblink import Link
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.helpers import config_validation as cv, intent
+from homeassistant import config as conf_util, loader
 
 from .api import FileExplorer
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.5'
-URL = '/' + DOMAIN +'-api'
+VERSION = '1.4'
+URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
 def setup(hass, config):        
@@ -43,7 +38,19 @@ def setup(hass, config):
         require_admin=True
     )
     
-        # 显示插件信息
+    # 重新加载服务
+    if hass.services.has_service(DOMAIN, 'reload') == False:
+        async def reload(call):
+            integration = await loader.async_get_integration(hass, DOMAIN)
+            component = integration.get_component()
+            importlib.reload(component)
+            config = await conf_util.async_hass_config_yaml(hass)
+            component.setup(hass, config)
+            _LOGGER.info('重新加载成功')
+
+        hass.services.register(DOMAIN, 'reload', reload)
+    
+    # 显示插件信息
     _LOGGER.info('''
 -------------------------------------------------------------------
 
@@ -68,27 +75,28 @@ class HassGateView(HomeAssistantView):
         res = await request.json()
         hass = request.app["hass"]
         fileExplorer = hass.data[DOMAIN]
+        _type = res['type']
         _path = hass.config.path('./' + res.get('path', ''))
-        if res['type'] == 'get':
+        if _type == 'get':
             _json = fileExplorer.getDirectory(_path)
             return self.json(_json)
-        elif res['type'] == 'content':
+        elif _type == 'content':
             try:
                 _text = fileExplorer.getContent(_path)
                 return self.json({ 'code': 0, 'data': _text})
             except Exception as ex:
                 return self.json({'code': 1, 'msg': '出现异常'})
-        elif res['type'] == 'set':
+        elif _type == 'set':
             fileExplorer.setContent(_path, res['data'])
             return self.json({ 'code': 0, 'msg': '保存成功'})
-        elif res['type'] == 'delete':
+        elif _type == 'delete':
             # 这是过滤掉主文件，不让删除
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
-        elif res['type'] == 'zip':
+        elif _type == 'zip':
             fileExplorer.zip(res['list'])
             return self.json({ 'code': 0, 'msg': '备份成功'})
-        elif res['type'] == 'upload':
+        elif _type == 'upload':
             if fileExplorer.q is None:
                 return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
             
@@ -102,8 +110,15 @@ class HassGateView(HomeAssistantView):
             # 上传成功，删除文件
             fileExplorer.delete(zf)
             return self.json({ 'code': 0, 'msg': '上传成功'})
-        elif res['type'] == 'upload-list':
+        elif _type == 'upload-list':
             res = fileExplorer.q.get_list()
             return self.json({ 'code': 0, 'msg': '上传成功', 'data': res})
+        elif _type == 'reload':
+            integration = await loader.async_get_integration(hass, DOMAIN)
+            component = integration.get_component()
+            importlib.reload(component)
+            config = await conf_util.async_hass_config_yaml(hass)
+            component.setup(hass, config)
+            return self.json({'code':0, 'msg': '重新加载成功'})
         return self.json(res)
 

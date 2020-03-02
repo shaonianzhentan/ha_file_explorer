@@ -2,7 +2,14 @@ class HA {
     constructor() {
         // url参数
         let query = new URLSearchParams(location.search)
-        this.query = (key) => query.get(key)
+        this.query = (key) => {
+            let val = query.get(key)
+            if (val) {
+                return decodeURIComponent(val)
+            }
+            return val
+        }
+        this.ver = this.query('ver')
     }
 
     fullscreen() {
@@ -39,7 +46,7 @@ class HA {
     }
 
     post(params) {
-        return this.http(top.location.pathname + '-api', params)
+        return this.http(top.location.pathname + '-api-' + this.ver, params)
     }
 
     // http请求
