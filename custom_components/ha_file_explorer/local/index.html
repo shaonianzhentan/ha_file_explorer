@@ -151,6 +151,17 @@
                     </ul>
                 </li>
             </ul>
+            <form class="row card-panel">
+                <div class="input-field col s6">
+                    <input placeholder="test.txt" id="first_name" v-model.trim="newFile" type="text" class="validate">
+                    <label for="first_name">文件名称</label>
+                </div>
+                <div class="input-field col s6">
+                    <a class="waves-effect waves-light btn" @click="newFileClick"><i
+                            class="material-icons left">note_add</i>新建文本文件</a>
+                </div>
+            </form>
+
         </div>
 
         <div v-show="content.path" style="padding:10px;">
@@ -337,7 +348,8 @@
                     // 目录
                     dir: [],
                     // 列表
-                    list: []
+                    list: [],
+                    newFile: ''
                 }
             },
             filters: {
@@ -497,18 +509,33 @@
 
 
                         } else {
-                            this.dir.splice(-1)
+                            // this.dir.splice(-1)
                             this.toast('这是一个空目录')
                         }
                     })
                 },
-                reloadClick(){
+                reloadClick() {
                     this.loading = true
                     ha.post({
                         type: 'reload'
-                    }).then(res=>{
+                    }).then(res => {
 
                     })
+                },
+                newFileClick() {
+                    let { newFile } = this
+                    if (newFile) {
+                        let path = this.dir.join('/')
+                        ha.post({
+                            type: 'new',
+                            path,
+                            newFile
+                        }).then(res => {
+                            if(res.code === 0) this.newFile = '';
+                            this.toast(res.msg)
+                            this.getList(path)
+                        })
+                    }
                 }
             }
         })

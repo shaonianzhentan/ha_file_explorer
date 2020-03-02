@@ -11,7 +11,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.4'
+VERSION = '1.5'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -93,9 +93,10 @@ class HassGateView(HomeAssistantView):
             # 这是过滤掉主文件，不让删除
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
-        elif _type == 'zip':
-            fileExplorer.zip(res['list'])
-            return self.json({ 'code': 0, 'msg': '备份成功'})
+        elif _type == 'new':
+            filename = res['newFile']
+            fileExplorer.setContent(_path + '/' + filename, '')
+            return self.json({ 'code': 0, 'msg': '新建成功'})
         elif _type == 'upload':
             if fileExplorer.q is None:
                 return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
