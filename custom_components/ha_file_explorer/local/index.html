@@ -525,15 +525,17 @@
                 newFileClick() {
                     let { newFile } = this
                     if (newFile) {
+                        this.loading = true
                         let path = this.dir.join('/')
                         ha.post({
                             type: 'new',
                             path,
                             newFile
                         }).then(res => {
-                            if(res.code === 0) this.newFile = '';
+                            if (res.code === 0) this.newFile = '';
                             this.toast(res.msg)
                             this.getList(path)
+                            this.loading = false
                         })
                     }
                 }
