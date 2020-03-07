@@ -1,4 +1,4 @@
-import os, yaml, uuid, logging, time, importlib, base64, json, string
+import os, yaml, uuid, logging, time, importlib, base64, json, string, sys
 from aiohttp import web
 import voluptuous as vol
 from homeassistant.components.weblink import Link
@@ -11,7 +11,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.5.1'
+VERSION = '1.6'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -19,6 +19,23 @@ def setup(hass, config):
     cfg  = config[DOMAIN]
     sidebar_title = cfg.get('sidebar_title', '文件管理')
     sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
+
+    # 重新加载服务
+    if hass.services.has_service(DOMAIN, 'reload') == False:
+        async def reload(call):
+            integration = await loader.async_get_integration(hass, DOMAIN)
+            component = integration.get_component()
+            importlib.reload(component)
+            config = await conf_util.async_hass_config_yaml(hass)
+            component.setup(hass, config)
+            _LOGGER.info('重新加载成功')
+
+        hass.services.register(DOMAIN, 'reload', reload)
+    else:
+        # 重新加载模块
+        importlib.reload(sys.modules['custom_components.ha_file_explorer.qn'])
+        importlib.reload(sys.modules['custom_components.ha_file_explorer.api'])
+
     hass.data[DOMAIN] = FileExplorer(hass,cfg)
     
     # 注册静态目录
@@ -38,18 +55,8 @@ def setup(hass, config):
         require_admin=True
     )
     
-    # 重新加载服务
-    if hass.services.has_service(DOMAIN, 'reload') == False:
-        async def reload(call):
-            integration = await loader.async_get_integration(hass, DOMAIN)
-            component = integration.get_component()
-            importlib.reload(component)
-            config = await conf_util.async_hass_config_yaml(hass)
-            component.setup(hass, config)
-            _LOGGER.info('重新加载成功')
 
-        hass.services.register(DOMAIN, 'reload', reload)
-    
+
     # 显示插件信息
     _LOGGER.info('''
 -------------------------------------------------------------------

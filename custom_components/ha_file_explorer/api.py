@@ -1,4 +1,4 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid
+import datetime, shutil, json, re, zipfile, time, os, uuid, sys
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -11,11 +11,12 @@ class FileExplorer():
         secret_key = cfg.get('secret_key', '')
         bucket_name = cfg.get('bucket_name', '')
         prefix = cfg.get('prefix', '')
+        download = cfg.get('download', '')
         if access_key != '' and secret_key != '' and bucket_name != '':
             #构建鉴权对象
             self.bucket_name = bucket_name
             self.prefix = prefix
-            self.q = Qn(access_key, secret_key, bucket_name, prefix)
+            self.q = Qn(access_key, secret_key, bucket_name, prefix, download)
         else:
             self.q = None   
 
@@ -30,15 +31,19 @@ class FileExplorer():
             if item.startswith('.'):
                 continue
             '''
+            if exists(join(dir,item)) == False:
+                continue
             listInfo = stat(join(dir,item))
             hashInfo['name'] = item
             hashInfo['url']  = item
             hashInfo['edit'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
-            hashInfo['size'] = int(listInfo.st_size)
+                        
             if isfile(join(dir,item)):
                 hashInfo['type'] = 'file'
+                hashInfo['size'] = int(listInfo.st_size)
             if isdir(join(dir,item)):
                 hashInfo['type'] = 'dir'
+                hashInfo['size'] = self.get_dir_size(join(dir,item))
             dirItem.append(hashInfo)
         return dirItem
     
@@ -61,6 +66,13 @@ class FileExplorer():
             elif isdir(_path):
                 # 删除目录
                 shutil.rmtree(_path, ignore_errors=True)
+
+    # 获取文件夹大小
+    def get_dir_size(self, dir):
+        size = 0
+        for root, dirs, files in os.walk(dir):
+            size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
+        return size
 
     # 创建文件夹
     def mkdir(self, path):

@@ -134,7 +134,7 @@
                         <span class="chip">
                             {{item.edit}}
                         </span>
-                        <span class="chip" v-show="item.type != 'dir' && item.size != 0">{{item.size | format}}</span>
+                        <span class="chip" v-show="item.size != 0">{{item.size | format}}</span>
 
                     </p>
                     <!--菜单-->
@@ -339,7 +339,7 @@
                     // 版本
                     ver: '',
                     // 支持直接打开的文件
-                    ext: ['yaml', 'log', 'conf', 'py', 'json', 'js', 'html', 'css'],
+                    ext: ['yaml', 'log', 'conf', 'py', 'json', 'js', 'html', 'css', 'txt', 'md', 'vue'],
                     // 编辑内容
                     content: {
                         path: '',
@@ -493,6 +493,7 @@
                     this.content.data = ''
                 },
                 getList(path) {
+                    this.cancel()
                     this.http({
                         type: 'get',
                         path
@@ -509,6 +510,7 @@
 
 
                         } else {
+                            this.list = []
                             // this.dir.splice(-1)
                             this.toast('这是一个空目录')
                         }

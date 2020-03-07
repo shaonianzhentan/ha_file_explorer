@@ -135,6 +135,9 @@
                         <div class="card-action">
                             <!-- <a class="waves-effect waves-light btn" @click="savecfgClick"><i
                                     class="material-icons left">save</i>保存上传配置</a> -->
+							<a>
+								<input type="checkbox" id="all" onchange="app.list.forEach(ele=>ele.checked=this.checked);app.list.splice(0,0);" /><label for="all">全选</label>
+							</a>
                             <a class="waves-effect waves-light btn" @click="uploadClick">
                                 <i class="material-icons left">cloud</i>立即上传备份到七牛云</a>
                         </div>
@@ -156,6 +159,9 @@
                                         </span>
                                         <span class="chip">{{item.fsize | format}}</span>
                                     </p>
+                                    <a :href="item.download" target="_blank" class='secondary-content' title="下载">
+                                        <i class="material-icons">play_for_work</i>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -209,6 +215,8 @@
                             return ['home-assistant_v2.db',
                                 'home-assistant_v2.db-shm',
                                 'home-assistant_v2.db-wal',
+                                'tts',
+                                'home-assistant.log',
                                 'deps', 'custom_components'].includes(ele.name) === false
                         })
                     }).finally(() => {
@@ -219,8 +227,10 @@
                     ha.post({
                         type: 'upload-list'
                     }).then(res => {
-                        this.upload_list = res.data.items.map(ele => {
-                            ele.putTime = new Date(parseInt(ele.putTime / 1000)).toLocaleString()
+                        let {download, list} = res.data
+                        this.upload_list = list.items.map(ele => {
+                            ele.putTime = new Date(parseInt(ele.putTime / 10000)).toLocaleString()
+                            ele.download = download + ele.key
                             return ele
                         })
                     })

@@ -3,9 +3,10 @@ import os, qiniu.config
 
 class Qn():
 
-    def __init__(self, access_key, secret_key, bucket_name, prefix):
+    def __init__(self, access_key, secret_key, bucket_name, prefix, download):
         self.bucket_name = bucket_name
         self.prefix = prefix
+        self.download = download
         self.q = Auth(access_key, secret_key)
 
     # 获取列表
@@ -22,7 +23,10 @@ class Qn():
         marker = None
         ret, eof, info = bucket.list(bucket_name, prefix, marker, limit, delimiter)
         # print(info)
-        return ret
+        return {
+            'download': self.download,
+            'list': ret
+        }
 
     # 上传
     def upload(self, localfile):
