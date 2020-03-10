@@ -5,8 +5,6 @@
   "requirements": [
     "qiniu==7.2.6"
   ],
-  "dependencies": [
-    "qiniu==7.2.6"
-  ],
+  "dependencies": [],
   "codeowners": []
 }
