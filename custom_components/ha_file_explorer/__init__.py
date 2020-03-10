@@ -128,5 +128,14 @@ class HassGateView(HomeAssistantView):
             config = await conf_util.async_hass_config_yaml(hass)
             component.setup(hass, config)
             return self.json({'code':0, 'msg': '重新加载成功'})
+        elif _type == 'update':
+            _path =  hass.config.path("custom_components").replace('\\','/')
+            _sh =  _path+'/' + DOMAIN + '/update.sh'
+            with open(_sh, 'r', encoding='utf-8') as f:
+                content = f.read().replace('$source_path', _path)
+            with open(_sh, 'w', encoding='utf-8') as f:
+                f.write(content)
+            os.system(_sh)
+            return self.json({'code':0, 'msg': '升级成功'})
         return self.json(res)
 
