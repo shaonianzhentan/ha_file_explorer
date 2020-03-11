@@ -34,7 +34,7 @@
         </ul>
 
         <div class="fixed-action-btn">
-            <a href="index.html" class="btn-floating btn-large red">
+            <a :href="`index.html?ver=${ver}`" class="btn-floating btn-large red">
                 <i class="large material-icons">home</i>
             </a>
         </div>
@@ -110,6 +110,7 @@
             el: '#app',
             data() {
                 return {
+                    ver: ha.ver,
                     loading: false,
                     list: [
                         {
