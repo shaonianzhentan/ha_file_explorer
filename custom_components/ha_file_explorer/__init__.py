@@ -11,7 +11,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.6.3'
+VERSION = '1.6.4'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -138,7 +138,11 @@ class HassGateView(HomeAssistantView):
             _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
-            os.system('sudo bash ' + _sh)
+            # 如果是windows则直接运行
+            if os.name == 'nt':
+                os.system(_sh)
+            else:
+                os.system('sudo bash ' + _sh)
             return self.json({'code':0, 'msg': '拉取最新代码成功'})
         return self.json(res)
 
