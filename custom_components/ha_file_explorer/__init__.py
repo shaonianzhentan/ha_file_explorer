@@ -138,7 +138,7 @@ class HassGateView(HomeAssistantView):
             _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
-            os.system(_sh)
+            os.system('sudo bash ' + _sh)
             return self.json({'code':0, 'msg': '拉取最新代码成功'})
         return self.json(res)
 
