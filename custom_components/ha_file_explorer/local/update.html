@@ -8,7 +8,7 @@
     <link href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <style>
         .des {
-            padding-top:8px;
+            padding-top: 8px;
         }
     </style>
 </head>
@@ -28,78 +28,84 @@
                         {{item.domain}}
                     </span>
                 </p>
-                <a href="#!" @click="updateClick(item)" class="secondary-content tooltipped" data-position="left" data-tooltip="拉取最新代码"><i class="material-icons">system_update_alt</i></a>
+                <a href="#!" @click="updateClick(item)" class="secondary-content tooltipped" data-position="left"
+                    data-tooltip="拉取最新代码"><i class="material-icons">system_update_alt</i></a>
             </li>
         </ul>
 
+        <div class="fixed-action-btn">
+            <a href="index.html" class="btn-floating btn-large red">
+                <i class="large material-icons">home</i>
+            </a>
+        </div>
 
 
-         <!-- loading -->
-         <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
+        <!-- loading -->
+        <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
          background:rgba(0,0,0,.8);
          z-index:10000;
          padding-top:200px;
          text-align:center;">
-         <div class="preloader-wrapper big active">
-             <div class="spinner-layer spinner-blue">
-                 <div class="circle-clipper left">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="gap-patch">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="circle-clipper right">
-                     <div class="circle"></div>
-                 </div>
-             </div>
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
 
-             <div class="spinner-layer spinner-red">
-                 <div class="circle-clipper left">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="gap-patch">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="circle-clipper right">
-                     <div class="circle"></div>
-                 </div>
-             </div>
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
 
-             <div class="spinner-layer spinner-yellow">
-                 <div class="circle-clipper left">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="gap-patch">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="circle-clipper right">
-                     <div class="circle"></div>
-                 </div>
-             </div>
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
 
-             <div class="spinner-layer spinner-green">
-                 <div class="circle-clipper left">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="gap-patch">
-                     <div class="circle"></div>
-                 </div>
-                 <div class="circle-clipper right">
-                     <div class="circle"></div>
-                 </div>
-             </div>
-         </div>
-         <p style="color:white;">
-             加载中...
-         </p>
-     </div>
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <p style="color:white;">
+                加载中...
+            </p>
+        </div>
     </div>
     <script src="ha.js"></script>
-    
+
     <script src="https://cdn.bootcss.com/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
     <script>
-        
+
         let app = new Vue({
             el: '#app',
             data() {
@@ -140,11 +146,11 @@
             created() {
 
             },
-            mounted(){        
+            mounted() {
             },
             methods: {
                 toast(html) {
-                    M.toast({html})
+                    M.toast({ html })
                 },
                 updateClick(item) {
                     this.loading = true
@@ -160,7 +166,7 @@
             }
         })
 
-        
+
         M.AutoInit();
     </script>
 </body>
