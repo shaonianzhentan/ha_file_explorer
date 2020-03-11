@@ -27,6 +27,9 @@
                     <span class="chip">
                         {{item.domain}}
                     </span>
+                    <a class="chip" :href="`https://github.com/shaonianzhentan/${item.domain}`" target="_blank">
+                        https://github.com/shaonianzhentan/{{item.domain}}
+                    </a>
                 </p>
                 <a href="#!" @click="updateClick(item)" class="secondary-content tooltipped" data-position="left"
                     data-tooltip="拉取最新代码"><i class="material-icons">system_update_alt</i></a>
