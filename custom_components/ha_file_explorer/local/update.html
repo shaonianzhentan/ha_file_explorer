@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+    <link href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        .des {
+            padding-top:8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app" class="container">
+        <ul class="collection with-header">
+            <li class="collection-header">
+                <h4>代码插件库开发版</h4>
+            </li>
+            <li class="collection-item avatar" v-for="item in list">
+                <i class="material-icons teal circle">code</i>
+                <span class="title">{{item.name}}</span>
+                <p class="des">
+                    <span class="chip">
+                        {{item.domain}}
+                    </span>
+                </p>
+                <a href="#!" @click="updateClick(item)" class="secondary-content tooltipped" data-position="left" data-tooltip="拉取最新代码"><i class="material-icons">system_update_alt</i></a>
+            </li>
+        </ul>
+
+
+
+         <!-- loading -->
+         <div v-show="loading" style="position: fixed;top:0;left:0;width:100%;height:100vh;
+         background:rgba(0,0,0,.8);
+         z-index:10000;
+         padding-top:200px;
+         text-align:center;">
+         <div class="preloader-wrapper big active">
+             <div class="spinner-layer spinner-blue">
+                 <div class="circle-clipper left">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="gap-patch">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="circle-clipper right">
+                     <div class="circle"></div>
+                 </div>
+             </div>
+
+             <div class="spinner-layer spinner-red">
+                 <div class="circle-clipper left">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="gap-patch">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="circle-clipper right">
+                     <div class="circle"></div>
+                 </div>
+             </div>
+
+             <div class="spinner-layer spinner-yellow">
+                 <div class="circle-clipper left">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="gap-patch">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="circle-clipper right">
+                     <div class="circle"></div>
+                 </div>
+             </div>
+
+             <div class="spinner-layer spinner-green">
+                 <div class="circle-clipper left">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="gap-patch">
+                     <div class="circle"></div>
+                 </div>
+                 <div class="circle-clipper right">
+                     <div class="circle"></div>
+                 </div>
+             </div>
+         </div>
+         <p style="color:white;">
+             加载中...
+         </p>
+     </div>
+    </div>
+    <script src="ha.js"></script>
+    
+    <script src="https://cdn.bootcss.com/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <script>
+        
+        let app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loading: false,
+                    list: [
+                        {
+                            domain: 'ha_cloud_music',
+                            name: '网易云音乐'
+                        }, {
+                            domain: 'ha_baidu_map',
+                            name: '百度地图'
+                        }, {
+                            domain: 'ha_sidebar',
+                            name: '侧边栏管理'
+                        }, {
+                            domain: 'ha_file_explorer',
+                            name: '文件管理'
+                        }, {
+                            domain: 'ha_qqmail',
+                            name: 'QQ邮箱通知'
+                        }, {
+                            domain: 'ha_shbus',
+                            name: '上海公交'
+                        }, {
+                            domain: 'ha_voice',
+                            name: '语音小助手'
+                        }, {
+                            domain: 'ha_ylui',
+                            name: 'Web桌面'
+                        }
+                    ]
+                }
+            },
+            created() {
+
+            },
+            mounted(){        
+            },
+            methods: {
+                toast(html) {
+                    M.toast({html})
+                },
+                updateClick(item) {
+                    this.loading = true
+                    ha.post({
+                        type: 'update',
+                        domain: item.domain
+                    }).then(res => {
+                        this.toast(res.msg)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                }
+            }
+        })
+
+        
+        M.AutoInit();
+    </script>
+</body>
+
+</html>

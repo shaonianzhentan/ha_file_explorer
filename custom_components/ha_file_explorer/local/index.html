@@ -95,7 +95,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#!" @click="reloadClick" class="modal-action waves-effect waves-green btn-flat ">重新加载</a>
-                <a href="#!" @click="updateClick" class="modal-action modal-close waves-effect waves-green btn-flat ">升级调试</a>
+                <a :href="`update.html?ver=${ver}`" class="modal-action waves-effect waves-green btn-flat ">升级调试功能（勿点）</a>
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
             </div>
         </div>
@@ -541,16 +541,6 @@
                             this.loading = false
                         })
                     }
-                },
-                updateClick(){
-                    this.loading = true
-                    ha.post({
-                        type: 'update'
-                    }).then(res => {
-                        this.toast(res.msg)
-                    }).finally(()=>{
-                        this.loading = false
-                    })
                 }
             }
         })

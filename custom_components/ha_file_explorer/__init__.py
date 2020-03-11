@@ -11,7 +11,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.6.1'
+VERSION = '1.6.3'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -129,13 +129,16 @@ class HassGateView(HomeAssistantView):
             component.setup(hass, config)
             return self.json({'code':0, 'msg': '重新加载成功'})
         elif _type == 'update':
+            _domain = res['domain']
             _path =  hass.config.path("custom_components").replace('\\','/')
-            _sh =  _path+'/' + DOMAIN + '/update.sh'
-            with open(_sh, 'r', encoding='utf-8') as f:
-                content = f.read().replace('$source_path', _path)
+            
+            with open(_path + '/' + DOMAIN + '/update.sh', 'r', encoding='utf-8') as f:
+                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain)
+            
+            _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
             os.system(_sh)
-            return self.json({'code':0, 'msg': '升级成功'})
+            return self.json({'code':0, 'msg': '拉取最新代码成功'})
         return self.json(res)
 
