@@ -10,6 +10,9 @@
         .des {
             padding-top: 8px;
         }
+        #app .collection {
+            overflow: inherit !important;
+        }
     </style>
 </head>
 
@@ -20,7 +23,7 @@
             <li class="collection-header">
                 <h4>代码插件库开发版</h4>
             </li>
-            <li class="collection-item avatar" v-for="item in list">
+            <li class="collection-item avatar" v-for="(item, index) in list">
                 <i class="material-icons teal circle">code</i>
                 <span class="title">{{item.name}}</span>
                 <p class="des">
@@ -31,8 +34,15 @@
                         https://github.com/shaonianzhentan/{{item.domain}}
                     </a>
                 </p>
-                <a href="#!" @click="updateClick(item)" class="secondary-content tooltipped" data-position="left"
-                    data-tooltip="拉取最新代码"><i class="material-icons">system_update_alt</i></a>
+                <!--菜单-->
+                <a href="#!" class='dropdown-trigger secondary-content' :data-target='`dropdown${index}`'>
+                    <i class="material-icons">more_vert</i>
+                </a>
+                <ul :id='`dropdown${index}`' class='dropdown-content'>
+                    <li @click="updateClick(item)"><a href="#!">拉取代码</a></li>
+                    <li class="divider"></li>
+                    <li @click="reloadClick(item)"><a href="#!">重新加载</a></li>
+                </ul>
             </li>
         </ul>
 
@@ -160,6 +170,17 @@
                     this.loading = true
                     ha.post({
                         type: 'update',
+                        domain: item.domain
+                    }).then(res => {
+                        this.toast(res.msg)
+                    }).finally(() => {
+                        this.loading = false
+                    })
+                },
+                reloadClick(item) {
+                    this.loading = true
+                    ha.post({
+                        type: 'reload',
                         domain: item.domain
                     }).then(res => {
                         this.toast(res.msg)

@@ -11,7 +11,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.6.6'
+VERSION = '1.6.7'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -122,7 +122,19 @@ class HassGateView(HomeAssistantView):
             res = fileExplorer.q.get_list()
             return self.json({ 'code': 0, 'msg': '上传成功', 'data': res})
         elif _type == 'reload':
-            integration = await loader.async_get_integration(hass, DOMAIN)
+            _domain = res['domain']
+            _com = {
+                'ha_file_explorer': ['qn', 'api'],
+                'ha_sidebar': ['api_config', 'api_sidebar'],
+                'ha_qqmail': ['api_msg']
+            }
+            # 重新加载模块
+            for m in _com[_domain]:
+                _m = 'custom_components.' + _domain + '.' + m
+                print(_m)
+                importlib.reload(sys.modules[_m])
+            # 加载主模块
+            integration = await loader.async_get_integration(hass, _domain)
             component = integration.get_component()
             importlib.reload(component)
             config = await conf_util.async_hass_config_yaml(hass)
