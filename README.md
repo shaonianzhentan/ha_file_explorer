@@ -31,6 +31,7 @@ ha_file_explorer:
 ### v1.7
 - 加入拉取最新代码测试功能
 - 文件列表分类排序
+- 删除WebLink引入，兼容HomeAssistant 0.107版本
 
 ### v1.6
 - 加入备份全选功能

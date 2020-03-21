@@ -1,7 +1,6 @@
 import os, yaml, uuid, logging, time, importlib, base64, json, string, sys
 from aiohttp import web
 import voluptuous as vol
-from homeassistant.components.weblink import Link
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.helpers import config_validation as cv, intent
 from homeassistant import config as conf_util, loader
@@ -11,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.6.7'
+VERSION = '1.7'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
