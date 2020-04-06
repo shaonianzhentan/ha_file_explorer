@@ -153,7 +153,8 @@ class HassGateView(HomeAssistantView):
             if os.name == 'nt':
                 os.system(_sh)
             else:
-                os.system('sudo bash ' + _sh)
+                # os.system('sudo bash ' + _sh)
+                os.system('bash ' + _sh)
             return self.json({'code':0, 'msg': '拉取最新代码成功'})
         return self.json(res)
 
