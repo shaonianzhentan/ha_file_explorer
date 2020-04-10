@@ -234,7 +234,13 @@
                         type: 'upload-list'
                     }).then(res => {
                         let { download, list } = res.data
-                        this.upload_list = list.items.map(ele => {
+                        this.upload_list = list.items.sort((a, b) => {
+                            if (a.putTime > b.putTime) {
+                                return 1
+                            } else {
+                                return -1
+                            }
+                        }).map(ele => {
                             ele.putTime = new Date(parseInt(ele.putTime / 10000)).toLocaleString()
                             ele.download = download + ele.key
                             return ele
