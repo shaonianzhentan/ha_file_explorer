@@ -4,7 +4,7 @@ mkdir ~/git_$DOMAIN
 cd ~/git_$DOMAIN
 # 拉取新文件
 git init
-git remote add -f origin https://github.com/shaonianzhentan/$DOMAIN
+git remote add -f origin https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN
 git config core.sparsecheckout true
 echo "custom_components/$DOMAIN" >> .git/info/sparse-checkout
 cat .git/info/sparse-checkout
