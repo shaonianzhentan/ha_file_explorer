@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.7'
+VERSION = '1.7.1'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -100,8 +100,13 @@ class HassGateView(HomeAssistantView):
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'new':
-            filename = res['newFile']
-            fileExplorer.setContent(_path + '/' + filename, '')
+            # 新建文件
+            if 'newFile' in res:
+                filename = res['newFile']
+                fileExplorer.setContent(_path + '/' + filename, '')
+            else if 'newDir' in res:
+                dirname = res['newDir']
+                fileExplorer.mkdir(_path + '/' + dirname)
             return self.json({ 'code': 0, 'msg': '新建成功'})
         elif _type == 'upload':
             if fileExplorer.q is None:

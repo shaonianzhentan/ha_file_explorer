@@ -133,9 +133,11 @@
                         <div class="card-action">
                             <!-- <a class="waves-effect waves-light btn" @click="savecfgClick"><i
                                     class="material-icons left">save</i>保存上传配置</a> -->
-							<a>
-								<input type="checkbox" id="all" onchange="app.list.forEach(ele=>ele.checked=this.checked);app.list.splice(0,0);" /><label for="all">全选</label>
-							</a>
+                            <a>
+                                <input type="checkbox" id="all"
+                                    onchange="app.list.forEach(ele=>ele.checked=this.checked);app.list.splice(0,0);" /><label
+                                    for="all">全选</label>
+                            </a>
                             <a class="waves-effect waves-light btn" @click="uploadClick">
                                 <i class="material-icons left">cloud</i>立即上传备份到七牛云</a>
                         </div>
@@ -216,6 +218,12 @@
                                 'tts',
                                 'home-assistant.log',
                                 'deps', 'custom_components'].includes(ele.name) === false
+                        }).sort((a, b) => {
+                            if (a.type > b.type) {
+                                return 1
+                            } else {
+                                return -1
+                            }
                         })
                     }).finally(() => {
                         this.loading = false
@@ -225,7 +233,7 @@
                     ha.post({
                         type: 'upload-list'
                     }).then(res => {
-                        let {download, list} = res.data
+                        let { download, list } = res.data
                         this.upload_list = list.items.map(ele => {
                             ele.putTime = new Date(parseInt(ele.putTime / 10000)).toLocaleString()
                             ele.download = download + ele.key

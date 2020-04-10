@@ -154,12 +154,14 @@
             </ul>
             <form class="row card-panel">
                 <div class="input-field col s6">
-                    <input placeholder="test.txt" id="first_name" v-model.trim="newFile" type="text" class="validate">
-                    <label for="first_name">文件名称</label>
+                    <input placeholder="文件 | 文件夹" id="first_name" v-model.trim="newFile" type="text" class="validate">
+                    <label for="first_name">(文件/文件夹)名称</label>
                 </div>
                 <div class="input-field col s6">
-                    <a class="waves-effect waves-light btn" @click="newFileClick"><i
-                            class="material-icons left">note_add</i>新建文本文件</a>
+                    <a class="waves-effect waves-light btn" @click="newFileClick(0)"><i
+                            class="material-icons left">note_add</i>新建文件</a>
+                    <a class="waves-effect waves-light btn" @click="newFileClick(1)"><i
+                            class="material-icons left">note_add</i>新建文件夹</a>
                 </div>
             </form>
 
@@ -523,16 +525,17 @@
                         }
                     })
                 },
-                newFileClick() {
+                newFileClick(type) {
                     let { newFile } = this
                     if (newFile) {
                         this.loading = true
                         let path = this.dir.join('/')
-                        ha.post({
+                        let params = {
                             type: 'new',
-                            path,
-                            newFile
-                        }).then(res => {
+                            path
+                        }
+                        params[type === 0 ? 'newFile' : 'newDir'] = newFile
+                        ha.post(params).then(res => {
                             if (res.code === 0) this.newFile = '';
                             this.toast(res.msg)
                             this.getList(path)
