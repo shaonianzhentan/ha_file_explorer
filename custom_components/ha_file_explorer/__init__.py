@@ -104,7 +104,7 @@ class HassGateView(HomeAssistantView):
             if 'newFile' in res:
                 filename = res['newFile']
                 fileExplorer.setContent(_path + '/' + filename, '')
-            else if 'newDir' in res:
+            elif 'newDir' in res:
                 dirname = res['newDir']
                 fileExplorer.mkdir(_path + '/' + dirname)
             return self.json({ 'code': 0, 'msg': '新建成功'})
