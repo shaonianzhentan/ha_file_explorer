@@ -124,8 +124,7 @@
                             <ul class="collection">
                                 <li class="collection-item" v-for="(item,index) in list">
                                     <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
-                                    <label :for="`file_${index}`" :class='{"green-text": item.type == "dir"}''>{{item.name}}</label>
-
+                                    <label :for="`file_${index}`" :style="`${item.type == 'dir'? 'color:red;':''}`"'>{{item.name}}</label>
                                     <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
                                 </li>
                             </ul>
