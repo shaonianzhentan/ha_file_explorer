@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.7.1'
+VERSION = '1.7.2'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -146,10 +146,11 @@ class HassGateView(HomeAssistantView):
             return self.json({'code':0, 'msg': '重新加载成功'})
         elif _type == 'update':
             _domain = res['domain']
+            _url = res['url']
             _path =  hass.config.path("custom_components").replace('\\','/')
-            
+            # https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN
             with open(_path + '/' + DOMAIN + '/update.sh', 'r', encoding='utf-8') as f:
-                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain)
+                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url)
             
             _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:

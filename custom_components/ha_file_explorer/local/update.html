@@ -10,6 +10,7 @@
         .des {
             padding-top: 8px;
         }
+
         #app .collection {
             overflow: inherit !important;
         }
@@ -30,7 +31,7 @@
                     <span class="chip">
                         {{item.domain}}
                     </span>
-                    <a class="chip" :href="`https://github.com/shaonianzhentan/${item.domain}`" target="_blank">
+                    <a class="chip" :href="item.url" target="_blank">
                         https://github.com/shaonianzhentan/{{item.domain}}
                     </a>
                 </p>
@@ -43,6 +44,29 @@
                     <li class="divider"></li>
                     <li @click="reloadClick(item)"><a href="#!">重新加载</a></li>
                 </ul>
+            </li>
+            <li class="collection-item avatar">
+                <i class="material-icons teal circle">code</i>
+                <form>
+                    <div class="row">
+                        <div class="input-field col s3">
+                            <input placeholder="sonoff" id="first_name" v-model.trim="pull.domain" type="text"
+                                class="validate">
+                            <label for="first_name">custom_components/sonoff</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="last_name" type="text" v-model.trim="pull.url"
+                                placeholder="https://github.com/AlexxIT/SonoffLAN" class="validate">
+                            <label for="last_name">GitHub域名</label>
+                        </div>
+                        <div class="input-field col s3">
+                            <a class="waves-effect waves-light btn" @click="pullClick"><i
+                                    class="material-icons left">cloud</i>拉取组件</a>
+                        </div>
+                    </div>
+                </form>
+            </li>
+
             </li>
         </ul>
 
@@ -128,33 +152,46 @@
                     list: [
                         {
                             domain: 'ha_cloud_music',
-                            name: '网易云音乐'
+                            name: '网易云音乐',
+                            url: 'https://github.com/shaonianzhentan/ha_cloud_music'
                         }, {
                             domain: 'ha_baidu_map',
-                            name: '百度地图'
+                            name: '百度地图',
+                            url: 'https://github.com/shaonianzhentan/ha_baidu_map'
                         }, {
                             domain: 'ha_sidebar',
-                            name: '侧边栏管理'
+                            name: '侧边栏管理',
+                            url: 'https://github.com/shaonianzhentan/ha_sidebar'
                         }, {
                             domain: 'ha_file_explorer',
-                            name: '文件管理'
+                            name: '文件管理',
+                            url: 'https://github.com/shaonianzhentan/ha_file_explorer'
                         }, {
                             domain: 'ha_qqmail',
-                            name: 'QQ邮箱通知'
+                            name: 'QQ邮箱通知',
+                            url: 'https://github.com/shaonianzhentan/ha_qqmail'
                         }, {
                             domain: 'ha_shbus',
-                            name: '上海公交'
+                            name: '上海公交',
+                            url: 'https://github.com/shaonianzhentan/ha_shbus'
                         }, {
                             domain: 'ha_voice',
-                            name: '语音小助手'
+                            name: '语音小助手',
+                            url: 'https://github.com/shaonianzhentan/ha_cloud_music'
                         }, {
                             domain: 'ha_ylui',
-                            name: 'Web桌面'
+                            name: 'Web桌面',
+                            url: 'https://github.com/shaonianzhentan/ha_ylui'
                         }, {
                             domain: 'ha_ble_home',
-                            name: '蓝牙在家'
+                            name: '蓝牙在家',
+                            url: 'https://github.com/shaonianzhentan/ha_ble_home'
                         }
-                    ]
+                    ],
+                    pull: {
+                        domain: '',
+                        url: ''
+                    }
                 }
             },
             created() {
@@ -166,11 +203,16 @@
                 toast(html) {
                     M.toast({ html })
                 },
+                pullClick() {
+                    let { domain, url } = this.pull
+                    if (domain && url) this.updateClick(this.pull)
+                },
                 updateClick(item) {
                     this.loading = true
                     ha.post({
                         type: 'update',
-                        domain: item.domain
+                        domain: item.domain,
+                        url: item.url.replace('https://github.com/', 'https://github.com.cnpmjs.org/')
                     }).then(res => {
                         this.toast(res.msg)
                     }).finally(() => {
