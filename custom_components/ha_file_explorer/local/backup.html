@@ -124,7 +124,7 @@
                             <ul class="collection">
                                 <li class="collection-item" v-for="(item,index) in list">
                                     <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
-                                    <label :for="`file_${index}`">{{item.name}}</label>
+                                    <label :for="`file_${index}`" :class='{"green-text": item.type == "dir"}''>{{item.name}}</label>
 
                                     <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
                                 </li>
@@ -159,9 +159,9 @@
                                         </span>
                                         <span class="chip">{{item.fsize | format}}</span>
                                     </p>
-                                    <a :href="item.download" target="_blank" class='secondary-content' title="下载">
+                                    <a :href="item.download" target="_blank" class=' secondary-content' title="下载">
                                         <i class="material-icons">play_for_work</i>
-                                    </a>
+                                        </a>
                                 </li>
                             </ul>
                         </div>
