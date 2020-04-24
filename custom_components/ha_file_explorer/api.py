@@ -87,7 +87,7 @@ class FileExplorer():
     # 压缩单个项
     def zipdir(self, dirname):
         hass = self.hass
-        local = hass.config.path("custom_components/ha_file_explorer/local/data")
+        local = hass.config.path("ha_file_explorer_backup")
         self.mkdir(local)
         zipfilename = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
         filelist = []
@@ -111,7 +111,7 @@ class FileExplorer():
     def zip(self, _list):
         hass = self.hass
         root_path = hass.config.path('./')
-        local = hass.config.path("custom_components/ha_file_explorer/local/data")
+        local = hass.config.path("ha_file_explorer_backup")
         self.mkdir(local)
         zf = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
