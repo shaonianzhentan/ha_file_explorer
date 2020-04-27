@@ -124,7 +124,8 @@
                             <ul class="collection">
                                 <li class="collection-item" v-for="(item,index) in list">
                                     <input type="checkbox" v-model="item.checked" :id="`file_${index}`" />
-                                    <label :for="`file_${index}`">【{{item.type == 'dir' ? '文件夹' : '文件'}}】{{item.name}}</label>
+                                    <label
+                                        :for="`file_${index}`">【{{item.type == 'dir' ? '文件夹' : '文件'}}】{{item.name}}</label>
                                     <span class="new badge" data-badge-caption="">{{item.size | format}}</span>
                                 </li>
                             </ul>
@@ -158,9 +159,16 @@
                                         </span>
                                         <span class="chip">{{item.fsize | format}}</span>
                                     </p>
-                                    <a :href="item.download" target="_blank" class=' secondary-content' title="下载">
-                                        <i class="material-icons">play_for_work</i>
-                                        </a>
+                                    <!--菜单-->
+                                    <a href="#!" class='dropdown-button secondary-content'
+                                        :data-activates='`dropdown${index}`'>
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul :id='`dropdown${index}`' class='dropdown-content'>
+                                        <li><a :href="item.download" target="_blank">下载</a></li>
+                                        <li class="divider"></li>
+                                        <li @click="resetClick(item.download)"><a href="#!">还原</a></li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -235,16 +243,26 @@
                         let { download, list } = res.data
                         this.upload_list = list.items.sort((a, b) => {
                             if (a.putTime > b.putTime) {
-                                return 1
-                            } else {
                                 return -1
+                            } else {
+                                return 1
                             }
                         }).map(ele => {
                             ele.putTime = new Date(parseInt(ele.putTime / 10000)).toLocaleString()
                             ele.download = download + ele.key
                             return ele
                         })
+
+                        setTimeout(() => {
+
+                            $('.dropdown-button').dropdown();
+
+                        }, 500)
                     })
+                },
+                // 还原数据
+                resetClick(url) {
+                    console.log(url)
                 },
                 // 保存配置
                 savecfgClick() {
