@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.1/theme-chalk/index.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <el-alert title="请选择要覆盖的文件，确定后会直接替换当前文件。我是用来初始化数据的" :closable="false" type="error">
+        </el-alert>
+        <el-tree :data="data" ref="tree" show-checkbox node-key="url" :props="defaultProps">
+        </el-tree>
+        <el-button @click="resetClick">还原选中项</el-button>
+    </div>
+    <script src="ha.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.1/index.js"></script>
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    ver: ha.query('ver'),
+                    data: [],
+                    defaultProps: {
+                        children: 'child',
+                        label: 'name'
+                    }
+                }
+            },
+            created() {
+                this.loadData()
+            },
+            methods: {
+                loadData() {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: 'Loading',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    let url = ha.query('url')
+                    ha.post({
+                        type: 'download',
+                        url
+                    }).then(res => {
+                        this.data = res.data
+                    }).finally(() => {
+                        loading.close();
+                    })
+                },
+                resetClick() {
+                    let list = this.$refs['tree'].getCheckedKeys(true)
+                    if (list.length > 0) {
+                        ha.post({
+                            type: 'reset',
+                            list
+                        }).then(res => {
+                            console.log(res)
+                            this.$notify({
+                                title: '还原通知',
+                                message: res.msg
+                            });
+                        })
+                    }
+                    // console.log(list)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

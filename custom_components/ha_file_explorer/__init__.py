@@ -1,4 +1,4 @@
-import os, yaml, uuid, logging, time, importlib, base64, json, string, sys
+import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests
 from aiohttp import web
 import voluptuous as vol
 from homeassistant.components.http import HomeAssistantView
@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.7.5'
+VERSION = '1.7.6'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -124,7 +124,25 @@ class HassGateView(HomeAssistantView):
             return self.json({ 'code': 0, 'msg': '上传成功'})
         elif _type == 'upload-list':
             res = fileExplorer.q.get_list()
-            return self.json({ 'code': 0, 'msg': '上传成功', 'data': res})
+            return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
+        elif _type == 'download':
+            # 还原备份的数据
+            _url = res['url']
+            # 下载备份的文件
+            down_res = requests.get(_url)
+            backup_path = _path + '/ha_file_explorer_backup.zip'
+            with open(backup_path, "wb") as code:
+                code.write(down_res.content)
+            # 解压文件
+            fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
+            # 删除下截的备份文件
+            fileExplorer.delete(backup_path)
+            # 返回文件夹里的数据
+            return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})
+        elif _type == 'reset':
+            # 替换指定文件
+            fileExplorer.move(res['list'])
+            return self.json({'code':0, 'msg': '还原成功'})
         elif _type == 'reload':
             _domain = res['domain']
             _com = {

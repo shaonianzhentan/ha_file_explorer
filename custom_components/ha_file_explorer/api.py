@@ -20,6 +20,23 @@ class FileExplorer():
         else:
             self.q = None   
 
+    def getAllFile(self, dir):
+        allcontent = listdir(dir)
+        dirItem    = [] 
+
+        for item in allcontent:
+            hashInfo = {}
+            filePath = join(dir,item)
+            if exists(filePath) == False:
+                continue
+            listInfo = stat(filePath)
+            hashInfo['name'] = item
+            hashInfo['url']  = filePath
+            if isdir(filePath):
+                hashInfo['child'] = self.getAllFile(filePath)
+            dirItem.append(hashInfo)
+        return dirItem
+
     def getDirectory(self, dir):
         allcontent = listdir(dir)
         dirItem    = [] 
@@ -84,6 +101,14 @@ class FileExplorer():
             path = os.path.join(path, folder)
             os.mkdir(path)
     
+    # 替换文件
+    def move(self, list):
+        for src in list:
+            _dst = src.replace('/ha_file_explorer_backup','')
+            print(_dst)
+            # self.mkdir(_dst)
+            shutil.copy2(src, _dst)
+
     # 压缩单个项
     def zipdir(self, dirname):
         hass = self.hass
@@ -127,3 +152,12 @@ class FileExplorer():
                 else:
                     zip.write(dirpath, item)
         return zf
+
+    # 解压
+    def unzip(self, src_file, dest_dir):
+        zf = zipfile.ZipFile(src_file)
+        try:
+           zf.extractall(path=dest_dir)
+        except RuntimeError as e:
+           print(e)
+        zf.close()

@@ -7,6 +7,9 @@
     <link href="https://cdn.bootcss.com/material-design-icons/3.0.1/iconfont/material-icons.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/materialize/0.97.8/css/materialize.min.css" rel="stylesheet">
     <style>
+        #app .collection {
+            overflow: inherit !important;
+        }
     </style>
 </head>
 
@@ -167,7 +170,7 @@
                                     <ul :id='`dropdown${index}`' class='dropdown-content'>
                                         <li><a :href="item.download" target="_blank">下载</a></li>
                                         <li class="divider"></li>
-                                        <li @click="resetClick(item.download)"><a href="#!">还原</a></li>
+                                        <li @click="downloadClick(item.download)"><a href="#!">还原</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -177,10 +180,26 @@
                 </div>
 
             </div>
-
-
-
         </form>
+
+        <!-- 数据还原 -->
+        <div id="modal-list" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <h4>项目信息</h4>
+                <p>&nbsp;</p>
+                <p>项目介绍：在HA里使用的文件管理</p>
+                <p>项目版本：{{ver}}</p>
+                <p>项目地址：<a href="https://github.com/shaonianzhentan/ha_file_explorer" target="_blank">
+                        https://github.com/shaonianzhentan/ha_file_explorer</a></p>
+                <p>作者QQ：635147515</p>
+                <p>如果觉得此项目对你有用，请给项目点一个Star，谢谢</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
+            </div>
+        </div>
+
+
     </div>
     <script src="ha.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -194,7 +213,8 @@
                     loading: false,
                     ver: ha.query('ver'),
                     list: [],
-                    upload_list: []
+                    upload_list: [],
+                    download_list: []
                 }
             },
             filters: {
@@ -216,7 +236,7 @@
                         type: 'get',
                         path: ''
                     }).then(res => {
-                        console.log(res)
+                        // console.log(res)
                         // 过滤掉不让备份的数据
                         this.list = res.filter(ele => {
                             return ['home-assistant_v2.db',
@@ -261,8 +281,10 @@
                     })
                 },
                 // 还原数据
-                resetClick(url) {
-                    console.log(url)
+                downloadClick(url) {
+                    if (confirm('还原前请先备份所有数据，确定知道自己在做什么？')) {
+                        location.href = `reset.html?ver=${ha.ver}&url=${encodeURIComponent(url)}&r=${Date.now()}`
+                    }
                 },
                 // 保存配置
                 savecfgClick() {
