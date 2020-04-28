@@ -63,6 +63,11 @@
                                 title: '还原通知',
                                 message: res.msg
                             });
+                        }).catch(ex => {
+                            this.$notify({
+                                title: '错误通知',
+                                message: '出现错误，自己去看日志'
+                            });
                         })
                     }
                     // console.log(list)

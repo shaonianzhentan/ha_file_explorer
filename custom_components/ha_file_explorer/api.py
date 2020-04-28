@@ -29,6 +29,9 @@ class FileExplorer():
             filePath = join(dir,item)
             if exists(filePath) == False:
                 continue
+            # 过滤指定目录
+            if item == '__pycache__':
+                continue
             listInfo = stat(filePath)
             hashInfo['name'] = item
             hashInfo['url']  = filePath
@@ -105,8 +108,12 @@ class FileExplorer():
     def move(self, list):
         for src in list:
             _dst = src.replace('/ha_file_explorer_backup','')
-            print(_dst)
-            # self.mkdir(_dst)
+            # 创建目录
+            lastIndex = _dst.replace('\\','/').rindex('/')
+            _dir = _dst[0:lastIndex]
+            if os.path.isdir(_dir) == False:
+                self.mkdir(_dir)
+                print(_dir)
             shutil.copy2(src, _dst)
 
     # 压缩单个项
