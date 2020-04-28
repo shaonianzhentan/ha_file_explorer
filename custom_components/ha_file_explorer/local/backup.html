@@ -282,7 +282,7 @@
                 },
                 // 还原数据
                 downloadClick(url) {
-                    if (confirm('还原前请先备份所有数据，确定知道自己在做什么？')) {
+                    if (top.confirm('还原前请先备份所有数据，确定知道自己在做什么？')) {
                         location.href = `reset.html?ver=${ha.ver}&url=${encodeURIComponent(url)}&r=${Date.now()}`
                     }
                 },
