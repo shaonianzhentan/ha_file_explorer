@@ -170,7 +170,7 @@
                                     <ul :id='`dropdown${index}`' class='dropdown-content'>
                                         <li><a :href="item.download" target="_blank">下载</a></li>
                                         <li class="divider"></li>
-                                        <li @click="downloadClick(item.download)"><a href="#!">还原</a></li>
+                                        <li @click="downloadClick(item)"><a href="#!">还原</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -269,6 +269,7 @@
                             }
                         }).map(ele => {
                             ele.putTime = new Date(parseInt(ele.putTime / 10000)).toLocaleString()
+                            ele.domain = download
                             ele.download = download + ele.key
                             return ele
                         })
@@ -281,7 +282,11 @@
                     })
                 },
                 // 还原数据
-                downloadClick(url) {
+                downloadClick({ domain, download }) {
+                    if (!domain) {
+                        top.alert('请配置下载域名')
+                        return
+                    }
                     if (top.confirm('还原前请先备份所有数据，确定知道自己在做什么？')) {
                         location.href = `reset.html?ver=${ha.ver}&url=${encodeURIComponent(url)}&r=${Date.now()}`
                     }
