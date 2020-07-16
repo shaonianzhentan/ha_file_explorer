@@ -73,4 +73,12 @@ class HA {
     }
 }
 
-window.ha = new HA()
+window.ha = new HA();
+(()=>{
+    // 主题跟着系统改变
+    let style = document.createElement('style')
+    style.textContent = `
+    .teal{ background-color: ${top.getComputedStyle(top.document.body).getPropertyValue('--primary-color')} !important}
+    `
+    document.head.appendChild(style)
+})();
