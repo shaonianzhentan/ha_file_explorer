@@ -63,18 +63,19 @@ class HA {
         } else {
             authorization = `Bearer ${auth.data.access_token}`
         }
+        let body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
         return fetch(url, {
             method: 'post',
             headers: {
                 authorization
             },
-            body: JSON.stringify(params)
+            body
         }).then(res => res.json())
     }
 }
 
 window.ha = new HA();
-(()=>{
+(() => {
     // 主题跟着系统改变
     let style = document.createElement('style')
     style.textContent = `

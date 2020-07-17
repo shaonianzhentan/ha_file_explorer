@@ -153,15 +153,35 @@
                 </li>
             </ul>
             <form class="row card-panel">
-                <div class="input-field col s6">
-                    <input placeholder="文件 | 文件夹" id="first_name" v-model.trim="newFile" type="text" class="validate">
-                    <label for="first_name">(文件/文件夹)名称</label>
+                <div class="col s12 m6">
+                    <div class="input-field">
+                        <input placeholder="文件 | 文件夹" id="first_name" v-model.trim="newFile" type="text"
+                            class="validate">
+                        <label for="first_name">(文件/文件夹)名称</label>
+                    </div>
+                    <div>
+                        <a class="waves-effect waves-light btn" @click="newFileClick(0)"><i
+                                class="material-icons left">note_add</i>新建文件</a>
+                        <a class="waves-effect waves-light btn" @click="newFileClick(1)"><i
+                                class="material-icons left">note_add</i>新建文件夹</a>
+                    </div>
                 </div>
-                <div class="input-field col s6">
-                    <a class="waves-effect waves-light btn" @click="newFileClick(0)"><i
-                            class="material-icons left">note_add</i>新建文件</a>
-                    <a class="waves-effect waves-light btn" @click="newFileClick(1)"><i
-                            class="material-icons left">note_add</i>新建文件夹</a>
+                <div class="col s12 m6">
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>文件</span>
+                            <input type="file" id="file">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" placeholder="请选择要上传的文件" type="text">
+                        </div>
+                    </div>
+                    <div>
+                        <a class="waves-effect waves-light btn" style="width:100%;" @click="newFileClick(2)"><i
+                                class="material-icons left">note_add</i>上传文件</a>
+                        <p class="red-text">请注意上传文件后会覆盖原文件</p>
+                    </div>
+
                 </div>
             </form>
 
@@ -526,10 +546,14 @@
                     })
                 },
                 newFileClick(type) {
-                    let { newFile } = this
-                    if (newFile) {
+                    let path = this.dir.join('/')
+                    if ([0, 1].includes(type)) {
+                        let { newFile } = this
+                        if (!newFile) {
+                            this.toast("请输入文件或文件夹的名称")
+                            return
+                        }
                         this.loading = true
-                        let path = this.dir.join('/')
                         let params = {
                             type: 'new',
                             path
@@ -541,7 +565,27 @@
                             this.getList(path)
                             this.loading = false
                         })
+                    } else if (type == 2) {
+                        let files = document.getElementById('file').files
+                        if (files.length == 0) {
+                            this.toast("请选择要上传的文件")
+                            return
+                        }
+                        this.loading = true
+                        let formData = new FormData()
+                        formData.append('path', path)
+                        formData.append('file', files[0])
+                        ha.post(formData).then(res => {
+                            // 重置
+                            document.getElementById('file').value = ''
+                            document.querySelector('.file-path').value = ''
+
+                            this.toast(res.msg)
+                            this.getList(path)
+                            this.loading = false
+                        })
                     }
+
                 }
             }
         })

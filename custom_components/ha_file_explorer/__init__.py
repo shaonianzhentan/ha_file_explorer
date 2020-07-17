@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.8.2'
+VERSION = '1.8.3'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -78,8 +78,31 @@ class HassGateView(HomeAssistantView):
     requires_auth = True
     
     async def post(self, request):
-        res = await request.json()
         hass = request.app["hass"]
+        try:
+            reader = await request.multipart()
+            # print(reader)
+            # 读取路径
+            res_path = await reader.next()
+            res_path_value = await res_path.text()
+            # print(hass.config.path(res_path_value))
+            # 保存文件
+            file = await reader.next()
+            # 生成文件
+            filename =  hass.config.path(res_path_value) + '/' + file.filename
+            size = 0
+            with open(filename, 'wb') as f:
+                while True:
+                    chunk = await file.read_chunk()  # 默认是8192个字节。
+                    if not chunk:
+                        break
+                    size += len(chunk)
+                    f.write(chunk)
+            return self.json({ 'code': 0, 'msg': '上传成功'})
+        except Exception as e:
+            print(e)
+
+        res = await request.json()
         fileExplorer = hass.data[DOMAIN]
         _type = res['type']
         _path = hass.config.path('./' + res.get('path', ''))
