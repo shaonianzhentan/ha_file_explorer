@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.8.3'
+VERSION = '1.8.4'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -146,8 +146,11 @@ class HassGateView(HomeAssistantView):
             fileExplorer.delete(zf)
             return self.json({ 'code': 0, 'msg': '上传成功'})
         elif _type == 'upload-list':
-            res = fileExplorer.q.get_list()
-            return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
+            try:
+                res = fileExplorer.q.get_list()
+                return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
+            except Exception as e:
+                return self.json({ 'code': 1, 'msg': '备份列表获取异常，请检查是否正确配置七牛云密钥'})
         elif _type == 'download':
             # 还原备份的数据
             _url = res['url']

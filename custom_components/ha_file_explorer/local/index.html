@@ -129,7 +129,7 @@
             <ul class="collection">
                 <li class="collection-item avatar" v-for="(item,index) in list">
                     <i
-                        :class="`material-icons circle ${item.type == 'dir' ? '' : 'green'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
+                        :class="`material-icons circle ${item.type == 'dir' ? '' : 'teal'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
                     <span class="title">{{item.name}}</span>
                     <p style="margin-top:5px;">
                         <span class="chip">
@@ -160,15 +160,15 @@
                         <label for="first_name">(文件/文件夹)名称</label>
                     </div>
                     <div>
-                        <a class="waves-effect waves-light btn" @click="newFileClick(0)"><i
+                        <a class="waves-effect waves-light btn teal" @click="newFileClick(0)"><i
                                 class="material-icons left">note_add</i>新建文件</a>
-                        <a class="waves-effect waves-light btn" @click="newFileClick(1)"><i
+                        <a class="waves-effect waves-light btn teal" @click="newFileClick(1)"><i
                                 class="material-icons left">note_add</i>新建文件夹</a>
                     </div>
                 </div>
                 <div class="col s12 m6">
                     <div class="file-field input-field">
-                        <div class="btn">
+                        <div class="btn teal">
                             <span>文件</span>
                             <input type="file" id="file">
                         </div>
@@ -177,7 +177,7 @@
                         </div>
                     </div>
                     <div>
-                        <a class="waves-effect waves-light btn" style="width:100%;" @click="newFileClick(2)"><i
+                        <a class="waves-effect waves-light btn teal" style="width:100%;" @click="newFileClick(2)"><i
                                 class="material-icons left">note_add</i>上传文件</a>
                         <p class="red-text">请注意上传文件后会覆盖原文件</p>
                     </div>
