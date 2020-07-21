@@ -152,12 +152,13 @@
                     </ul>
                 </li>
             </ul>
+            <!-- 新建文件 -->
             <form class="row card-panel">
                 <div class="col s12 m6">
                     <div class="input-field">
-                        <input placeholder="文件 | 文件夹" id="first_name" v-model.trim="newFile" type="text"
+                        <input placeholder="文件 | 文件夹" id="txtFileName" v-model.trim="newFile" type="text"
                             class="validate">
-                        <label for="first_name">(文件/文件夹)名称</label>
+                        <label for="txtFileName">(文件/文件夹)名称</label>
                     </div>
                     <div>
                         <a class="waves-effect waves-light btn teal" @click="newFileClick(0)"><i
@@ -170,10 +171,10 @@
                     <div class="file-field input-field">
                         <div class="btn teal">
                             <span>文件</span>
-                            <input type="file" id="file">
+                            <input type="file" id="file" style="width:90px;">
                         </div>
                         <div class="file-path-wrapper">
-                            <input class="file-path validate" placeholder="请选择要上传的文件" type="text">
+                            <input class="file-path validate" placeholder="文件名称" type="text">
                         </div>
                     </div>
                     <div>
@@ -182,6 +183,18 @@
                         <p class="red-text">请注意上传文件后会覆盖原文件</p>
                     </div>
 
+                </div>
+            </form>
+            <!-- 下载网络文件 -->
+            <form class="row card-panel">
+                <div class="input-field col s8">
+                    <input placeholder="https://github.com/shaonianzhentan/ha_file_explorer/archive/master.zip"
+                        id="txtURL" type="url" class="validate">
+                    <label for="txtURL">网络URL地址</label>
+                </div>
+                <div class="input-field col s4">
+                    <a class="waves-effect waves-light btn teal" @click="newFileClick(3)"><i
+                            class="material-icons left">file_download</i>下载</a>
                 </div>
             </form>
 
@@ -332,9 +345,9 @@
             </div>
 
 
-            <a class="waves-effect waves-light btn" @click="cancel"><i
+            <a class="waves-effect waves-light btn teal" @click="cancel"><i
                     class="material-icons left">keyboard_arrow_left</i>返回</a>
-            <a class="waves-effect waves-light btn" @click="save"><i class="material-icons left">save</i>保存</a>
+            <a class="waves-effect waves-light btn teal" @click="save"><i class="material-icons left">save</i>保存</a>
 
 
             <!--
@@ -548,6 +561,7 @@
                 newFileClick(type) {
                     let path = this.dir.join('/')
                     if ([0, 1].includes(type)) {
+                        // 创建文件&文件夹
                         let { newFile } = this
                         if (!newFile) {
                             this.toast("请输入文件或文件夹的名称")
@@ -566,26 +580,59 @@
                             this.loading = false
                         })
                     } else if (type == 2) {
+                        // 上传文件
                         let files = document.getElementById('file').files
                         if (files.length == 0) {
                             this.toast("请选择要上传的文件")
                             return
                         }
+                        let filePath = document.querySelector('.file-path')
+                        let fileName = filePath.value
+                        if (!fileName) {
+                            this.toast("请输入文件名称")
+                            return
+                        }
                         this.loading = true
                         let formData = new FormData()
                         formData.append('path', path)
+                        formData.append('name', fileName)
                         formData.append('file', files[0])
                         ha.post(formData).then(res => {
                             // 重置
                             document.getElementById('file').value = ''
-                            document.querySelector('.file-path').value = ''
+                            filePath.value = ''
 
                             this.toast(res.msg)
                             this.getList(path)
                             this.loading = false
                         })
-                    }
 
+                    } else if (type == 3) {
+                        // 下载文件
+                        let txtURL = document.querySelector('#txtURL')
+                        let link = txtURL.value.trim()
+                        try {
+                            if (!link) {
+                                this.toast("请输入下载地址")
+                                return
+                            }
+                            let url = new URL(link)
+                            this.loading = true
+                            ha.post({
+                                path,
+                                type: 'download',
+                                url: link
+                            }).then(res => {
+                                this.toast(res.msg)
+                                if (res.code == 0) txtURL.value = ''
+
+                                this.getList(path)
+                                this.loading = false
+                            })
+                        } catch (ex) {
+                            this.toast("URL格式错误")
+                        }
+                    }
                 }
             }
         })

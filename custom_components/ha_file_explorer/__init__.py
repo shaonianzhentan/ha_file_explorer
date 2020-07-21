@@ -1,4 +1,4 @@
-import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests
+import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp
 from aiohttp import web
 import voluptuous as vol
 from homeassistant.components.http import HomeAssistantView
@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '1.9'
+VERSION = '1.9.4'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -85,11 +85,15 @@ class HassGateView(HomeAssistantView):
             # 读取路径
             res_path = await reader.next()
             res_path_value = await res_path.text()
-            # print(hass.config.path(res_path_value))
+            # print(res_path_value)
+            # 读取名称
+            res_file = await reader.next()
+            res_file_value = await res_file.text()
+            # print(res_file_value)
             # 保存文件
             file = await reader.next()
             # 生成文件
-            filename =  hass.config.path(res_path_value) + '/' + file.filename
+            filename =  hass.config.path(res_path_value) + '/' + res_file_value
             size = 0
             with open(filename, 'wb') as f:
                 while True:
@@ -152,19 +156,30 @@ class HassGateView(HomeAssistantView):
             except Exception as e:
                 return self.json({ 'code': 1, 'msg': '备份列表获取异常，请检查是否正确配置七牛云密钥'})
         elif _type == 'download':
-            # 还原备份的数据
-            _url = res['url']
-            # 下载备份的文件
-            down_res = requests.get(_url)
-            backup_path = _path + '/ha_file_explorer_backup.zip'
-            with open(backup_path, "wb") as code:
-                code.write(down_res.content)
-            # 解压文件
-            fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
-            # 删除下截的备份文件
-            fileExplorer.delete(backup_path)
-            # 返回文件夹里的数据
-            return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})
+            try:
+                _url = res['url']
+                print(_url)
+                down_res = None
+                async with aiohttp.request('GET', _url) as r:
+                    down_res = await r.read()
+            except Exception as e:
+                return self.json({'code':1, 'msg': '下载文件出现异常：' + str(e)})
+            # 如果有path，则代表是下载URL到指定目录
+            if 'path' in res:
+                backup_path = _path + '/' + os.path.basename(_url)
+                with open(backup_path, "wb") as code:
+                    code.write(down_res)
+                return self.json({'code':0, 'msg': '下载成功'})
+            else:
+                backup_path = _path + '/ha_file_explorer_backup.zip'
+                with open(backup_path, "wb") as code:
+                    code.write(down_res)
+                # 解压文件
+                fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
+                # 删除下截的备份文件
+                fileExplorer.delete(backup_path)
+                # 返回文件夹里的数据
+                return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})        
         elif _type == 'reset':
             # 替换指定文件
             fileExplorer.move(res['list'])
