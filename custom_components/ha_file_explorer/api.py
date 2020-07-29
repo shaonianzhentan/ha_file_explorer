@@ -65,6 +65,8 @@ class FileExplorer():
                 hashInfo['type'] = 'dir'
                 hashInfo['size'] = self.get_dir_size(join(dir,item))
             dirItem.append(hashInfo)
+
+        dirItem.sort(key=lambda x: x['name'], reverse=True)
         return dirItem
     
     def getContent(self, _path):        
