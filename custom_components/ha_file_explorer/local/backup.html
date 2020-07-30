@@ -171,6 +171,8 @@
                                         <li><a :href="item.download" target="_blank">下载</a></li>
                                         <li class="divider"></li>
                                         <li @click="downloadClick(item)"><a href="#!">还原</a></li>
+                                        <li class="divider"></li>
+                                        <li @click="deleteClick(item)"><a href="#!">删除</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -260,7 +262,7 @@
                     ha.post({
                         type: 'upload-list'
                     }).then(res => {
-                        if(res.code==1){
+                        if (res.code == 1) {
                             this.toast(res.msg)
                             return
                         }
@@ -295,6 +297,22 @@
                     if (top.confirm('还原前请先备份所有数据，确定知道自己在做什么？')) {
                         location.href = `reset.html?ver=${ha.ver}&url=${encodeURIComponent(url)}&r=${Date.now()}`
                     }
+                },
+                deleteClick(item) {
+                    if (!top.confirm('确定删除？')) {
+                        return
+                    }
+                    this.loading = true
+                    ha.post({
+                        type: 'delete-qiniu',
+                        key: item.key
+                    }).then(res => {
+                        this.loadUploadList()
+                    }).finally(() => {
+                        setTimeout(() => {
+                            this.loading = false
+                        }, 3000)
+                    })
                 },
                 // 保存配置
                 savecfgClick() {

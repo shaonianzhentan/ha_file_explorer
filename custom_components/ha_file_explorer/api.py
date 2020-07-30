@@ -1,4 +1,4 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid, sys
+import datetime, shutil, json, re, zipfile, time, os, uuid, sys, multiprocessing
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -170,3 +170,23 @@ class FileExplorer():
         except RuntimeError as e:
            print(e)
         zf.close()
+
+    def run(self, func, args):
+        pool = multiprocessing.Pool()
+        res = pool.map(func, args)
+        if len(res) > 0:
+            return res[0]
+        return None
+
+    def upload(self, call):
+        config_path = self.hass.config.path('./')
+        print(config_path)
+        file_list = self.getDirectory(config_path)
+        # 上传文件
+        filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps'].count(x['name']) == 0, file_list)
+        list_name = list(map(lambda x: x['name'], list(filter_list)))
+        print(list_name)
+        zf = self.zip(list_name)
+        self.run(self.q.upload, [zf])
+        self.delete(zf)
+        print('上传成功')

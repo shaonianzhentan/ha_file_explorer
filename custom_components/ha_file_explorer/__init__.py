@@ -10,7 +10,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.0'
+VERSION = '2.1'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -35,8 +35,11 @@ def setup(hass, config):
         importlib.reload(sys.modules['custom_components.ha_file_explorer.qn'])
         importlib.reload(sys.modules['custom_components.ha_file_explorer.api'])
 
-    hass.data[DOMAIN] = FileExplorer(hass,cfg)
+    fileExplorer = FileExplorer(hass,cfg)
+    hass.data[DOMAIN] = fileExplorer
     
+    hass.services.register(DOMAIN, 'upload', fileExplorer.upload)
+
     # 注册静态目录
     local = hass.config.path("custom_components/" + DOMAIN + "/local")
     if os.path.isdir(local):
@@ -126,6 +129,9 @@ class HassGateView(HomeAssistantView):
             # 这是过滤掉主文件，不让删除
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
+        elif _type == 'delete-qiniu':
+            fileExplorer.run(fileExplorer.q.delete, [res.get('key')])
+            return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'new':
             # 新建文件
             if 'newFile' in res:
@@ -145,15 +151,17 @@ class HassGateView(HomeAssistantView):
                 # 压缩多个文件
                 zf = fileExplorer.zip(res['list'])
             
-            fileExplorer.q.upload(zf)
+            fileExplorer.run(fileExplorer.q.upload, [zf])
             # 上传成功，删除文件
             fileExplorer.delete(zf)
             return self.json({ 'code': 0, 'msg': '上传成功'})
         elif _type == 'upload-list':
             try:
-                res = fileExplorer.q.get_list()
+                res = fileExplorer.run(fileExplorer.q.get_list, [None])
+                # print('测试一下：', res)
                 return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
             except Exception as e:
+                print(e)
                 return self.json({ 'code': 1, 'msg': '备份列表获取异常，请检查是否正确配置七牛云密钥'})
         elif _type == 'download':
             try:

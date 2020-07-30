@@ -1,6 +1,7 @@
 from qiniu import Auth, put_file, etag, BucketManager
 import os, qiniu.config
 
+
 class Qn():
 
     def __init__(self, access_key, secret_key, bucket_name, prefix, download):
@@ -10,7 +11,7 @@ class Qn():
         self.q = Auth(access_key, secret_key)
 
     # 获取列表
-    def get_list(self):
+    def get_list(self, prefix):
         bucket = BucketManager(self.q)
         bucket_name = self.bucket_name
         # 前缀
@@ -34,3 +35,9 @@ class Qn():
         token = self.q.upload_token(self.bucket_name, key, 3600)
         res = put_file(token, key, localfile)
         print(res)
+
+    # 删除
+    def delete(self, key):
+        bucket = BucketManager(self.q)
+        ret, info = bucket.delete(self.bucket_name, key)
+        print(info)
