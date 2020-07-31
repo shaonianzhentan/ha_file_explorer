@@ -178,6 +178,9 @@ class FileExplorer():
             return res[0]
         return None
 
+    def notify(self, message):
+        self.hass.services.call('persistent_notification', 'create', {"message": message, "title": "文件管理", "notification_id": "ha_file_explorer"})
+
     def upload(self, call):
         config_path = self.hass.config.path('./')
         print(config_path)
@@ -186,7 +189,9 @@ class FileExplorer():
         filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps'].count(x['name']) == 0, file_list)
         list_name = list(map(lambda x: x['name'], list(filter_list)))
         print(list_name)
+        self.notify('开始压缩上传备份文件')
         zf = self.zip(list_name)
         self.run(self.q.upload, [zf])
         self.delete(zf)
         print('上传成功')
+        self.notify('备份文件上传成功')
