@@ -191,6 +191,7 @@ class HassGateView(HomeAssistantView):
         elif _type == 'reset':
             # 替换指定文件
             fileExplorer.move(res['list'])
+            fileExplorer.notify("还原成功")
             return self.json({'code':0, 'msg': '还原成功'})
         elif _type == 'reload':
             _domain = res['domain']
