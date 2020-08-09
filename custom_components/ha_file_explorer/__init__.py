@@ -1,8 +1,6 @@
 import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp
 from aiohttp import web
-import voluptuous as vol
 from homeassistant.components.http import HomeAssistantView
-from homeassistant.helpers import config_validation as cv, intent
 from homeassistant import config as conf_util, loader
 
 from .api import FileExplorer
@@ -10,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2'
+VERSION = '2.2.1'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -151,10 +149,14 @@ class HassGateView(HomeAssistantView):
                 # 压缩多个文件
                 zf = fileExplorer.zip(res['list'])
             
-            fileExplorer.run(fileExplorer.q.upload, [zf])
-            # 上传成功，删除文件
-            fileExplorer.delete(zf)
-            return self.json({ 'code': 0, 'msg': '上传成功'})
+            try:
+                fileExplorer.run(fileExplorer.q.upload, [zf])
+                # 上传成功，删除文件
+                fileExplorer.delete(zf)
+                return self.json({ 'code': 0, 'msg': '上传成功'})
+            except Exception as ex:
+                print(ex)
+                return self.json({ 'code': 1, 'msg': '上传错误，一般是七牛云不能创建配置文件的权限问题'})            
         elif _type == 'upload-list':
             try:
                 res = fileExplorer.run(fileExplorer.q.get_list, [None])
