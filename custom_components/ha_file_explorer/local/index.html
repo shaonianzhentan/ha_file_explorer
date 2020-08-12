@@ -152,9 +152,17 @@
                     </ul>
                 </li>
             </ul>
-            <!-- 新建文件 -->
             <form class="row card-panel">
-                <div class="col s12 m6">
+                <div class="col s12" style="margin-bottom:20px;">
+                    <ul class="tabs">
+                        <li class="tab col s3"><a href="#test1" class="active">新建文件/文件夹</a></li>
+                        <li class="tab col s3"><a href="#test2">上传文件</a></li>
+                        <li class="tab col s3"><a href="#test3">上传文件夹</a></li>
+                        <li class="tab col s3"><a href="#test4">下载网络文件</a></li>
+                    </ul>
+                </div>
+                <!-- 新建文件 -->
+                <div id="test1" class="col s12">
                     <div class="input-field">
                         <input placeholder="文件 | 文件夹" id="txtFileName" v-model.trim="newFile" type="text"
                             class="validate">
@@ -167,14 +175,15 @@
                                 class="material-icons left">note_add</i>新建文件夹</a>
                     </div>
                 </div>
-                <div class="col s12 m6">
+                <!-- 上传文件 -->
+                <div id="test2" class="col s12">
                     <div class="file-field input-field">
                         <div class="btn teal">
                             <span>文件</span>
                             <input type="file" id="file" style="width:90px;">
                         </div>
                         <div class="file-path-wrapper">
-                            <input class="file-path validate" placeholder="文件名称" type="text">
+                            <input class="file-path file-name validate" placeholder="文件名称" type="text">
                         </div>
                     </div>
                     <div>
@@ -182,19 +191,35 @@
                                 class="material-icons left">note_add</i>上传文件</a>
                         <p class="red-text">请注意上传文件后会覆盖原文件</p>
                     </div>
-
                 </div>
-            </form>
-            <!-- 下载网络文件 -->
-            <form class="row card-panel">
-                <div class="input-field col s8">
-                    <input placeholder="https://github.com/shaonianzhentan/ha_file_explorer/archive/master.zip"
-                        id="txtURL" type="url" class="validate">
-                    <label for="txtURL">网络URL地址</label>
+                <!-- 上传文件夹 -->
+                <div id="test3" class="col s12">
+                    <div class="file-field input-field">
+                        <div class="btn teal">
+                            <span>文件夹</span>
+                            <input type="file" id="folder" webkitdirectory>
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" placeholder="文件名称" type="text">
+                        </div>
+                    </div>
+                    <div>
+                        <a class="waves-effect waves-light btn teal" style="width:100%;" @click="newFileClick(4)"><i
+                                class="material-icons left">note_add</i>上传文件夹</a>
+                        <p class="red-text">请注意上传文件后会覆盖原文件</p>
+                    </div>
                 </div>
-                <div class="input-field col s4">
-                    <a class="waves-effect waves-light btn teal" @click="newFileClick(3)"><i
-                            class="material-icons left">file_download</i>下载</a>
+                <!-- 下载网络文件 -->
+                <div id="test4" class="col s12">
+                    <div class="input-field col s8">
+                        <input placeholder="https://github.com/shaonianzhentan/ha_file_explorer/archive/master.zip"
+                            id="txtURL" type="url" class="validate">
+                        <label for="txtURL">网络URL地址</label>
+                    </div>
+                    <div class="input-field col s4">
+                        <a class="waves-effect waves-light btn teal" @click="newFileClick(3)"><i
+                                class="material-icons left">file_download</i>下载</a>
+                    </div>
                 </div>
             </form>
 
@@ -586,7 +611,7 @@
                             this.toast("请选择要上传的文件")
                             return
                         }
-                        let filePath = document.querySelector('.file-path')
+                        let filePath = document.querySelector('.file-name')
                         let fileName = filePath.value
                         if (!fileName) {
                             this.toast("请输入文件名称")
@@ -632,6 +657,28 @@
                         } catch (ex) {
                             this.toast("URL格式错误")
                         }
+                    } else if (type == 4) {
+                        // 上传文件夹
+                        let files = document.getElementById('folder').files
+                        if (files.length == 0) {
+                            this.toast("请选择要上传的文件")
+                            return
+                        }
+                        let arr = []
+                        for (let file of files) {
+                            let folder = `${path}/${file.webkitRelativePath}`
+                            let formData = new FormData()
+                            formData.append('path', folder.replace('/' + file.name, ''))
+                            formData.append('name', file.name)
+                            formData.append('file', file)
+                            arr.push(ha.post(formData))
+                        }
+                        this.loading = true
+                        Promise.all(arr).then(res => {
+                            console.log(res)
+                            this.getList(path)
+                            this.loading = false
+                        })
                     }
                 }
             }

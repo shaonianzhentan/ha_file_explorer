@@ -8,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2.1'
+VERSION = '2.2.2'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -80,6 +80,7 @@ class HassGateView(HomeAssistantView):
     
     async def post(self, request):
         hass = request.app["hass"]
+        fileExplorer = hass.data[DOMAIN]
         try:
             reader = await request.multipart()
             # print(reader)
@@ -94,7 +95,10 @@ class HassGateView(HomeAssistantView):
             # 保存文件
             file = await reader.next()
             # 生成文件
-            filename =  hass.config.path(res_path_value) + '/' + res_file_value
+            _path = hass.config.path('./' + res_path_value)
+            if os.path.isdir(_path) == False:
+                fileExplorer.mkdir(_path)
+            filename =  _path + '/' + res_file_value
             size = 0
             with open(filename, 'wb') as f:
                 while True:
@@ -108,7 +112,6 @@ class HassGateView(HomeAssistantView):
             print(e)
 
         res = await request.json()
-        fileExplorer = hass.data[DOMAIN]
         _type = res['type']
         _path = hass.config.path('./' + res.get('path', ''))
         if _type == 'get':
