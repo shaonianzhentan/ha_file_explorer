@@ -676,6 +676,7 @@
                         this.loading = true
                         Promise.all(arr).then(res => {
                             console.log(res)
+                            this.toast('上传成功')
                             this.getList(path)
                             this.loading = false
                         })
