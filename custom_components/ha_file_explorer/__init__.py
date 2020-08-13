@@ -229,11 +229,10 @@ class HassGateView(HomeAssistantView):
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
             # 如果是windows则直接运行
+            _cmd = 'bash ' + _sh
             if os.name == 'nt':
-                os.system(_sh)
-            else:
-                # os.system('sudo bash ' + _sh)
-                os.system('bash ' + _sh)
+                _cmd = _sh
+            fileExplorer.run(os.system, [_cmd])
             return self.json({'code':0, 'msg': '拉取最新代码成功'})
         return self.json(res)
 
