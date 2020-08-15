@@ -1,4 +1,5 @@
-import os
+from qiniu import Auth, put_file, etag, BucketManager
+import os, qiniu.config
 
 class Qn():
 
@@ -6,17 +7,11 @@ class Qn():
         self.bucket_name = bucket_name
         self.prefix = prefix
         self.download = download
-        try:
-            import qiniu
-            self.qiniu = qiniu
-            self.q = qiniu.Auth(access_key, secret_key)
-        except Exception as ex:
-            print(ex)
-            self.q = None
+        self.q = Auth(access_key, secret_key)
 
     # 获取列表
     def get_list(self, prefix):
-        bucket = self.qiniu.BucketManager(self.q)
+        bucket = BucketManager(self.q)
         bucket_name = self.bucket_name
         # 前缀
         prefix = 'HomeAssistant/' + self.prefix
@@ -37,11 +32,11 @@ class Qn():
     def upload(self, localfile):
         key = 'HomeAssistant/' + self.prefix + os.path.basename(localfile)
         token = self.q.upload_token(self.bucket_name, key, 3600)
-        res = self.qiniu.put_file(token, key, localfile)
+        res = put_file(token, key, localfile)
         print(res)
-
+    
     # 删除
     def delete(self, key):
-        bucket = self.qiniu.BucketManager(self.q)
+        bucket = BucketManager(self.q)
         ret, info = bucket.delete(self.bucket_name, key)
         print(info)
