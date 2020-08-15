@@ -16,7 +16,19 @@ def setup(hass, config):
     cfg  = config[DOMAIN]
     sidebar_title = cfg.get('sidebar_title', '文件管理')
     sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
+    # 显示插件信息
+    _LOGGER.info('''
+-------------------------------------------------------------------
 
+    文件管理插件【作者QQ：635147515】
+    
+    版本：''' + VERSION + '''    
+    
+    介绍：在HA里使用的文件管理器
+    
+    项目地址：https://github.com/shaonianzhentan/ha_file_explorer
+    
+-------------------------------------------------------------------''')
     # 重新加载服务
     if hass.services.has_service(DOMAIN, 'reload') == False:
         async def reload(call):
@@ -54,22 +66,6 @@ def setup(hass, config):
         {"url": ROOT_PATH + "/index.html?ver=" + VERSION},
         require_admin=True
     )
-    
-
-
-    # 显示插件信息
-    _LOGGER.info('''
--------------------------------------------------------------------
-
-    文件管理插件【作者QQ：635147515】
-    
-    版本：''' + VERSION + '''    
-    
-    介绍：在HA里使用的文件管理器
-    
-    项目地址：https://github.com/shaonianzhentan/ha_file_explorer
-    
--------------------------------------------------------------------''')
     return True
 
 class HassGateView(HomeAssistantView):
