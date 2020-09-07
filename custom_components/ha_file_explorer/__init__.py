@@ -1,4 +1,4 @@
-import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp
+import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant import config as conf_util, loader
@@ -8,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2.3'
+VERSION = '2.2.4'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -228,7 +228,7 @@ class HassGateView(HomeAssistantView):
             _cmd = 'bash ' + _sh
             if os.name == 'nt':
                 _cmd = _sh
-            fileExplorer.run(os.system, [_cmd])
-            return self.json({'code':0, 'msg': '拉取最新代码成功'})
+            subprocess.Popen(_cmd, shell=True)
+            return self.json({'code':0, 'msg': '正在异步拉取代码，请自行查看是否成功'})
         return self.json(res)
 
