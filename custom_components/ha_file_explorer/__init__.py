@@ -1,4 +1,4 @@
-import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess
+import os, yaml, uuid, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant import config as conf_util, loader
@@ -8,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2.4'
+VERSION = '2.2.5'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -180,6 +180,8 @@ class HassGateView(HomeAssistantView):
                     code.write(down_res)
                 return self.json({'code':0, 'msg': '下载成功'})
             else:
+                # 获取临时文件目录
+                _path = tempfile.gettempdir()
                 backup_path = _path + '/ha_file_explorer_backup.zip'
                 with open(backup_path, "wb") as code:
                     code.write(down_res)

@@ -1,4 +1,4 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid, sys, multiprocessing
+import datetime, shutil, json, re, zipfile, time, os, uuid, sys, multiprocessing, tempfile
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -109,7 +109,8 @@ class FileExplorer():
     # 替换文件
     def move(self, list):
         for src in list:
-            _dst = src.replace('/ha_file_explorer_backup','')
+            # 将要还原的目录替换为空
+            _dst = src.replace(tempfile.gettempdir() + '/ha_file_explorer_backup', '')
             # 创建目录
             lastIndex = _dst.replace('\\','/').rindex('/')
             _dir = _dst[0:lastIndex]
@@ -121,9 +122,9 @@ class FileExplorer():
     # 压缩单个项
     def zipdir(self, dirname):
         hass = self.hass
-        local = hass.config.path("ha_file_explorer_backup")
-        self.mkdir(local)
+        local = tempfile.gettempdir()
         zipfilename = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
+        print(zipfilename)
         filelist = []
         dirname = hass.config.path('./' + dirname)
         if os.path.isfile(dirname):
@@ -145,8 +146,7 @@ class FileExplorer():
     def zip(self, _list):
         hass = self.hass
         root_path = hass.config.path('./')
-        local = hass.config.path("ha_file_explorer_backup")
-        self.mkdir(local)
+        local = tempfile.gettempdir()
         zf = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
