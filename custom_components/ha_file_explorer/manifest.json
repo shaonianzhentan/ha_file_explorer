@@ -3,7 +3,7 @@
   "name": "ha_file_explorer",
   "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
   "requirements": [
-    "qiniu==7.2.9"
+    "qiniu==7.2.10"
   ],
   "dependencies": [],
   "codeowners": []
