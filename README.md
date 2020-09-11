@@ -3,18 +3,28 @@
 
 > 注意：在Windows环境无法使用云备份功能
 
+## 安装方式
+
+```bash
+# 切换到HA对应的配置目录
+cd ~/.homeassistant
+# 下载当前项目
+git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer
+# 复制文件夹
+sudo mv ./ha_file_explorer/custom_components custom_components
+# 删除clone的文件
+sudo rm -rf ha_file_explorer
+```
 
 ## 使用方式
 
 
-```
+```yaml
 # 默认配置
 ha_file_explorer:
-
 ```
 
-```
-
+```yaml
 # 完整配置
 ha_file_explorer:
   sidebar_title: 文件管理
