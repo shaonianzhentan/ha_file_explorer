@@ -190,7 +190,7 @@ class FileExplorer():
         print(config_path)
         file_list = self.getDirectory(config_path)
         # 上传文件
-        filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps'].count(x['name']) == 0, file_list)
+        filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps', 'media'].count(x['name']) == 0, file_list)
         list_name = list(map(lambda x: x['name'], list(filter_list)))
         print(list_name)
         self.notify('开始压缩上传备份文件')
