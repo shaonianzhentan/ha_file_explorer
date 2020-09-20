@@ -244,7 +244,9 @@
                             return ['home-assistant_v2.db',
                                 'home-assistant_v2.db-shm',
                                 'home-assistant_v2.db-wal',
-                                'tts', 'ha_file_explorer_backup',
+                                'tts',
+                                'media',
+                                'ha_file_explorer_backup',
                                 'home-assistant.log',
                                 'deps'].includes(ele.name) === false
                         }).sort((a, b) => {
