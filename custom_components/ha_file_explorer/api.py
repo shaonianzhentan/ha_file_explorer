@@ -123,7 +123,7 @@ class FileExplorer():
     def zipdir(self, dirname):
         hass = self.hass
         local = tempfile.gettempdir()
-        zipfilename = local + '/' + time.strftime('%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
+        zipfilename = local + '/' + time.strftime('_%m_%d_%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
         print(zipfilename)
         filelist = []
         dirname = hass.config.path('./' + dirname)
@@ -147,7 +147,7 @@ class FileExplorer():
         hass = self.hass
         root_path = hass.config.path('./')
         local = tempfile.gettempdir()
-        zf = local + '/' + time.strftime('%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
+        zf = local + '/' + time.strftime('_%m_%d_%H%M%S',time.localtime(time.time())) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 try:
