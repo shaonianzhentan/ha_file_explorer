@@ -127,7 +127,7 @@ class HassGateView(HomeAssistantView):
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'delete-qiniu':
-            fileExplorer.run(fileExplorer.q.delete, [res.get('key')])
+            await fileExplorer.q.delete(res.get('key'))
             return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'new':
             # 新建文件
@@ -149,7 +149,7 @@ class HassGateView(HomeAssistantView):
                 zf = fileExplorer.zip(res['list'])
             
             try:
-                fileExplorer.run(fileExplorer.q.upload, [zf])
+                await fileExplorer.q.upload(zf)
                 # 上传成功，删除文件
                 fileExplorer.delete(zf)
                 return self.json({ 'code': 0, 'msg': '上传成功'})
@@ -158,7 +158,7 @@ class HassGateView(HomeAssistantView):
                 return self.json({ 'code': 1, 'msg': '上传错误，一般是七牛云不能创建配置文件的权限问题'})            
         elif _type == 'upload-list':
             try:
-                res = fileExplorer.run(fileExplorer.q.get_list, [None])
+                res = await fileExplorer.q.get_list(None)
                 # print('测试一下：', res)
                 return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
             except Exception as e:

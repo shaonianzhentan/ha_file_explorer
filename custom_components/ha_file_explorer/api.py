@@ -1,4 +1,4 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid, sys, multiprocessing, tempfile
+import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -123,7 +123,7 @@ class FileExplorer():
     def zipdir(self, dirname):
         hass = self.hass
         local = tempfile.gettempdir()
-        zipfilename = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
+        zipfilename = local + '/' + time.strftime('%m%d%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
         print(zipfilename)
         filelist = []
         dirname = hass.config.path('./' + dirname)
@@ -175,17 +175,10 @@ class FileExplorer():
            print(e)
         zf.close()
 
-    def run(self, func, args):
-        pool = multiprocessing.Pool()
-        res = pool.map(func, args)
-        if len(res) > 0:
-            return res[0]
-        return None
-
     def notify(self, message):
         self.hass.services.call('persistent_notification', 'create', {"message": message, "title": "文件管理", "notification_id": "ha_file_explorer"})
 
-    def upload(self, call):
+    async def upload(self, call):
         config_path = self.hass.config.path('./')
         print(config_path)
         file_list = self.getDirectory(config_path)
@@ -195,7 +188,7 @@ class FileExplorer():
         print(list_name)
         self.notify('开始压缩上传备份文件')
         zf = self.zip(list_name)
-        self.run(self.q.upload, [zf])
+        await self.q.upload(zf)
         self.delete(zf)
         print('上传成功')
         self.notify('备份文件上传成功')
