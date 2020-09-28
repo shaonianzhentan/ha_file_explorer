@@ -7,7 +7,7 @@
 # 切换到HA对应的配置目录
 cd ~/.homeassistant
 # 下载当前项目
-git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer
+git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer --depth=1
 # 复制文件夹
 sudo mv ./ha_file_explorer/custom_components custom_components
 # 删除clone的文件
@@ -44,6 +44,8 @@ ha_file_explorer:
 - 解决在window下无法使用云备份的问题
 - 过滤media和当前组件目录
 - 加入pip模块`asgiref`
+- 拉取生成的sh文件放到临时目录
+- 优化项目拉取速度
 
 ### v2.2
 - 更新外部资源到本地，没网也能使用

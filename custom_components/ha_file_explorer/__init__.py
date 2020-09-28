@@ -221,7 +221,8 @@ class HassGateView(HomeAssistantView):
             _path =  hass.config.path("custom_components").replace('\\','/')
             # https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN
             with open(_path + '/' + DOMAIN + '/update.sh', 'r', encoding='utf-8') as f:
-                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url)            
+                arr = _url.split('/')
+                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url).replace('$PROJECT', arr[len(arr)-1])
             # 获取临时文件目录
             tmp_path = tempfile.gettempdir()
             _sh =  tmp_path + '/' + _domain + '.sh'
