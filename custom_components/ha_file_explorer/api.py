@@ -147,7 +147,7 @@ class FileExplorer():
         hass = self.hass
         root_path = hass.config.path('./')
         local = tempfile.gettempdir()
-        zf = local + '/' + time.strftime('%Y%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
+        zf = local + '/' + time.strftime('%m%d%H%M%S',time.localtime(time.time())) + '_'  + str(uuid.uuid4()) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 try:
