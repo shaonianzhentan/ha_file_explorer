@@ -143,7 +143,7 @@ class FileExplorer():
         return zipfilename
 
     # 压缩
-    def zip(self, _list):
+    def zip(self, _list, filter_dir=None):
         hass = self.hass
         root_path = hass.config.path('./')
         local = tempfile.gettempdir()
@@ -156,7 +156,11 @@ class FileExplorer():
                     if isdir(dirpath):
                         for path,dirnames,filenames in os.walk(dirpath):
                             # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-                            fpath = path.replace(root_path,'')
+                            fpath = path.replace(root_path,'')                            
+                            # 如果过滤的文件
+                            if filter_dir is not None and len(list(filter(lambda x: x in fpath, filter_dir))) > 0:
+                                continue
+                            # print('压缩目录：' + fpath)
                             for filename in filenames:
                                 zip.write(os.path.join(path,filename), os.path.join(fpath,filename))
                     else:
@@ -175,20 +179,19 @@ class FileExplorer():
            print(e)
         zf.close()
 
-    def notify(self, message):
-        self.hass.services.call('persistent_notification', 'create', {"message": message, "title": "文件管理", "notification_id": "ha_file_explorer"})
+    async def notify(self, message):
+        await self.hass.services.async_call('persistent_notification', 'create', {"message": message, "title": "文件管理", "notification_id": "ha_file_explorer"})
 
     async def upload(self, call):
         config_path = self.hass.config.path('./')
-        print(config_path)
         file_list = self.getDirectory(config_path)
         # 上传文件
         filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps', 'media'].count(x['name']) == 0, file_list)
         list_name = list(map(lambda x: x['name'], list(filter_list)))
-        print(list_name)
-        self.notify('开始压缩上传备份文件')
-        zf = self.zip(list_name)
+        # print(list_name)
+        await self.notify('开始压缩上传备份文件')
+        zf = self.zip(list_name, ['custom_components\\ha_file_explorer'])
         await self.q.upload(zf)
         self.delete(zf)
         print('上传成功')
-        self.notify('备份文件上传成功')
+        await self.notify('备份文件上传成功')

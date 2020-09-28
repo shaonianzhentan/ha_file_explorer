@@ -8,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2.6'
+VERSION = '2.3'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -48,7 +48,7 @@ def setup(hass, config):
     fileExplorer = FileExplorer(hass,cfg)
     hass.data[DOMAIN] = fileExplorer
     
-    hass.services.register(DOMAIN, 'upload', fileExplorer.upload)
+    hass.services.async_register(DOMAIN, 'upload', fileExplorer.upload)
 
     # 注册静态目录
     local = hass.config.path("custom_components/" + DOMAIN + "/local")
@@ -221,9 +221,10 @@ class HassGateView(HomeAssistantView):
             _path =  hass.config.path("custom_components").replace('\\','/')
             # https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN
             with open(_path + '/' + DOMAIN + '/update.sh', 'r', encoding='utf-8') as f:
-                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url)
-            
-            _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
+                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url)            
+            # 获取临时文件目录
+            tmp_path = tempfile.gettempdir()
+            _sh =  tmp_path + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
             # 如果是windows则直接运行

@@ -1,8 +1,6 @@
 # ha_file_explorer
 在HA里使用的文件管理器
 
-> 注意：在Windows环境无法使用云备份功能
-
 ## 安装方式
 
 ```bash
@@ -14,6 +12,9 @@ git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer
 sudo mv ./ha_file_explorer/custom_components custom_components
 # 删除clone的文件
 sudo rm -rf ha_file_explorer
+
+# 安装依赖
+pip3 install qiniu asgiref
 ```
 
 ## 使用方式
@@ -38,6 +39,11 @@ ha_file_explorer:
 
 
 ## 更新日志
+
+### v2.3
+- 解决在window下无法使用云备份的问题
+- 过滤media和当前组件目录
+- 加入pip模块`asgiref`
 
 ### v2.2
 - 更新外部资源到本地，没网也能使用

@@ -1,2 +1,4 @@
 reload:
   description: 重新加载组件（在替换文件后可以不用重启HA，直接升级）
+upload:
+  description: 上传备份文件（文件太多且大时，请勿重复调用，避免程序卡死）
