@@ -107,17 +107,23 @@ class FileExplorer():
             os.mkdir(path)
     
     # 替换文件
-    def move(self, list):
-        for src in list:
-            # 将要还原的目录替换为空
-            _dst = src.replace(tempfile.gettempdir() + '/ha_file_explorer_backup', '')
-            # 创建目录
-            lastIndex = _dst.replace('\\','/').rindex('/')
-            _dir = _dst[0:lastIndex]
-            if os.path.isdir(_dir) == False:
-                self.mkdir(_dir)
-                print(_dir)
-            shutil.copy2(src, _dst)
+    def move(self, _list):
+        tmp_path = tempfile.gettempdir() + '/ha_file_explorer_backup'
+        try:
+            for src in _list:
+                # 将要还原的目录替换为空
+                _dst = src.replace(tmp_path, self.hass.config.path("./"))
+                # print(src)
+                # print(_dst)
+                # 创建目录
+                lastIndex = _dst.replace('\\','/').rindex('/')
+                _dir = _dst[0:lastIndex]
+                if os.path.isdir(_dir) == False:
+                    self.mkdir(_dir)
+                    print(_dir)
+                shutil.copy2(src, _dst)
+        except Exception as ex:
+            print(ex)        
 
     # 压缩单个项
     def zipdir(self, dirname):
