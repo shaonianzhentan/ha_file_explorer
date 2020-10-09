@@ -40,7 +40,8 @@
                     <i class="material-icons">more_vert</i>
                 </a>
                 <ul :id='`dropdown${index}`' class='dropdown-content'>
-                    <li @click="updateClick(item)"><a href="#!">拉取代码</a></li>
+                    <li @click="updateClick(item, 1)"><a href="#!">cnpmjs拉取代码</a></li>
+                    <li @click="updateClick(item)"><a href="#!">github拉取代码</a></li>
                     <li class="divider"></li>
                     <li @click="reloadClick(item)"><a href="#!">重新加载</a></li>
                 </ul>
@@ -232,13 +233,13 @@
                     let { domain, url } = this.pull
                     if (domain && url) this.updateClick(this.pull)
                 },
-                updateClick(item) {
+                updateClick(item, type) {
                     this.loading = true
-                    ha.post({
-                        type: 'update',
-                        domain: item.domain,
-                        url: item.url.replace('https://github.com/', 'https://github.com.cnpmjs.org/')
-                    }).then(res => {
+                    let {domain, url} = item
+                    if(type === 1){
+                        url = url.replace('https://github.com/', 'https://github.com.cnpmjs.org/')
+                    }
+                    ha.post({ type: 'update', domain,url}).then(res => {
                         this.toast(res.msg)
                     }).finally(() => {
                         this.loading = false

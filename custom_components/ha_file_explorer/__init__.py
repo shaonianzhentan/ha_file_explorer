@@ -8,7 +8,7 @@ from .api import FileExplorer
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'ha_file_explorer'
-VERSION = '2.2.6'
+VERSION = '2.3'
 URL = '/' + DOMAIN +'-api-' + VERSION
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
 
@@ -48,7 +48,7 @@ def setup(hass, config):
     fileExplorer = FileExplorer(hass,cfg)
     hass.data[DOMAIN] = fileExplorer
     
-    hass.services.register(DOMAIN, 'upload', fileExplorer.upload)
+    hass.services.async_register(DOMAIN, 'upload', fileExplorer.upload)
 
     # 注册静态目录
     local = hass.config.path("custom_components/" + DOMAIN + "/local")
@@ -127,7 +127,7 @@ class HassGateView(HomeAssistantView):
             fileExplorer.delete(_path)
             return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'delete-qiniu':
-            fileExplorer.run(fileExplorer.q.delete, [res.get('key')])
+            await fileExplorer.q.delete(res.get('key'))
             return self.json({ 'code': 0, 'msg': '删除成功'})
         elif _type == 'new':
             # 新建文件
@@ -149,7 +149,7 @@ class HassGateView(HomeAssistantView):
                 zf = fileExplorer.zip(res['list'])
             
             try:
-                fileExplorer.run(fileExplorer.q.upload, [zf])
+                await fileExplorer.q.upload(zf)
                 # 上传成功，删除文件
                 fileExplorer.delete(zf)
                 return self.json({ 'code': 0, 'msg': '上传成功'})
@@ -158,7 +158,7 @@ class HassGateView(HomeAssistantView):
                 return self.json({ 'code': 1, 'msg': '上传错误，一般是七牛云不能创建配置文件的权限问题'})            
         elif _type == 'upload-list':
             try:
-                res = fileExplorer.run(fileExplorer.q.get_list, [None])
+                res = await fileExplorer.q.get_list(None)
                 # print('测试一下：', res)
                 return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
             except Exception as e:
@@ -194,7 +194,7 @@ class HassGateView(HomeAssistantView):
         elif _type == 'reset':
             # 替换指定文件
             fileExplorer.move(res['list'])
-            fileExplorer.notify("还原成功")
+            await fileExplorer.notify("还原成功")
             return self.json({'code':0, 'msg': '还原成功'})
         elif _type == 'reload':
             _domain = res['domain']
@@ -221,9 +221,11 @@ class HassGateView(HomeAssistantView):
             _path =  hass.config.path("custom_components").replace('\\','/')
             # https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN
             with open(_path + '/' + DOMAIN + '/update.sh', 'r', encoding='utf-8') as f:
-                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url)
-            
-            _sh =  _path + '/' + DOMAIN + '/' + _domain + '.sh'
+                arr = _url.split('/')
+                content = f.read().replace('$PATH', _path).replace('$DOMAIN', _domain).replace('$URL', _url).replace('$PROJECT', arr[len(arr)-1])
+            # 获取临时文件目录
+            tmp_path = tempfile.gettempdir()
+            _sh =  tmp_path + '/' + _domain + '.sh'
             with open(_sh, 'w', encoding='utf-8') as f:
                 f.write(content)
             # 如果是windows则直接运行
