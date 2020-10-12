@@ -145,6 +145,7 @@
                     <ul :id='`dropdown${index}`' class='dropdown-content'>
                         <li @click="show(item)" v-if="item.type == 'dir'"><a href="#!">打开</a></li>
                         <li @click="show(item)" v-else><a href="#!">编辑</a></li>
+                        <li v-if="browserLink(item)"><a :href="browserLink(item)" target="_blank">浏览器</a></li>
                         <li class="divider"></li>
                         <li @click="deleteClick(item)"><a href="#!">删除</a></li>
                         <li class="divider"></li>
@@ -426,6 +427,14 @@
                 this.getList('')
             },
             methods: {
+                browserLink({ type, url }) {
+                    const { dir } = this
+                    if (Array.isArray(dir) && dir.length > 0 && dir[0] === 'www' && type === 'file') {
+                        // 把第一个www换成local
+                        return `root/${dir.join('/')}/${url}`.replace('root/www', '/local')
+                    }
+                    return false
+                },
                 show({ type, url }) {
                     if (type === 'dir') {
                         this.dir.push(url)
@@ -694,4 +703,5 @@
         ha.fullscreen()
     </script>
 </body>
+
 </html>
