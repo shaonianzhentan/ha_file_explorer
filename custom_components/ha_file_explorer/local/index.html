@@ -11,6 +11,10 @@
             .input-mode {
                 width: 110px;
             }
+
+            nav .brand-logo {
+                font-size: 20px;
+            }
         }
 
         #app .collection {
@@ -104,15 +108,7 @@
         <nav class="teal">
             <div class="nav-wrapper">
                 <a href="#modal-info" class="modal-trigger brand-logo right">版本:{{ver}}&emsp;</a>
-                <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-                <ul class="left hide-on-med-and-down">
-                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
-                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
-                </ul>
-                <!-- 手机 -->
-                <ul class="side-nav" id="nav-mobile">
-                    <li> <a onclick="ha.fire('hass-toggle-menu')">HA菜单</a></li>
-                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
+                <ul class="left">
                     <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
                 </ul>
             </div>
@@ -120,7 +116,10 @@
         <nav class="teal" style="box-shadow: none;">
             <div class="nav-wrapper container" style="overflow-x: auto;overflow-y: hidden;">
                 <div class="col s12" style="white-space: nowrap;">
-                    <a href="#!" class="breadcrumb" @click="opendir('')">HA根目录</a>
+                    <a href="#!" class="breadcrumb" onclick="ha.fire('hass-toggle-menu')">
+                        <i class="material-icons">menu</i>
+                    </a>
+                    <a href="#!" class="breadcrumb" @click="opendir('')">HA</a>
                     <a href="#!" class="breadcrumb" @click="opendir(item)" v-for="item in dir">{{item}}</a>
                 </div>
             </div>
@@ -212,13 +211,13 @@
                 </div>
                 <!-- 下载网络文件 -->
                 <div id="test4" class="col s12">
-                    <div class="input-field col s8">
+                    <div class="input-field col s12">
                         <input placeholder="https://github.com/shaonianzhentan/ha_file_explorer/archive/master.zip"
                             id="txtURL" type="url" class="validate">
                         <label for="txtURL">网络URL地址</label>
                     </div>
-                    <div class="input-field col s4">
-                        <a class="waves-effect waves-light btn teal" @click="newFileClick(3)"><i
+                    <div class="input-field col s12">
+                        <a class="waves-effect waves-light btn teal" style="width:100%;" @click="newFileClick(3)"><i
                                 class="material-icons left">file_download</i>下载</a>
                     </div>
                 </div>

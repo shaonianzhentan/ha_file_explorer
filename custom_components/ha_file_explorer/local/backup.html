@@ -10,6 +10,12 @@
         #app .collection {
             overflow: inherit !important;
         }
+        @media screen and (max-width: 750px) {
+
+            nav .brand-logo {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -95,16 +101,8 @@
         <nav class="teal">
             <div class="nav-wrapper">
                 <a href="#modal-info" class="modal-trigger brand-logo right">版本:{{ver}}&emsp;</a>
-                <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-                <ul class="left hide-on-med-and-down">
+                <ul class="left">
                     <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
-                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
-                </ul>
-                <!-- 手机 -->
-                <ul class="side-nav" id="nav-mobile">
-                    <li> <a onclick="ha.fire('hass-toggle-menu')">HA菜单</a></li>
-                    <li> <a :href="`index.html?ver=${ver}`">文件管理</a></li>
-                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
                 </ul>
             </div>
         </nav>
@@ -357,8 +355,6 @@
         });
         ha.fullscreen()
     </script>
-    <script>var _hmt = _hmt || []; window._hmt = _hmt; (function () { var hm = document.createElement('script'); hm.src = 'https://hm.baidu.com/hm.js?52d57d8b7588a022f89c451d06e311f0'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(hm, s) })();</script>
-
 </body>
 
 </html>

@@ -7,12 +7,15 @@ from .api import FileExplorer
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = 'ha_file_explorer'
-VERSION = '2.3.1'
-URL = '/' + DOMAIN +'-api-' + VERSION
-ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
+from .const import DOMAIN, VERSION, URL, ROOT_PATH
 
-def setup(hass, config):        
+def setup(hass, config):
+    # 如果没有配置则不运行
+    if DOMAIN not in config:
+        return True
+    # 如果已经运行，则不进行操作
+    if DOMAIN in hass.data:
+        return True
     cfg  = config[DOMAIN]
     sidebar_title = cfg.get('sidebar_title', '文件管理')
     sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
@@ -29,22 +32,6 @@ def setup(hass, config):
     项目地址：https://github.com/shaonianzhentan/ha_file_explorer
     
 -------------------------------------------------------------------''')
-    # 重新加载服务
-    if hass.services.has_service(DOMAIN, 'reload') == False:
-        async def reload(call):
-            integration = await loader.async_get_integration(hass, DOMAIN)
-            component = integration.get_component()
-            importlib.reload(component)
-            config = await conf_util.async_hass_config_yaml(hass)
-            component.setup(hass, config)
-            _LOGGER.info('重新加载成功')
-
-        hass.services.register(DOMAIN, 'reload', reload)
-    else:
-        # 重新加载模块
-        importlib.reload(sys.modules['custom_components.ha_file_explorer.qn'])
-        importlib.reload(sys.modules['custom_components.ha_file_explorer.api'])
-
     fileExplorer = FileExplorer(hass,cfg)
     hass.data[DOMAIN] = fileExplorer
     
@@ -66,6 +53,11 @@ def setup(hass, config):
         {"url": ROOT_PATH + "/index.html?ver=" + VERSION},
         require_admin=True
     )
+    return True
+
+async def async_setup_entry(hass, entry):
+    # print("集成安装=============================")
+    setup(hass, { DOMAIN: entry.data })
     return True
 
 class HassGateView(HomeAssistantView):
