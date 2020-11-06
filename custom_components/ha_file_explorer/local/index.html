@@ -20,6 +20,22 @@
         #app .collection {
             overflow: inherit !important;
         }
+
+        #dropdown-action {
+            width: 120px !important;
+        }
+
+        body {
+            padding-top: 70px;
+        }
+
+        nav.teal {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
     </style>
 </head>
 
@@ -103,24 +119,23 @@
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">关闭</a>
             </div>
         </div>
-
+        <ul id='dropdown-action' class='dropdown-content'>
+            <li> <a :href="`backup.html?ver=${ver}`">云备份</a> </li>
+            <li> <a href="#modal-info" class="modal-trigger">版本:{{ver}}</a></li>
+        </ul>
         <!-- 导航 -->
         <nav class="teal">
-            <div class="nav-wrapper">
-                <a href="#modal-info" class="modal-trigger brand-logo right">版本:{{ver}}&emsp;</a>
-                <ul class="left">
-                    <li> <a :href="`backup.html?ver=${ver}`">云备份</a></li>
-                </ul>
-            </div>
-        </nav>
-        <nav class="teal" style="box-shadow: none;">
-            <div class="nav-wrapper container" style="overflow-x: auto;overflow-y: hidden;">
-                <div class="col s12" style="white-space: nowrap;">
+            <div class="nav-wrapper row">
+                <div class="col s10 m11" style="white-space: nowrap;overflow-x: auto;overflow-y: hidden;">
                     <a href="#!" class="breadcrumb" onclick="ha.fire('hass-toggle-menu')">
                         <i class="material-icons">menu</i>
                     </a>
                     <a href="#!" class="breadcrumb" @click="opendir('')">HA</a>
                     <a href="#!" class="breadcrumb" @click="opendir(item)" v-for="item in dir">{{item}}</a>
+                </div>
+                <div class="col s2 m1" style="text-align: right;">
+                    <a class='dropdown-button' href='#' data-activates='dropdown-action'> <i
+                            class="material-icons">view_module</i>&emsp;</a>
                 </div>
             </div>
         </nav>
