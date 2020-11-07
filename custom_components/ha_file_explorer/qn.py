@@ -10,8 +10,8 @@ class Qn():
             import qiniu
             self.qiniu = qiniu
             self.q = qiniu.Auth(access_key, secret_key)
-            import asgiref
-            self.sync_to_async = asgiref.sync.sync_to_async
+            from asgiref.sync import sync_to_async
+            self.sync_to_async = sync_to_async
         except Exception as ex:
             print(ex)
 
