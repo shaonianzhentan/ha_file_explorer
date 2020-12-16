@@ -189,10 +189,15 @@ class FileExplorer():
         await self.hass.services.async_call('persistent_notification', 'create', {"message": message, "title": "文件管理", "notification_id": "ha_file_explorer"})
 
     async def upload(self, call):
+        data = call.data
+        _filter = data.get('filter', [])
+        _filter.extend(['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core'])
         config_path = self.hass.config.path('./')
         file_list = self.getDirectory(config_path)
+        print('过滤目录')
+        print(_filter)
         # 上传文件
-        filter_list = filter(lambda x: ['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core'].count(x['name']) == 0, file_list)
+        filter_list = filter(lambda x: _filter.count(x['name']) == 0, file_list)        
         list_name = list(map(lambda x: x['name'], list(filter_list)))
         # print(list_name)
         await self.notify('开始压缩上传备份文件')
