@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta charset="utf-8" />
     <title></title>
     <link href="css/material-icons.min.css" rel="stylesheet">
@@ -141,8 +143,8 @@
         <div class="container" v-show="!content.path">
             <ul class="collection">
                 <li class="collection-item avatar" v-for="(item,index) in list">
-                    <i
-                        :class="`material-icons circle ${item.type == 'dir' ? '' : 'teal'}`">{{item.type == 'dir' ? 'folder' : 'insert_drive_file'}}</i>
+                    <i :class="`material-icons circle ${item.type == 'dir' ? '' : 'teal'}`">{{item.type == 'dir' ?
+                        'folder' : 'insert_drive_file'}}</i>
                     <span class="title">{{item.name}}</span>
                     <p style="margin-top:5px;">
                         <span class="chip">
