@@ -1,1 +1,78 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><title>ha_file_explorer</title><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css"><script src="js/src-min-noconflict/ace.js"></script><link href="css/chunk-078ff06d.2373802b.css" rel="prefetch"><link href="css/chunk-2d976c01.7d887a01.css" rel="prefetch"><link href="css/chunk-487b6392.a1fdf230.css" rel="prefetch"><link href="css/chunk-56cbf492.3185ad7f.css" rel="prefetch"><link href="css/chunk-79f839ed.24d30c5d.css" rel="prefetch"><link href="js/chunk-078ff06d.677a78d7.js" rel="prefetch"><link href="js/chunk-2d976c01.d77d7b2c.js" rel="prefetch"><link href="js/chunk-487b6392.539b0f98.js" rel="prefetch"><link href="js/chunk-56cbf492.5697190f.js" rel="prefetch"><link href="js/chunk-79f839ed.0a56c70e.js" rel="prefetch"><link href="css/chunk-vendors.941f2f24.css" rel="preload" as="style"><link href="js/app.dce58c25.js" rel="preload" as="script"><link href="js/chunk-vendors.766d170e.js" rel="preload" as="script"><link href="css/chunk-vendors.941f2f24.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="ha_file_explorer"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but ha_file_explorer doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script src="js/chunk-vendors.766d170e.js"></script><script src="js/app.dce58c25.js"></script></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><title>ha_file_explorer</title><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css"><script src="js/src-min-noconflict/ace.js"></script><link href="css/chunk-078ff06d.2373802b.css" rel="prefetch"><link href="css/chunk-2165858a.f0ff3047.css" rel="prefetch"><link href="css/chunk-2d976c01.7d887a01.css" rel="prefetch"><link href="css/chunk-487b6392.a1fdf230.css" rel="prefetch"><link href="css/chunk-544c3efa.24d30c5d.css" rel="prefetch"><link href="css/chunk-70b9cf5d.6d0d1e99.css" rel="prefetch"><link href="js/chunk-078ff06d.2a4b995a.js" rel="prefetch"><link href="js/chunk-2165858a.d641658b.js" rel="prefetch"><link href="js/chunk-2d0b2007.762d4811.js" rel="prefetch"><link href="js/chunk-2d0e88ff.98a4359f.js" rel="prefetch"><link href="js/chunk-2d2248b2.71b254b6.js" rel="prefetch"><link href="js/chunk-2d229989.a7b25841.js" rel="prefetch"><link href="js/chunk-2d976c01.0ecb6b8e.js" rel="prefetch"><link href="js/chunk-487b6392.22e1190e.js" rel="prefetch"><link href="js/chunk-544c3efa.7b639b44.js" rel="prefetch"><link href="js/chunk-70b9cf5d.d8972832.js" rel="prefetch"><link href="css/chunk-vendors.941f2f24.css" rel="preload" as="style"><link href="js/app.6f4020dd.js" rel="preload" as="script"><link href="js/chunk-vendors.3de45b12.js" rel="preload" as="script"><link href="css/chunk-vendors.941f2f24.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="ha_file_explorer"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but ha_file_explorer doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script>class HA {
+      constructor() {
+        // url参数
+        let query = new URLSearchParams(location.search)
+        this.query = (key) => {
+          let val = query.get(key)
+          if (val) {
+            return decodeURIComponent(val)
+          }
+          return val
+        }
+        this.ver = this.query('ver')
+      }
+
+      fullscreen() {
+        try {
+          let haPanelIframe = top.document.body
+            .querySelector("home-assistant")
+            .shadowRoot.querySelector("home-assistant-main")
+            .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver ha-panel-iframe").shadowRoot
+          let ha_card = haPanelIframe.querySelector("iframe");
+          ha_card.style.position = 'absolute'
+          haPanelIframe.querySelector('app-toolbar').style.display = 'none'
+          ha_card.style.top = '0'
+          ha_card.style.height = '100%'
+        } catch {
+
+        }
+      }
+
+
+
+      // 触发事件
+      fire(type, data, ele = null) {
+        console.log(type, data)
+        const event = new top.Event(type, {
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        });
+        event.detail = data;
+        if (!ele) {
+          ele = top.document.querySelector("home-assistant")
+            .shadowRoot.querySelector("home-assistant-main")
+            .shadowRoot.querySelector("app-drawer-layout")
+        }
+        ele.dispatchEvent(event);
+      }
+
+      post(params) {
+        return this.fetch('/ha_file_explorer-api', params, 'post')
+      }
+
+      // http请求
+      async fetch(url, params, method) {
+        const body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
+        const homeassistant = top.document.querySelector('home-assistant')
+        if (!homeassistant) {
+          return fetch('http://localhost:8123' + url, {
+            method,
+            body,
+            headers: {
+              authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlMWMxZjZkMGQ1NDA0MjljODVkMTVmNDdhZjJhMDA3OCIsImlhdCI6MTYwODc5MjU5MSwiZXhwIjoxNjA4Nzk0MzkxfQ.phTLMFZ9jQYkL_u_wUUJnXR-FbI3U1JvTxqTaleYoOg'
+            }
+          }).then(res => res.json())
+        }
+        const hass = homeassistant.hass
+        return hass.fetchWithAuth(url, {
+          method,
+          body
+        }).then(res => res.json())
+      }
+    }
+
+    window.ha = new HA();
+    window.ha.fullscreen()
+    // 百度统计
+    var _hmt = _hmt || []; window._hmt = _hmt; (function () { var hm = document.createElement('script'); hm.src = 'https://hm.baidu.com/hm.js?52d57d8b7588a022f89c451d06e311f0'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(hm, s) })();</script><script src="js/chunk-vendors.3de45b12.js"></script><script src="js/app.6f4020dd.js"></script></body></html>

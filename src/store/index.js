@@ -3,30 +3,6 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-window.fetchApi = (data, method = 'POST') => {
-  const homeassistant = top.document.querySelector('home-assistant')
-  if (homeassistant) {
-    return homeassistant.hasAttributes.hass.fetchWithAuth('/ha_file_explorer-api', {
-      method,
-      body: JSON.stringify(data)
-    })
-  } else {
-    return fetch('http://localhost:8123/ha_file_explorer-api', {
-      method,
-      body: JSON.stringify(data),
-      headers: {
-        'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlMWMxZjZkMGQ1NDA0MjljODVkMTVmNDdhZjJhMDA3OCIsImlhdCI6MTYwODc3NjU0NSwiZXhwIjoxNjA4Nzc4MzQ1fQ.7om6l5-Vi689SZurpK-Q1xKmKfbCRAhflGOkZoN5l1M'
-      }
-    }).then(res => {
-      if (res.status === 401) {
-        Vue.$toast('没有权限')
-      }
-      return res.json()
-    })
-  }
-
-}
-
 export default new Vuex.Store({
   state: {
     showSidebar: false,
@@ -102,13 +78,32 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // 操作文件
+    operationFile(context, { name, type }) {
+      context.state.loading = true
+      let filePathList = context.state.filePathList
+      const path = name ? `${filePathList.join('/')}/${name}` : filePathList.join('/')
+      if (!name) {
+        filePathList.splice(filePathList.length - 1, 1)
+      }
+      return window.ha.post({ path, type }).then(res => {
+        if (res.code === 0) {
+          // 刷新
+          context.dispatch('getFileList', filePathList)
+        } else {
+          context.state.loading = false
+        }
+        Vue.$toast(res.msg)
+        return res
+      })
+    },
     // 获取文件列表
     getFileList(context, path = []) {
       context.state.loading = true
-      window.fetchApi({
+      window.ha.post({
         path: path.join('/'),
         type: "get"
-      }, 'GET').then(res => {
+      }).then(res => {
         context.commit("setFileInfo", {
           path,
           list: res.sort((a, b) => {

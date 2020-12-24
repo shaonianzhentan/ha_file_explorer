@@ -7,6 +7,61 @@
             style="width:100%;"
         >
             <v-card-text>
+
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            class="mx-4"
+                            icon
+                            href="https://shaonianzhentan.github.io/ha-docs/#/"
+                            target="_blank"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <v-icon size="24px">
+                                mdi-home-assistant
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Home Assistant 学习笔记</span>
+                </v-tooltip>
+
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            class="mx-4"
+                            icon
+                            href="https://space.bilibili.com/39523884"
+                            target="_blank"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <v-icon size="24px">
+                                mdi-home-assistant
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Home Assistant 视频学习记录</span>
+                </v-tooltip>
+
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            class="mx-4"
+                            icon
+                            href="https://www.home-assistant.io/"
+                            target="_blank"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <v-icon size="24px">
+                                mdi-home-assistant
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Home Assistant 官网</span>
+                </v-tooltip>
+
                 <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -77,24 +132,6 @@
                         </v-btn>
                     </template>
                     <span>前端UI框架 - Vuetify</span>
-                </v-tooltip>
-
-                <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            class="mx-4"
-                            icon
-                            href="https://www.home-assistant.io/"
-                            target="_blank"
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            <v-icon size="24px">
-                                mdi-home-assistant
-                            </v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Home Assistant 官网</span>
                 </v-tooltip>
 
             </v-card-text>

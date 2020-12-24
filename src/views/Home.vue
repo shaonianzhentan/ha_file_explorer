@@ -1,7 +1,9 @@
 <template>
   <div class="home">
+    <FileListPanel ref="FileListPanel" />
     <v-navigation-drawer
       app
+      right
       v-model="showSidebar"
     >
       <v-list-item>
@@ -37,7 +39,6 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <FileListPanel ref="FileListPanel" />
   </div>
 </template>
 
@@ -58,6 +59,11 @@ export default {
           title: "HomeAssistant升级",
           icon: "mdi-home-assistant",
           href: "/Update"
+        },
+        {
+          title: "设置",
+          icon: "mdi-cog",
+          href: "/Setting"
         }
       ]
     };

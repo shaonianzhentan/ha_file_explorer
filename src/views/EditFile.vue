@@ -57,11 +57,11 @@ export default {
           "#editor-panel"
         ).innerHTML = `<pre id="editor" style="width:100%;height:100%;" ></pre>`;
         // 请求内容
-        window
-          .fetchApi({
-            type: "content",
+        window.ha
+          .post({
+            type: "get-content",
             path: this.getFilePath(name)
-          }, 'GET')
+          })
           .then(({ code, data, msg }) => {
             if (code > 0) {
               return this.$toast(msg);
@@ -91,9 +91,9 @@ export default {
     },
     saveClick() {
       let data = window.editor.getValue();
-      window
-        .fetchApi({
-          type: "set",
+      window.ha
+        .post({
+          type: "new-file",
           path: this.getFilePath(this.name),
           data
         })

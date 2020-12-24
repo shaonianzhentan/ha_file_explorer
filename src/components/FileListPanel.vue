@@ -99,7 +99,7 @@
                                 <v-list-item>
                                     <v-list-item-title>重命名</v-list-item-title>
                                 </v-list-item>
-                                <v-list-item>
+                                <v-list-item @click="deleteClick(item)">
                                     <v-list-item-title>删除</v-list-item-title>
                                 </v-list-item>
                                 <v-list-item>
@@ -156,7 +156,7 @@ export default {
     this.initData();
   },
   methods: {
-    ...mapActions(["getFileList"]),
+    ...mapActions(["getFileList", "operationFile"]),
     initData() {
       this.getFileList([]);
     },
@@ -172,6 +172,9 @@ export default {
           name
         }
       });
+    },
+    deleteClick({ name }) {
+      this.operationFile({ type: "delete", name })
     }
   }
 };

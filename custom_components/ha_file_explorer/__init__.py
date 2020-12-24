@@ -1,3 +1,4 @@
+import logging
 from .api import FileExplorer
 from .view import HAView
 _LOGGER = logging.getLogger(__name__)
