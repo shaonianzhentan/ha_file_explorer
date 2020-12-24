@@ -1,18 +1,84 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <v-navigation-drawer
+      app
+      v-model="showSidebar"
+    >
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="title">
+            文件管理
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            File Explorer
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list
+        dense
+        nav
+      >
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+          @click="linkClick(item)"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <FileListPanel ref="FileListPanel" />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import { mapMutations } from "vuex";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    HelloWorld
+    FileListPanel: () => import("@/components/FileListPanel")
+  },
+  data() {
+    return {
+      items: [
+        { title: "七牛云备份", icon: "mdi-backup-restore", href: "/Backup" },
+        { title: "我的插件", icon: "mdi-apps-box", href: "/PlugIn" },
+        {
+          title: "HomeAssistant升级",
+          icon: "mdi-home-assistant",
+          href: "/Update"
+        }
+      ]
+    };
+  },
+  computed: {
+    showSidebar: {
+      get() {
+        return this.$store.state.showSidebar;
+      },
+      set(value) {
+        if (value != this.$store.state.showSidebar) {
+          this.toggleSidebar && this.toggleSidebar();
+        }
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(["toggleSidebar"]),
+    linkClick({ href }) {
+      this.$router.push(href);
+    }
   }
-}
+};
 </script>
