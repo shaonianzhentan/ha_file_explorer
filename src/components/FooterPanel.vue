@@ -19,7 +19,7 @@
                             v-on="on"
                         >
                             <v-icon size="24px">
-                                mdi-home-assistant
+                                mdi-book-edit
                             </v-icon>
                         </v-btn>
                     </template>
@@ -37,29 +37,11 @@
                             v-on="on"
                         >
                             <v-icon size="24px">
-                                mdi-home-assistant
+                                mdi-file-video
                             </v-icon>
                         </v-btn>
                     </template>
                     <span>Home Assistant 视频学习记录</span>
-                </v-tooltip>
-
-                <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            class="mx-4"
-                            icon
-                            href="https://www.home-assistant.io/"
-                            target="_blank"
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            <v-icon size="24px">
-                                mdi-home-assistant
-                            </v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Home Assistant 官网</span>
                 </v-tooltip>
 
                 <v-tooltip top>
@@ -78,6 +60,23 @@
                         </v-btn>
                     </template>
                     <span>GitHub项目地址</span>
+                </v-tooltip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            class="mx-4"
+                            icon
+                            href="https://www.home-assistant.io/"
+                            target="_blank"
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            <v-icon size="24px">
+                                mdi-home-assistant
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Home Assistant 官网</span>
                 </v-tooltip>
 
                 <v-tooltip top>
@@ -143,7 +142,7 @@
             <v-divider></v-divider>
 
             <v-card-text>
-                {{ new Date().getFullYear() }} — <strong>😀哈哈哈😀</strong>
+                {{ new Date().getFullYear() }} — <strong>版本：{{ver}}</strong>
             </v-card-text>
         </v-card>
     </v-footer>
@@ -151,7 +150,9 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      ver: window.ha.ver || "测试版"
+    };
   }
 };
 </script>
