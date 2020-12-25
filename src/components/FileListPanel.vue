@@ -34,10 +34,11 @@
             <v-list-item-title v-text="item.name"></v-list-item-title>
 
             <v-list-item-subtitle>
-              {{item.edit}} <span
-                class="float-right"
+              <span class="text--disabled">{{item.edit}}</span>
+              <span
+                class="font-weight-light"
                 v-if="item.sizeName"
-              >{{item.sizeName}}</span>
+              > — {{item.sizeName}}</span>
             </v-list-item-subtitle>
           </v-list-item-content>
 
@@ -80,10 +81,11 @@
           <v-list-item-content>
             <v-list-item-title v-text="item.name"></v-list-item-title>
             <v-list-item-subtitle>
-              {{item.edit}} <span
-                class="float-right"
+              <span class="text--disabled">{{item.edit}}</span>
+              <span
+                class="font-weight-light"
                 v-if="item.sizeName"
-              >{{item.sizeName}}</span>
+              > — {{item.sizeName}}</span>
             </v-list-item-subtitle>
           </v-list-item-content>
 
