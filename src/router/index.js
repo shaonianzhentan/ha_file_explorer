@@ -19,6 +19,21 @@ const routes = [
     path: '/PlugIn',
     name: 'PlugIn',
     component: () => import('../views/PlugIn')
+  },
+  {
+    path: '/Backup',
+    name: 'Backup',
+    component: () => import('../views/Backup')
+  },
+  {
+    path: '/Update',
+    name: 'Update',
+    component: () => import('../views/Update')
+  },
+  {
+    path: '/Setting',
+    name: 'Setting',
+    component: () => import('../views/Setting')
   }
 ]
 

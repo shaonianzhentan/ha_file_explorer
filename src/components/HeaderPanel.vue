@@ -103,9 +103,11 @@ export default {
       this.$refs[name].show();
     },
     deleteClick() {
-      this.operationFile({
-        type: "delete"
-      });
+      if (top.confirm("确定删除？")) {
+        this.operationFile({
+          type: "delete"
+        });
+      }
     }
   }
 };

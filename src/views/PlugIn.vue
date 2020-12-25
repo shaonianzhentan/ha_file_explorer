@@ -1,108 +1,108 @@
 <template>
 
-    <v-card class="mx-auto">
-        <v-toolbar
-            color="light-blue"
+  <v-card class="mx-auto">
+    <v-toolbar
+      color="light-blue"
+      dark
+      style="position: sticky; top: 0; z-index: 1;"
+    >
+      <v-btn
+        dark
+        icon
+        @click="backClick"
+      >
+        <v-icon>mdi-keyboard-backspace</v-icon>
+      </v-btn>
+
+      <v-toolbar-title>插件列表</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+    </v-toolbar>
+
+    <v-list
+      subheader
+      two-line
+    >
+      <v-subheader inset>我的插件</v-subheader>
+
+      <v-list-item
+        v-for="item in mylist"
+        :key="item.title"
+      >
+        <v-list-item-avatar>
+          <v-icon
+            class="green lighten-1"
             dark
-            style="position: sticky; top: 0; z-index: 1;"
-        >
-            <v-btn
-                dark
+          >
+            mdi-github
+          </v-icon>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title v-text="item.name"></v-list-item-title>
+
+          <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
+        </v-list-item-content>
+
+        <v-list-item-action>
+          <v-tooltip left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
                 icon
-                @click="backClick"
-            >
-                <v-icon>mdi-keyboard-backspace</v-icon>
-            </v-btn>
+                v-bind="attrs"
+                v-on="on"
+                @click="pullClick(item)"
+              >
+                <v-icon color="grey lighten-1">mdi-download</v-icon>
+              </v-btn>
+            </template>
+            <span>安装最新组件</span>
+          </v-tooltip>
+        </v-list-item-action>
+      </v-list-item>
 
-            <v-toolbar-title>插件列表</v-toolbar-title>
+      <v-divider inset></v-divider>
 
-            <v-spacer></v-spacer>
+      <v-subheader inset>收藏插件</v-subheader>
 
-        </v-toolbar>
+      <v-list-item
+        v-for="item in list"
+        :key="item.title"
+      >
+        <v-list-item-avatar>
+          <v-icon
+            class="blue lighten-1"
+            dark
+          >
+            mdi-github
+          </v-icon>
+        </v-list-item-avatar>
 
-        <v-list
-            subheader
-            two-line
-        >
-            <v-subheader inset>我的插件</v-subheader>
+        <v-list-item-content>
+          <v-list-item-title v-text="item.name"></v-list-item-title>
 
-            <v-list-item
-                v-for="item in mylist"
-                :key="item.title"
-            >
-                <v-list-item-avatar>
-                    <v-icon
-                        class="green lighten-1"
-                        dark
-                    >
-                        mdi-github
-                    </v-icon>
-                </v-list-item-avatar>
+          <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
+        </v-list-item-content>
 
-                <v-list-item-content>
-                    <v-list-item-title v-text="item.name"></v-list-item-title>
-
-                    <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                    <v-tooltip left>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                                icon
-                                v-bind="attrs"
-                                v-on="on"
-                                @click="pullClick(item)"
-                            >
-                                <v-icon color="grey lighten-1">mdi-download</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>安装最新组件</span>
-                    </v-tooltip>
-                </v-list-item-action>
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-subheader inset>收藏插件</v-subheader>
-
-            <v-list-item
-                v-for="item in list"
-                :key="item.title"
-            >
-                <v-list-item-avatar>
-                    <v-icon
-                        class="blue lighten-1"
-                        dark
-                    >
-                        mdi-github
-                    </v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                    <v-list-item-title v-text="item.name"></v-list-item-title>
-
-                    <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                    <v-tooltip left>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                                icon
-                                v-bind="attrs"
-                                v-on="on"
-                                @click="pullClick(item)"
-                            >
-                                <v-icon color="grey lighten-1">mdi-download</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>安装最新组件</span>
-                    </v-tooltip>
-                </v-list-item-action>
-            </v-list-item>
-        </v-list>
-    </v-card>
+        <v-list-item-action>
+          <v-tooltip left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+                @click="pullClick(item)"
+              >
+                <v-icon color="grey lighten-1">mdi-download</v-icon>
+              </v-btn>
+            </template>
+            <span>安装最新组件</span>
+          </v-tooltip>
+        </v-list-item-action>
+      </v-list-item>
+    </v-list>
+  </v-card>
 
 </template>
 <script>
@@ -203,6 +203,10 @@ export default {
           "https://github.com/",
           "https://github.com.cnpmjs.org/"
         )
+      }).then(res => {
+        if (res.code === 0) {
+          this.$toast(res.msg);
+        }
       });
     }
   }

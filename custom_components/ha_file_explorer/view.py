@@ -1,4 +1,4 @@
-import logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
+import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 

@@ -53,10 +53,10 @@ export default {
   data() {
     return {
       items: [
-        { title: "七牛云备份", icon: "mdi-backup-restore", href: "/Backup" },
+        { title: "云备份", icon: "mdi-backup-restore", href: "/Backup" },
         { title: "我的插件", icon: "mdi-apps-box", href: "/PlugIn" },
         {
-          title: "HomeAssistant升级",
+          title: "HA升级",
           icon: "mdi-home-assistant",
           href: "/Update"
         },
