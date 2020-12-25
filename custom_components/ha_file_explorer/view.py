@@ -19,19 +19,20 @@ class HAView(HomeAssistantView):
             # print(reader)
             # 读取路径
             res_path = await reader.next()
-            res_path_value = await res_path.text()
-            # print(res_path_value)
-            # 读取名称
-            res_file = await reader.next()
-            res_file_value = await res_file.text()
-            # print(res_file_value)
+            file_path = await res_path.text()
+            print(file_path)
+            # 获取文件名称
+            arr = file_path.split('/')
+            file_name = arr[-1]
+            # 文件夹路径
+            folder_path = '/'.join(arr[0:-1])
             # 保存文件
             file = await reader.next()
             # 生成文件
-            _path = hass.config.path('./' + res_path_value)
+            _path = hass.config.path(folder_path)
             if os.path.isdir(_path) == False:
                 fileExplorer.mkdir(_path)
-            filename =  _path + '/' + res_file_value
+            filename = f"{_path}/{file_name}"
             size = 0
             with open(filename, 'wb') as f:
                 while True:

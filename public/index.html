@@ -75,16 +75,20 @@
         return this.fetch('/ha_file_explorer-api', params, 'post')
       }
 
+      put(params) {
+        return this.fetch('/ha_file_explorer-api', params, 'put')
+      }
+
       // http请求
       async fetch(url, params, method) {
         const body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
         const homeassistant = top.document.querySelector('home-assistant')
         if (!homeassistant) {
-          return fetch('http://localhost:8123' + url, {
+          return fetch('http://192.168.1.101' + url, {
             method,
             body,
             headers: {
-              authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlMWMxZjZkMGQ1NDA0MjljODVkMTVmNDdhZjJhMDA3OCIsImlhdCI6MTYwODg4ODA2MSwiZXhwIjoxNjA4ODg5ODYxfQ.vlsX-Pb1JHcALtCLWaCLqxMEs9MKomdBMJn_Q3xgZWg'
+              authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxMGE3ZWVjYzQ5Njc0MzE0YmQwOWY0YzVhMDlhY2Q3YiIsImlhdCI6MTYwODkxMTkyNCwiZXhwIjoxNjA4OTEzNzI0fQ.4zjP_4NWS3ymk3_ETO739AKR7frHEdU0jPw6P0EHGos'
             }
           }).then(res => res.json())
         }

@@ -93,6 +93,13 @@
                 </v-btn>
               </template>
               <v-list>
+                <v-list-item
+                  v-if="filePathList[0]==='www'"
+                  :href="getLink(item)"
+                  target="_blank"
+                >
+                  <v-list-item-title>打开</v-list-item-title>
+                </v-list-item>
                 <v-list-item @click="editClick(item)">
                   <v-list-item-title>编辑</v-list-item-title>
                 </v-list-item>
@@ -159,6 +166,10 @@ export default {
     ...mapActions(["getFileList", "operationFile"]),
     initData() {
       this.getFileList([]);
+    },
+    getLink({ name }) {
+      const { filePathList } = this;
+      return `/local/${filePathList.join("/")}/${name}`;
     },
     openFolder(item) {
       const { filePathList } = this;
