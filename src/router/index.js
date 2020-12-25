@@ -14,6 +14,11 @@ const routes = [
     path: '/editFile',
     name: 'editFile',
     component: () => import('../views/EditFile.vue')
+  },
+  {
+    path: '/PlugIn',
+    name: 'PlugIn',
+    component: () => import('../views/PlugIn')
   }
 ]
 

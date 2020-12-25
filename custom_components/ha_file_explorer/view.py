@@ -140,5 +140,6 @@ class HAView(HomeAssistantView):
                 subprocess.Popen(_cmd, shell=True)
                 return self.json({'code':0, 'msg': '正在异步拉取代码，请自行查看是否成功'})        
         except Exception as ex:
-            return self.json({'code': 1, 'msg': '出现异常'})
+            print(ex)
+            return self.json({'code': 1, 'msg': f'出现异常：{ex}'})
         return self.json(res)
