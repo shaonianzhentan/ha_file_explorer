@@ -33,7 +33,12 @@
           <v-list-item-content>
             <v-list-item-title v-text="item.name"></v-list-item-title>
 
-            <v-list-item-subtitle v-text="item.edit"></v-list-item-subtitle>
+            <v-list-item-subtitle>
+              {{item.edit}} <span
+                class="float-right"
+                v-if="item.sizeName"
+              >{{item.sizeName}}</span>
+            </v-list-item-subtitle>
           </v-list-item-content>
 
           <v-list-item-action>
@@ -74,7 +79,12 @@
 
           <v-list-item-content>
             <v-list-item-title v-text="item.name"></v-list-item-title>
-            <v-list-item-subtitle v-text="item.edit"></v-list-item-subtitle>
+            <v-list-item-subtitle>
+              {{item.edit}} <span
+                class="float-right"
+                v-if="item.sizeName"
+              >{{item.sizeName}}</span>
+            </v-list-item-subtitle>
           </v-list-item-content>
 
           <v-list-item-action>

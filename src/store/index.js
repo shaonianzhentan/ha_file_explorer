@@ -3,6 +3,13 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+function formatSize(value) {
+  if (value == 0) return ''
+  if (value >= 1024 * 1024) return `${(value / (1024 * 1024)).toFixed(2)} MB`
+  if (value >= 1024) return `${(value / 1024).toFixed(2)} KB`
+  return `${value} B`
+}
+
 export default new Vuex.Store({
   state: {
     showSidebar: false,
@@ -112,6 +119,10 @@ export default new Vuex.Store({
             } else {
               return -1
             }
+          }).map(ele => {
+            // 大小格式化
+            ele['sizeName'] = formatSize(ele.size)
+            return ele
           })
         });
       }).finally(() => {
