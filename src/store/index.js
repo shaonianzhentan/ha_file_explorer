@@ -127,7 +127,7 @@ export default new Vuex.Store({
     // 拉取组件
     fetchApi(context, data) {
       context.state.loading = true
-      window.ha.post(data).then(res => {
+      return window.ha.post(data).then(res => {
         if (res.code > 0) {
           Vue.$toast(res.msg)
         }
