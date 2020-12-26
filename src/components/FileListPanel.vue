@@ -197,7 +197,7 @@ export default {
       });
     },
     deleteClick({ name }) {
-      if (top.confirm("确定删除？")) {
+      if (top.confirm(`确定删除文件【${name}】？`)) {
         this.operationFile({ type: "delete", name });
       }
     }

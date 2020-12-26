@@ -1,43 +1,43 @@
 <template>
-    <v-dialog
-        v-model="dialog"
-        width="500"
-    >
-        <v-card>
-            <v-card-title>
-                上传文件
-            </v-card-title>
+  <v-dialog
+    v-model="dialog"
+    width="500"
+  >
+    <v-card>
+      <v-card-title>
+        上传文件
+      </v-card-title>
 
-            <v-card-text>
-                <v-form>
-                    <v-file-input
-                        label="选择上传文件"
-                        @change="selectFile"
-                    ></v-file-input>
-                    <v-text-field
-                        label="上传文件名"
-                        v-model.trim="name"
-                    ></v-text-field>
-                </v-form>
-                <span class="red--text">
-                    注意：上传文件会覆盖已有文件
-                </span>
-            </v-card-text>
+      <v-card-text>
+        <v-form>
+          <v-file-input
+            label="选择上传文件"
+            @change="selectFile"
+          ></v-file-input>
+          <v-text-field
+            label="上传文件名"
+            v-model.trim="name"
+          ></v-text-field>
+        </v-form>
+        <span class="red--text">
+          注意：上传文件会覆盖已有文件
+        </span>
+      </v-card-text>
 
-            <v-divider></v-divider>
+      <v-divider></v-divider>
 
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                    color="primary"
-                    text
-                    @click="saveClick"
-                >
-                    保存
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          text
+          @click="saveClick"
+        >
+          保存
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";

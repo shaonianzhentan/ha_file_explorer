@@ -98,7 +98,7 @@ export default {
       this.$refs[name].show();
     },
     deleteClick() {
-      if (top.confirm("确定删除？")) {
+      if (top.confirm("确定删除当前文件夹？")) {
         this.operationFile({
           type: "delete"
         });
