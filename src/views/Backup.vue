@@ -1,27 +1,18 @@
 <template>
+  <div>
+    <v-app-bar
+      app
+      color="deep-purple"
+      dark
+    >
+      <v-app-bar-nav-icon @click="backClick">
+        <v-icon>mdi-keyboard-backspace</v-icon>
+      </v-app-bar-nav-icon>
+      <v-app-bar-title>云备份</v-app-bar-title>
 
-    <v-card class="mx-auto">
-        <v-toolbar
-            color="light-blue"
-            dark
-            style="position: sticky; top: 0; z-index: 1;"
-        >
-            <v-btn
-                dark
-                icon
-                @click="backClick"
-            >
-                <v-icon>mdi-keyboard-backspace</v-icon>
-            </v-btn>
+    </v-app-bar>
 
-            <v-toolbar-title>云备份</v-toolbar-title>
-
-            <v-spacer></v-spacer>
-
-        </v-toolbar>
-
-    </v-card>
-
+  </div>
 </template>
 <script>
 import { mapActions } from "vuex";

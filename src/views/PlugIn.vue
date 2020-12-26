@@ -1,108 +1,176 @@
 <template>
 
-  <v-card class="mx-auto">
-    <v-toolbar
+  <div>
+    <v-app-bar
+      app
       color="light-blue"
       dark
-      style="position: sticky; top: 0; z-index: 1;"
     >
-      <v-btn
-        dark
-        icon
-        @click="backClick"
-      >
+      <v-app-bar-nav-icon @click="backClick">
         <v-icon>mdi-keyboard-backspace</v-icon>
-      </v-btn>
+      </v-app-bar-nav-icon>
+      <v-app-bar-title>插件列表</v-app-bar-title>
 
-      <v-toolbar-title>插件列表</v-toolbar-title>
+    </v-app-bar>
 
-      <v-spacer></v-spacer>
-
-    </v-toolbar>
-
-    <v-list
-      subheader
-      two-line
-    >
-      <v-subheader inset>我的插件</v-subheader>
-
-      <v-list-item
-        v-for="item in mylist"
-        :key="item.title"
+    <v-container>
+      <v-list
+        subheader
+        two-line
       >
-        <v-list-item-avatar>
-          <v-icon
-            class="green lighten-1"
-            dark
-          >
-            mdi-github
-          </v-icon>
-        </v-list-item-avatar>
+        <v-subheader inset>我的插件</v-subheader>
 
-        <v-list-item-content>
-          <v-list-item-title v-text="item.name"></v-list-item-title>
+        <v-list-item
+          v-for="item in mylist"
+          :key="item.title"
+        >
+          <v-list-item-avatar>
+            <v-icon
+              class="green lighten-1"
+              dark
+            >
+              mdi-github
+            </v-icon>
+          </v-list-item-avatar>
 
-          <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
-        </v-list-item-content>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
 
-        <v-list-item-action>
-          <v-tooltip left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click="pullClick(item)"
-              >
-                <v-icon color="grey lighten-1">mdi-download</v-icon>
-              </v-btn>
-            </template>
-            <span>安装最新组件</span>
-          </v-tooltip>
-        </v-list-item-action>
-      </v-list-item>
+            <v-list-item-subtitle>
+              <a
+                :href="item.url"
+                target="_blank"
+                class="text-decoration-none"
+              >{{item.url}}</a>
+            </v-list-item-subtitle>
+          </v-list-item-content>
 
-      <v-divider inset></v-divider>
+          <v-list-item-action>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="pullClick(item)"
+                >
+                  <v-icon color="grey lighten-1">mdi-download</v-icon>
+                </v-btn>
+              </template>
+              <span>安装最新组件</span>
+            </v-tooltip>
+          </v-list-item-action>
+        </v-list-item>
 
-      <v-subheader inset>收藏插件</v-subheader>
+        <v-divider inset></v-divider>
 
-      <v-list-item
-        v-for="item in list"
-        :key="item.title"
-      >
-        <v-list-item-avatar>
-          <v-icon
-            class="blue lighten-1"
-            dark
-          >
-            mdi-github
-          </v-icon>
-        </v-list-item-avatar>
+        <v-subheader inset>收藏插件</v-subheader>
 
-        <v-list-item-content>
-          <v-list-item-title v-text="item.name"></v-list-item-title>
+        <v-list-item
+          v-for="item in list"
+          :key="item.title"
+        >
+          <v-list-item-avatar>
+            <v-icon
+              class="blue lighten-1"
+              dark
+            >
+              mdi-github
+            </v-icon>
+          </v-list-item-avatar>
 
-          <v-list-item-subtitle v-text="item.url"></v-list-item-subtitle>
-        </v-list-item-content>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
 
-        <v-list-item-action>
-          <v-tooltip left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click="pullClick(item)"
-              >
-                <v-icon color="grey lighten-1">mdi-download</v-icon>
-              </v-btn>
-            </template>
-            <span>安装最新组件</span>
-          </v-tooltip>
-        </v-list-item-action>
-      </v-list-item>
-    </v-list>
-  </v-card>
+            <v-list-item-subtitle>
+              <a
+                :href="item.url"
+                target="_blank"
+                class="text-decoration-none"
+              >{{item.url}}</a>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="pullClick(item)"
+                >
+                  <v-icon color="grey lighten-1">mdi-download</v-icon>
+                </v-btn>
+              </template>
+              <span>安装最新组件</span>
+            </v-tooltip>
+          </v-list-item-action>
+        </v-list-item>
+        <v-divider inset></v-divider>
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-icon
+              class="red lighten-1"
+              dark
+            >
+              mdi-github
+            </v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-form>
+
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="4"
+                >
+                  <v-text-field
+                    v-model.trim="pull.domain"
+                    label="自定义组件名称"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  md="8"
+                >
+                  <v-text-field
+                    type="url"
+                    v-model.trim="pull.url"
+                    label="GitHub项目地址"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+              </v-row>
+            </v-form>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="pullClick(pull)"
+                >
+                  <v-icon color="grey lighten-1">mdi-download</v-icon>
+                </v-btn>
+              </template>
+              <span>安装最新组件</span>
+            </v-tooltip>
+          </v-list-item-action>
+
+        </v-list-item>
+
+      </v-list>
+
+    </v-container>
+  </div>
 
 </template>
 <script>
@@ -196,6 +264,9 @@ export default {
       this.$router.back();
     },
     pullClick({ domain, url }) {
+      if (!domain || !url) {
+        return this.$toast("请输入组件名称和项目地址");
+      }
       this.fetchApi({
         type: "update",
         domain,

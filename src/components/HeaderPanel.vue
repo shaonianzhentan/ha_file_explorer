@@ -4,15 +4,10 @@
         color="primary"
         dark
     >
-        <div class="d-flex align-center">
-            <v-btn
-                dark
-                text
-                @click="dockedClick"
-            >
-                <v-icon>mdi-home-assistant</v-icon> 文件管理
-            </v-btn>
-        </div>
+        <v-app-bar-nav-icon @click="dockedClick">
+            <v-icon>mdi-home-assistant</v-icon>
+        </v-app-bar-nav-icon>
+        <v-app-bar-title>文件管理</v-app-bar-title>
 
         <v-spacer></v-spacer>
 
