@@ -61,13 +61,13 @@ export default {
       }
 
       const arr = [];
-      for (let file in this.file) {
+      for (let file in files) {
         let formData = new FormData();
         formData.append("filePath", this.getFilePath(file.webkitRelativePath));
         formData.append("file", file);
         arr.push(window.ha.post(formData));
       }
-
+      if (arr.length === 0) return this.$toast("请选择文件");
       Promise.all(arr).then(() => {
         this.$toast("上传成功");
         this.getFileList(this.filePathList);
