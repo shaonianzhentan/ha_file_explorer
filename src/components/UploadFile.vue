@@ -40,7 +40,7 @@
   </v-dialog>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -49,9 +49,12 @@ export default {
       file: null
     };
   },
-  computed: mapGetters(["getFilePath"]),
+  computed: {
+    ...mapState(["filePathList"]),
+    ...mapGetters(["getFilePath"])
+  },
   methods: {
-    ...mapActions(["operationFile"]),
+    ...mapActions(["getFileList"]),
     show() {
       this.name = "";
       this.dialog = true;
@@ -74,6 +77,7 @@ export default {
         this.$toast(msg);
         if (code === 0) {
           this.dialog = false;
+          this.getFileList(this.filePathList);
         }
       });
     }

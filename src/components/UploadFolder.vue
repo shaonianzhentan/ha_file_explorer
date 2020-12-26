@@ -37,7 +37,7 @@
   </v-dialog>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -45,9 +45,12 @@ export default {
       files: null
     };
   },
-  computed: mapGetters(["getFilePath"]),
+  computed: {
+    ...mapState(["filePathList"]),
+    ...mapGetters(["getFilePath"])
+  },
   methods: {
-    ...mapActions(["operationFile"]),
+    ...mapActions(["getFileList"]),
     show() {
       this.dialog = true;
     },
@@ -58,7 +61,7 @@ export default {
       }
 
       const arr = [];
-      for (let file of this.file) {
+      for (let file in this.file) {
         let formData = new FormData();
         formData.append("filePath", this.getFilePath(file.webkitRelativePath));
         formData.append("file", file);
@@ -67,6 +70,7 @@ export default {
 
       Promise.all(arr).then(() => {
         this.$toast("上传成功");
+        this.getFileList(this.filePathList);
       });
     }
   }
