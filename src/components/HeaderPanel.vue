@@ -39,7 +39,7 @@
                     <v-list-item-title>上传文件夹</v-list-item-title>
                 </v-list-item>
                 <v-divider></v-divider>
-                <v-list-item >
+                <v-list-item>
                     <v-list-item-title>重命名</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="deleteClick">
@@ -87,7 +87,7 @@ export default {
   data() {
     return {};
   },
-  computed: mapState(["showSidebar"]),
+  computed: mapState(["showSidebar", "filePathList"]),
   methods: {
     ...mapMutations(["toggleSidebar"]),
     ...mapActions(["operationFile"]),
@@ -98,6 +98,9 @@ export default {
       this.$refs[name].show();
     },
     deleteClick() {
+      if (this.filePathList.length === 0) {
+        return this.$toast("不能删除根目录");
+      }
       if (top.confirm("确定删除当前文件夹？")) {
         this.operationFile({
           type: "delete"
