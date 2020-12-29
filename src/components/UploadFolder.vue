@@ -65,11 +65,12 @@ export default {
         let formData = new FormData();
         formData.append("filePath", this.getFilePath(file.webkitRelativePath));
         formData.append("file", file);
-        arr.push(window.ha.post(formData));
+        arr.push(window.ha.put(formData));
       });
       Promise.all(arr).then(() => {
         this.$toast("上传成功");
         this.getFileList(this.filePathList);
+        this.dialog = false;
       });
     }
   }

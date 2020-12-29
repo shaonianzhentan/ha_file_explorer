@@ -29,7 +29,7 @@ class HAView(HomeAssistantView):
             # 保存文件
             file = await reader.next()
             # 生成文件
-            _path = hass.config.path(folder_path)
+            _path = hass.config.path(f"./{folder_path}")
             if os.path.isdir(_path) == False:
                 fileExplorer.mkdir(_path)
             filename = f"{_path}/{file_name}"

@@ -73,12 +73,10 @@ export default {
       const formData = new FormData();
       formData.append("filePath", getFilePath(name));
       formData.append("file", file);
-      window.ha.put(formData).then(({ code, msg }) => {
-        this.$toast(msg);
-        if (code === 0) {
-          this.dialog = false;
-          this.getFileList(this.filePathList);
-        }
+      window.ha.put(formData).then(() => {
+        this.$toast("上传成功");
+        this.getFileList(this.filePathList);
+        this.dialog = false;
       });
     }
   }
