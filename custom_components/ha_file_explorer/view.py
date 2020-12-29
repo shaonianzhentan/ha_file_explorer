@@ -51,7 +51,7 @@ class HAView(HomeAssistantView):
         res = await request.json()
         _type = res.get('type', '')
         _url = res.get('url', '')
-        _path = hass.config.path('./' + res.get('path', ''))        
+        _path = hass.config.path('./' + res.get('path', ''))
         try:
             if _type == 'get':
                 # 获取目录和文件
@@ -114,8 +114,12 @@ class HAView(HomeAssistantView):
                 fileExplorer.delete(backup_path)
                 # 返回文件夹里的数据
                 return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})        
+            elif _type == 'rename':
+                rename_path = hass.config.path(res['rename_path'])
+                os.rename(_path, rename_path)
+                return self.json({ 'code': 0, 'msg': '重命名成功'})
             elif _type == 'move-file':
-                # 移动文件
+                # 移动文件                
                 return self.json({ 'code': 0, 'msg': '移动文件成功'})
             elif _type == 'move-tmpfile':
                 # 还原数据

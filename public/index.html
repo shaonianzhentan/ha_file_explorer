@@ -84,11 +84,11 @@
         const body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
         const homeassistant = top.document.querySelector('home-assistant')
         if (!homeassistant) {
-          return fetch('http://192.168.1.101' + url, {
+          return fetch('http://localhost:8123' + url, {
             method,
             body,
             headers: {
-              authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxMGE3ZWVjYzQ5Njc0MzE0YmQwOWY0YzVhMDlhY2Q3YiIsImlhdCI6MTYwODkxMzg1MSwiZXhwIjoxNjA4OTE1NjUxfQ.RPTKcwo2XimMKB2u_LPfK_0mocyC9Vx25yhrOZzuShk'
+              authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlMWMxZjZkMGQ1NDA0MjljODVkMTVmNDdhZjJhMDA3OCIsImlhdCI6MTYwOTIyMzc0MywiZXhwIjoxNjA5MjI1NTQzfQ.aL6yYWPjH46ANBVquX90eUKGCyY-esKIpEPQHDZx23I'
             }
           }).then(res => res.json())
         }

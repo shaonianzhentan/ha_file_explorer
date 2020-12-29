@@ -11,9 +11,9 @@
       <v-card-text>
         <v-form>
           <v-file-input
+            ref="file"
             label="选择上传文件夹"
             webkitdirectory
-            v-model="files"
           ></v-file-input>
         </v-form>
         <span class="red--text">
@@ -41,8 +41,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      dialog: false,
-      files: null
+      dialog: false
     };
   },
   computed: {
@@ -55,19 +54,19 @@ export default {
       this.dialog = true;
     },
     saveClick() {
-      const { files } = this;
-      if (!files) {
+      const { files } = this.$refs["file"].$el.querySelector(
+        "input[type='file']"
+      );
+      if (files.length === 0) {
         return this.$toast("请选择文件夹");
       }
-
       const arr = [];
-      for (let file in files) {
+      files.forEach(file => {
         let formData = new FormData();
         formData.append("filePath", this.getFilePath(file.webkitRelativePath));
         formData.append("file", file);
         arr.push(window.ha.post(formData));
-      }
-      if (arr.length === 0) return this.$toast("请选择文件");
+      });
       Promise.all(arr).then(() => {
         this.$toast("上传成功");
         this.getFileList(this.filePathList);

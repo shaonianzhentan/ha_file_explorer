@@ -7,7 +7,7 @@
         <v-app-bar-nav-icon @click="dockedClick">
             <v-icon>mdi-home-assistant</v-icon>
         </v-app-bar-nav-icon>
-        <v-app-bar-title>文件管理</v-app-bar-title>
+        <v-toolbar-title>文件管理</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -39,7 +39,7 @@
                     <v-list-item-title>上传文件夹</v-list-item-title>
                 </v-list-item>
                 <v-divider></v-divider>
-                <v-list-item>
+                <v-list-item >
                     <v-list-item-title>重命名</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="deleteClick">

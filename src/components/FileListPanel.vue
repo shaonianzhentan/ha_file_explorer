@@ -115,7 +115,7 @@
                 <v-list-item @click="editClick(item)">
                   <v-list-item-title>编辑</v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item @click="renameClick(item)">
                   <v-list-item-title>重命名</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="deleteClick(item)">
@@ -140,6 +140,7 @@
       <v-divider></v-divider>
       <FooterPanel />
     </v-card>
+    <RenameFile ref="RenameFile" />
   </v-container>
 </template>
 <script>
@@ -148,7 +149,8 @@ export default {
   components: {
     HeaderPanel: () => import("./HeaderPanel"),
     FilePathNav: () => import("./FilePathNav"),
-    FooterPanel: () => import("./FooterPanel")
+    FooterPanel: () => import("./FooterPanel"),
+    RenameFile: () => import("./RenameFile")
   },
   data() {
     return {
@@ -200,6 +202,9 @@ export default {
       if (top.confirm(`确定删除文件【${name}】？`)) {
         this.operationFile({ type: "delete", name });
       }
+    },
+    renameClick({ name }) {
+      this.$refs["RenameFile"].show(name);
     }
   }
 };

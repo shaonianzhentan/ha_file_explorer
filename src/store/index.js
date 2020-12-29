@@ -86,14 +86,14 @@ export default new Vuex.Store({
   },
   actions: {
     // 操作文件
-    operationFile(context, { name, type }) {
+    operationFile(context, { name, type, rename_path }) {
       context.state.loading = true
       let filePathList = context.state.filePathList
       const path = name ? `${filePathList.join('/')}/${name}` : filePathList.join('/')
       if (!name) {
         filePathList.splice(filePathList.length - 1, 1)
       }
-      return window.ha.post({ path, type }).then(res => {
+      return window.ha.post({ path, type, rename_path }).then(res => {
         if (res.code === 0) {
           // 刷新
           context.dispatch('getFileList', filePathList)
