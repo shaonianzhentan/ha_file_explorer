@@ -28,7 +28,7 @@
             color="deep-purple lighten-2"
             @click="updateClick(2)"
           >
-            升级home-assistant/frontend
+            升级frontend
           </v-btn>
           <v-btn
             outlined
@@ -36,14 +36,13 @@
             color="blue lighten-2"
             @click="updateClick(3)"
           >
-            升级home-assistant/core
+            升级core
           </v-btn>
         </v-card-actions>
         <v-card-text>
           {{data}}
         </v-card-text>
       </v-card>
-
     </v-container>
   </div>
 </template>
@@ -80,7 +79,7 @@ export default {
         ).then(res => res.json());
         url = `home-assistant-frontend==${git.name}`;
       } else {
-        url = "home-assistant --upgrade";
+        url = "homeassistant --upgrade";
       }
       this.fetchApi({
         type: "update-package",
