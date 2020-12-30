@@ -128,8 +128,8 @@ class HAView(HomeAssistantView):
                 return self.json({'code':0, 'msg': '还原成功'})
             elif _type == 'update-package':
                 # 更新系统依赖包
-                pip_install('-r https://raw.githubusercontent.com/home-assistant/core/2020.12.1/homeassistant/package_constraints.txt')
-                return self.json({'code':0, 'msg': '更新依赖包完成'})
+                data = pip_install(_url)
+                return self.json({'code':0, 'data': data, 'msg': '更新依赖包完成'})
             elif _type == 'update':
                 # 拉取组件
                 _domain = res['domain']

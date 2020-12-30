@@ -40,7 +40,7 @@
           </v-btn>
         </v-card-actions>
         <v-card-text>
-          sdfsdfsdfsdf
+          {{data}}
         </v-card-text>
       </v-card>
 
@@ -51,19 +51,43 @@
 import { mapActions } from "vuex";
 export default {
   data() {
-    return {};
+    return {
+      data: "安装日志"
+    };
   },
   methods: {
     ...mapActions(["fetchApi"]),
     backClick() {
       this.$router.back();
     },
-    updateClick(type) {
+    async updateClick(type) {
       console.log(type);
+      let url = "";
+      if (type === 1) {
+        // 获取最新版本的依赖包
+        const git = await fetch(
+          "https://api.github.com/repos/home-assistant/core/releases/latest",
+          { mode: "cors" }
+        ).then(res => res.json());
+        url = `-r https://raw.githubusercontent.com/home-assistant/core/${
+          git.name
+        }/homeassistant/package_constraints.txt`;
+      } else if (type === 2) {
+        // 获取前端安装包
+        const git = await fetch(
+          "https://api.github.com/repos/home-assistant/frontend/releases/latest",
+          { mode: "cors" }
+        ).then(res => res.json());
+        url = `home-assistant-frontend==${git.name}`;
+      } else {
+        url = "home-assistant --upgrade";
+      }
       this.fetchApi({
-        type: "update-package"
+        type: "update-package",
+        url
       }).then(res => {
         if (res.code === 0) {
+          this.data = res.data;
           this.$toast(res.msg);
         }
       });
