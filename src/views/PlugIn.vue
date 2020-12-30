@@ -9,7 +9,7 @@
       <v-app-bar-nav-icon @click="backClick">
         <v-icon>mdi-keyboard-backspace</v-icon>
       </v-app-bar-nav-icon>
-      <v-app-bar-title>插件列表</v-app-bar-title>
+        <v-toolbar-title>插件列表</v-toolbar-title>
 
     </v-app-bar>
 

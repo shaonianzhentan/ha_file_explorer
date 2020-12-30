@@ -16,7 +16,7 @@
                     ></v-text-field>
                 </v-form>
                 <span class="red--text">
-                    注意：重命名文件会覆盖已有文件
+                    注意：重命名文件不能与现有文件相同
                 </span>
             </v-card-text>
 

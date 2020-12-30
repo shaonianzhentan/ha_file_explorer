@@ -1,7 +1,7 @@
 import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
-
+from .util import pip_install
 from .const import DOMAIN, VERSION, URL, ROOT_PATH
 
 class HAView(HomeAssistantView):
@@ -126,7 +126,12 @@ class HAView(HomeAssistantView):
                 fileExplorer.move(res['list'])
                 await fileExplorer.notify("还原成功")
                 return self.json({'code':0, 'msg': '还原成功'})
+            elif _type == 'update-package':
+                # 更新系统依赖包
+                pip_install('-r https://raw.githubusercontent.com/home-assistant/core/2020.12.1/homeassistant/package_constraints.txt')
+                return self.json({'code':0, 'msg': '更新依赖包完成'})
             elif _type == 'update':
+                # 拉取组件
                 _domain = res['domain']
                 _path =  hass.config.path("custom_components").replace('\\','/')
                 # https://github.com.cnpmjs.org/shaonianzhentan/$DOMAIN

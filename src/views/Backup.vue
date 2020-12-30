@@ -8,7 +8,7 @@
       <v-app-bar-nav-icon @click="backClick">
         <v-icon>mdi-keyboard-backspace</v-icon>
       </v-app-bar-nav-icon>
-      <v-app-bar-title>云备份</v-app-bar-title>
+      <v-toolbar-title>云备份</v-toolbar-title>
 
     </v-app-bar>
 
