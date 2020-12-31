@@ -7,5 +7,6 @@ def pip_install(package):
     info = r.readlines()
     arr = []
     for line in info:
+        print(line)
         arr.append(line)
-    return ''.join(arr)
+    return '\r\n'.join(arr)
