@@ -38,40 +38,80 @@ export default new Vuex.Store({
         const arr = ele.name.split('.')
         let ext = arr[arr.length - 1].toLocaleLowerCase()
         // 图片
-        if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext)) {
+        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'ico'].includes(ext)) {
           ext = 'img'
-        } else if (['json', 'js', 'css', 'html', 'yaml'].includes(ext)) {
+        } else if (['yaml', 'DS_Store'].includes(ext)) {
           ext = 'code'
+        } else if (['ha_version', 'config_entries', 'device_registry', 'entity_registry', 'restore_state'].includes(ext)) {
+          ext = 'homeassistant'
+        } else if (['m3u8', 'mp4', 'flv', 'm3u'].includes(ext)) {
+          ext = 'video'
+        } else if (['mp3', 'm4a'].includes(ext)) {
+          ext = 'audio'
+        } else if (['gz', 'rar', 'tz'].includes(ext)) {
+          ext = 'zip'
         }
         const mode = {
           code: {
-            color: 'pink',
-            icon: 'mdi-code-json'
+            color: 'red',
+            icon: 'mdi-code-braces'
           },
           img: {
-            color: 'red',
+            color: 'pink',
             icon: 'mdi-file-image'
           },
           py: {
             color: 'purple',
             icon: 'mdi-language-python'
           },
-          db: {
-            color: 'indigo',
-            icon: 'mdi-database'
-          },
           log: {
             color: 'deep-purple',
             icon: 'mdi-math-log'
           },
+          db: {
+            color: 'indigo',
+            icon: 'mdi-database'
+          },
           js: {
             color: 'blue',
-            icon: 'mdi-nodejs'
+            icon: 'mdi-language-javascript'
           },
-          ha_version: {
+          homeassistant: {
             color: 'light-blue',
             icon: 'mdi-home-assistant'
-          }
+          },
+          json: {
+            color: 'cyan',
+            icon: 'mdi-code-json'
+          },
+          md: {
+            color: 'teal',
+            icon: 'mdi-language-markdown'
+          },
+          html: {
+            color: 'green',
+            icon: 'mdi-language-html5'
+          },
+          video: {
+            color: 'light-green',
+            icon: 'mdi-file-video'
+          },
+          audio: {
+            color: 'lime',
+            icon: 'mdi-file-music'
+          },
+          zip: {
+            color: 'yellow',
+            icon: 'mdi-folder-zip'
+          },
+          svg: {
+            color: 'amber',
+            icon: 'mdi-svg'
+          },
+          // json: {
+          //   color: 'orange',
+          //   icon: 'mdi-code-json'
+          // }
         }
         return {
           ...ele,

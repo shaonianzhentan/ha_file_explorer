@@ -38,6 +38,14 @@
           >
             升级core
           </v-btn>
+          <v-btn
+            outlined
+            rounded
+            color="pink"
+            @click="updateClick(4)"
+          >
+            升级pip
+          </v-btn>
         </v-card-actions>
         <v-card-text>
           {{data}}
@@ -78,8 +86,10 @@ export default {
           { mode: "cors" }
         ).then(res => res.json());
         url = `home-assistant-frontend==${git.name}`;
-      } else {
+      } else if (type === 3) {
         url = "homeassistant --upgrade";
+      } else if (type === 4) {
+        url = "pip --upgrade";
       }
       this.fetchApi({
         type: "update-package",
