@@ -185,7 +185,7 @@ export default {
       const { filePathList } = this;
       let arr = JSON.parse(JSON.stringify(filePathList));
       arr[0] = "local";
-      return `/${filePathList.join("/")}/${name}`;
+      return `/${arr.join("/")}/${name}`;
     },
     openFolder(item) {
       const { filePathList } = this;
