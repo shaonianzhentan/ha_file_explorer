@@ -183,7 +183,9 @@ export default {
     },
     getLink({ name }) {
       const { filePathList } = this;
-      return `/local/${filePathList.join("/")}/${name}`;
+      let arr = JSON.parse(JSON.stringify(filePathList));
+      arr[0] = "local";
+      return `/${filePathList.join("/")}/${name}`;
     },
     openFolder(item) {
       const { filePathList } = this;
