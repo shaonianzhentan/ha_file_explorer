@@ -118,6 +118,39 @@ class HAView(HomeAssistantView):
                 rename_path = hass.config.path(f"./{res['rename_path']}")
                 os.rename(_path, rename_path)
                 return self.json({ 'code': 0, 'msg': '重命名成功'})
+            ## ====================== 七牛云 ==========================
+            elif _type == 'qn-list':
+                if fileExplorer.q is None:
+                    return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
+                try:
+                    res = await fileExplorer.q.get_list(None)
+                    # print('测试一下：', res)
+                    return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
+                except Exception as e:
+                    print(e)
+                    return self.json({ 'code': 1, 'msg': '备份列表获取异常，请检查是否正确配置七牛云密钥'})
+            elif _type == 'qn-upload':
+                if fileExplorer.q is None:
+                    return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
+                if 'path' in res:
+                    zf = fileExplorer.zipdir(res['path'])
+                elif 'list' in res:
+                    # 压缩多个文件
+                    zf = fileExplorer.zip(res['list'])
+                try:
+                    await fileExplorer.q.upload(zf)
+                    # 上传成功，删除文件
+                    fileExplorer.delete(zf)
+                    return self.json({ 'code': 0, 'msg': '上传成功'})
+                except Exception as ex:
+                    print(ex)
+                    return self.json({ 'code': 1, 'msg': '上传错误，一般是七牛云不能创建配置文件的权限问题'})
+            elif _type == 'qn-delete':
+                if fileExplorer.q is None:
+                    return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
+                await fileExplorer.q.delete(res.get('key'))
+                return self.json({ 'code': 0, 'msg': '删除成功'})
+            ## ====================== 移动文件 ==========================
             elif _type == 'move-file':
                 # 移动文件                
                 return self.json({ 'code': 0, 'msg': '移动文件成功'})

@@ -1,16 +1,10 @@
 <template>
   <div>
-    <v-app-bar
-      app
+    <AppBar
       color="blue"
-      dark
-    >
-      <v-app-bar-nav-icon @click="backClick">
-        <v-icon>mdi-keyboard-backspace</v-icon>
-      </v-app-bar-nav-icon>
-      <v-toolbar-title>HomeAssistant升级</v-toolbar-title>
+      title="HomeAssistant升级"
+    />
 
-    </v-app-bar>
     <v-container>
       <v-card>
         <v-card-actions>
@@ -45,6 +39,14 @@
             @click="updateClick(4)"
           >
             升级pip
+          </v-btn>
+          <v-btn
+            outlined
+            rounded
+            color="pink"
+            @click="updateClick(5)"
+          >
+            安装七牛云依赖库
           </v-btn>
         </v-card-actions>
         <v-card-text>
@@ -90,6 +92,8 @@ export default {
         url = "homeassistant --upgrade";
       } else if (type === 4) {
         url = "pip --upgrade";
+      } else if (type === 5) {
+        url = "qiniu asgiref";
       }
       this.fetchApi({
         type: "update-package",

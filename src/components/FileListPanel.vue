@@ -129,7 +129,7 @@
                   <v-list-item-title>下载文件</v-list-item-title>
                 </v-list-item>
                 <v-divider></v-divider>
-                <v-list-item>
+                <v-list-item @click="uploadQnClick(item)">
                   <v-list-item-title>上传此文件到七牛云</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -177,7 +177,7 @@ export default {
     this.initData();
   },
   methods: {
-    ...mapActions(["getFileList", "operationFile"]),
+    ...mapActions(["getFileList", "fetchApi", "operationFile"]),
     initData() {
       this.getFileList([]);
     },
@@ -204,6 +204,14 @@ export default {
       if (top.confirm(`确定删除文件【${name}】？`)) {
         this.operationFile({ type: "delete", name });
       }
+    },
+    uploadQnClick({ name }) {
+      this.fetchApi({
+        type: "qn-upload",
+        path: this.$store.getters.getFilePath(name)
+      }).then(({ msg }) => {
+        this.$toast(msg);
+      });
     },
     renameClick({ name }) {
       this.$refs["RenameFile"].show(name);

@@ -1,15 +1,9 @@
 <template>
   <div>
-    <v-app-bar
-      app
+    <AppBar
       color="teal"
-      dark
-    >
-      <v-app-bar-nav-icon @click="backClick">
-        <v-icon>mdi-keyboard-backspace</v-icon>
-      </v-app-bar-nav-icon>
-      <v-app-bar-title>设置</v-app-bar-title>
-    </v-app-bar>
+      title="设置"
+    />
   </div>
 </template>
 <script>

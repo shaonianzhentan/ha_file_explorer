@@ -12,9 +12,6 @@ def setup(hass, config):
     # 如果已经运行，则不进行操作
     if DOMAIN in hass.data:
         return True
-    cfg  = config[DOMAIN]
-    sidebar_title = cfg.get('sidebar_title', '文件管理')
-    sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
     # 显示插件信息
     _LOGGER.info('''
 -------------------------------------------------------------------
@@ -28,10 +25,12 @@ def setup(hass, config):
     项目地址：https://github.com/shaonianzhentan/ha_file_explorer
     
 -------------------------------------------------------------------''')
-    fileExplorer = FileExplorer(hass)
-    hass.data[DOMAIN] = fileExplorer
-    
-    # hass.services.async_register(DOMAIN, 'upload', fileExplorer.upload)
+    cfg  = config[DOMAIN]    
+    sidebar_title = cfg.get('sidebar_title', '文件管理')
+    sidebar_icon = cfg.get('sidebar_icon', 'mdi:folder')
+    # 七牛云配置
+    fileExplorer = FileExplorer(hass, cfg)
+    hass.data[DOMAIN] = fileExplorer    
 
     # 注册静态目录
     hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)    

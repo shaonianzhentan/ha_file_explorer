@@ -1,16 +1,5 @@
 <template>
-    <v-app-bar
-        app
-        color="primary"
-        dark
-    >
-        <v-app-bar-nav-icon @click="dockedClick">
-            <v-icon>mdi-home-assistant</v-icon>
-        </v-app-bar-nav-icon>
-        <v-toolbar-title>文件管理</v-toolbar-title>
-
-        <v-spacer></v-spacer>
-
+    <AppBar title="文件管理">
         <v-menu
             bottom
             left
@@ -39,7 +28,7 @@
                     <v-list-item-title>上传文件夹</v-list-item-title>
                 </v-list-item>
                 <v-divider></v-divider>
-                <v-list-item>
+                <v-list-item @click="showDialog('RenameFolder')">
                     <v-list-item-title>重命名</v-list-item-title>
                 </v-list-item>
                 <v-list-item @click="deleteClick">
@@ -62,18 +51,14 @@
             </v-list>
         </v-menu>
 
-        <v-btn
-            dark
-            icon
-            @click="toggleSidebar"
-        >
-            <v-icon>{{showSidebar ? 'mdi-menu-open' : 'mdi-menu'}}</v-icon>
-        </v-btn>
         <NewFile ref="NewFile" />
         <NewFolder ref="NewFolder" />
         <UploadFile ref="UploadFile" />
         <UploadFolder ref="UploadFolder" />
-    </v-app-bar>
+        <RenameFolder ref="RenameFolder" />
+
+    </AppBar>
+
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
@@ -82,7 +67,8 @@ export default {
     NewFile: () => import("./NewFile"),
     NewFolder: () => import("./NewFolder"),
     UploadFile: () => import("./UploadFile"),
-    UploadFolder: () => import("./UploadFolder")
+    UploadFolder: () => import("./UploadFolder"),
+    RenameFolder: () => import("./RenameFolder")
   },
   data() {
     return {};

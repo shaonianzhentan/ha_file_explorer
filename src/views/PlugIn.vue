@@ -1,17 +1,11 @@
 <template>
 
   <div>
-    <v-app-bar
-      app
+     <AppBar
       color="light-blue"
-      dark
-    >
-      <v-app-bar-nav-icon @click="backClick">
-        <v-icon>mdi-keyboard-backspace</v-icon>
-      </v-app-bar-nav-icon>
-        <v-toolbar-title>插件列表</v-toolbar-title>
-
-    </v-app-bar>
+      title="插件列表"
+    />
+  
 
     <v-container>
       <v-list
@@ -260,9 +254,6 @@ export default {
   },
   methods: {
     ...mapActions(["fetchApi"]),
-    backClick() {
-      this.$router.back();
-    },
     pullClick({ domain, url }) {
       if (!domain || !url) {
         return this.$toast("请输入组件名称和项目地址");
