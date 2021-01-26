@@ -53,6 +53,7 @@ ha_file_explorer:
 - [ ] 更新HomeAssistant
 - [x] 七牛云备份列表
 - [x] 七牛云文件备份
+- [ ] 支持回车操作
 
 ### v2.4
 - `www目录`加入浏览器打开菜单
