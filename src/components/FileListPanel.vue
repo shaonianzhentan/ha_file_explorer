@@ -137,8 +137,6 @@
           </v-list-item-action>
         </v-list-item>
       </v-list>
-      <v-divider></v-divider>
-      <FooterPanel />
     </v-card>
     <RenameFile ref="RenameFile" />
   </v-container>
@@ -149,7 +147,6 @@ export default {
   components: {
     HeaderPanel: () => import("./HeaderPanel"),
     FilePathNav: () => import("./FilePathNav"),
-    FooterPanel: () => import("./FooterPanel"),
     RenameFile: () => import("./RenameFile")
   },
   data() {
