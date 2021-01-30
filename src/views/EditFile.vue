@@ -16,6 +16,42 @@
         {{ name }}
       </div>
       <v-spacer></v-spacer>
+      <v-menu
+        bottom
+        left
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            dark
+            icon
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>重载脚本</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>重载场景</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>重载自动化</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>重载Python Scripts</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>重载分组及通知服务</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-list-item-title>重新启动HA</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-btn
         text
         v-show="showSave"
