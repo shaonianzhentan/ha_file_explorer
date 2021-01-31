@@ -1,5 +1,6 @@
 import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
 from aiohttp import web
+from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
 from .util import pip_install
 from .const import DOMAIN, VERSION, URL, ROOT_PATH
@@ -159,6 +160,13 @@ class HAView(HomeAssistantView):
                 fileExplorer.move(res['list'])
                 await fileExplorer.notify("还原成功")
                 return self.json({'code':0, 'msg': '还原成功'})
+            elif _type == 'install-package':
+                # 安装依赖包
+                package_name = _url
+                if package.is_installed(package_name) == False:
+                    package.install_package(package_name)
+                    return self.json({'code':0, 'msg': '正在更新依赖包'})
+                return self.json({'code':0, 'msg': '已经安装成功啦'})
             elif _type == 'update-package':
                 # 更新系统依赖包
                 data = pip_install(_url)

@@ -36,6 +36,11 @@
         this.ver = this.query('ver')
       }
 
+      get hass() {
+        const homeassistant = top.document.querySelector('home-assistant')
+        return homeassistant ? homeassistant.hass : null
+      }
+
       fullscreen() {
         try {
           let haPanelIframe = top.document.body
@@ -79,11 +84,16 @@
         return this.fetch('/ha_file_explorer-api', params, 'put')
       }
 
+      callService(name, params = {}) {
+        const arr = name.split('.')
+        return this.hass.callService(arr[0], arr[1], params)
+      }
+
       // http请求
       async fetch(url, params, method) {
         const body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
-        const homeassistant = top.document.querySelector('home-assistant')
-        if (!homeassistant) {
+        const { hass } = this
+        if (!hass) {
           return fetch('http://localhost:8123' + url, {
             method,
             body,
@@ -92,7 +102,6 @@
             }
           }).then(res => res.json())
         }
-        const hass = homeassistant.hass
         return hass.fetchWithAuth(url, {
           method,
           body

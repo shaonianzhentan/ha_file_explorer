@@ -58,6 +58,21 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item
+          v-for="item in haItems"
+          :key="item.title"
+          link
+          @click="haLinkClick(item)"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-main>
@@ -243,6 +258,24 @@ export default {
         href: "/Setting"
       }
     ],
+    haItems: [
+      {
+        title: "自动化",
+        icon: "mdi-android",
+        href: "/config/automation/dashboard"
+      },
+      {
+        title: "场景",
+        icon: "mdi-home-automation",
+        href: "/config/scene/dashboard"
+      },
+      {
+        title: "脚本",
+        icon: "mdi-script-text",
+        href: "/config/script/dashboard"
+      },
+      { title: "服务控制", icon: "mdi-server", href: "/config/server_control" }
+    ],
     ver: window.ha.ver || "测试版"
   }),
   computed: {
@@ -268,6 +301,10 @@ export default {
     ...mapMutations(["toggleSidebar"]),
     linkClick({ href }) {
       this.$router.push(href);
+    },
+    haLinkClick({ href }) {
+      top.history.pushState(null, null, href);
+      window.ha.fire("location-changed", { replace: true }, top);
     }
   }
 };

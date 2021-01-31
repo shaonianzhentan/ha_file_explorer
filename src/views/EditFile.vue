@@ -31,23 +31,23 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item>
+          <v-list-item @click="callService('script.reload')">
             <v-list-item-title>重载脚本</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="callService('scene.reload')">
             <v-list-item-title>重载场景</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="callService('automation.reload')">
             <v-list-item-title>重载自动化</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <!-- <v-list-item @click="callService('automation.reload')">
             <v-list-item-title>重载Python Scripts</v-list-item-title>
-          </v-list-item>
-          <v-list-item>
+          </v-list-item> -->
+          <v-list-item @click="callService('group.reload')">
             <v-list-item-title>重载分组及通知服务</v-list-item-title>
           </v-list-item>
           <v-divider></v-divider>
-          <v-list-item>
+          <v-list-item @click="callService('homeassistant.restart')">
             <v-list-item-title>重新启动HA</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -62,7 +62,7 @@
     </v-app-bar>
     <div
       id="editor-panel"
-      style="width:100%; height:calc(100vh - 65px); "
+      style="width:100%; height:calc(100vh - 65px);padding-top:2px;"
     ></div>
   </div>
 </template>
@@ -122,6 +122,7 @@ export default {
               mode
             });
             this.showSave = true;
+            document.body.scrollIntoView();
           });
       });
     },
@@ -136,6 +137,10 @@ export default {
         .then(res => {
           this.$toast(res.msg);
         });
+    },
+    callService(service) {
+      window.ha.callService(service);
+      this.$toast(`调用服务${service}`);
     },
     backClick() {
       this.$router.back();
