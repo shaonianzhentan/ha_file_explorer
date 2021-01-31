@@ -274,6 +274,11 @@ export default {
         icon: "mdi-script-text",
         href: "/config/script/dashboard"
       },
+      {
+        title: "资源",
+        icon: "mdi-view-quilt",
+        href: "/config/lovelace/resources"
+      },
       { title: "服务控制", icon: "mdi-server", href: "/config/server_control" }
     ],
     ver: window.ha.ver || "测试版"
