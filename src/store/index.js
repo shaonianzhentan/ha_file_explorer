@@ -108,10 +108,10 @@ export default new Vuex.Store({
             color: 'amber',
             icon: 'mdi-svg'
           },
-          // json: {
-          //   color: 'orange',
-          //   icon: 'mdi-code-json'
-          // }
+          css: {
+            color: 'orange',
+            icon: 'mdi-language-css3'
+          }
         }
         return {
           ...ele,
