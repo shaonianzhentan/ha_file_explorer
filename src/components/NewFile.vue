@@ -13,6 +13,7 @@
           <v-text-field
             label="文件名"
             v-model.trim="name"
+            @keyup.enter="saveClick"
           ></v-text-field>
         </v-form>
         <span class="red--text">
