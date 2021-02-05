@@ -9,11 +9,11 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form>
+        <v-form @submit="saveClick">
           <v-text-field
             label="新文件夹名称"
             v-model.trim="name"
-            @keyup.enter="saveClick"
+            autofocus="true"
           ></v-text-field>
         </v-form>
         <span class="red--text">

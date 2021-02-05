@@ -40,9 +40,9 @@
           <v-list-item @click="callService('automation.reload')">
             <v-list-item-title>重载自动化</v-list-item-title>
           </v-list-item>
-          <!-- <v-list-item @click="callService('automation.reload')">
-            <v-list-item-title>重载Python Scripts</v-list-item-title>
-          </v-list-item> -->
+          <v-list-item @click="callService('python_script.reload')">
+            <v-list-item-title>重载Python Script</v-list-item-title>
+          </v-list-item>
           <v-list-item @click="callService('group.reload')">
             <v-list-item-title>重载分组及通知服务</v-list-item-title>
           </v-list-item>

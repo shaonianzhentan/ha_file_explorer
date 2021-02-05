@@ -1,63 +1,88 @@
 <template>
-    <AppBar title="文件管理">
-        <v-menu
-            bottom
-            left
+  <AppBar title="文件管理">
+    <v-menu
+      bottom
+      left
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          dark
+          icon
+          v-bind="attrs"
+          v-on="on"
         >
-            <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                    dark
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                >
-                    <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-            </template>
-            <v-list>
-                <v-list-item @click="showDialog('NewFile')">
-                    <v-list-item-title>新建文件</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="showDialog('NewFolder')">
-                    <v-list-item-title>新建文件夹</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="showDialog('UploadFile')">
-                    <v-list-item-title>上传文件</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="showDialog('UploadFolder')">
-                    <v-list-item-title>上传文件夹</v-list-item-title>
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item @click="showDialog('RenameFolder')">
-                    <v-list-item-title>重命名</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="deleteClick">
-                    <v-list-item-title>删除</v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title>移动</v-list-item-title>
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item>
-                    <v-list-item-title>下载此目录到当前电脑</v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title>下载网络文件到此目录</v-list-item-title>
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item>
-                    <v-list-item-title>上传此目录到七牛云</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-menu>
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item @click="showDialog('NewFile')">
+          <v-list-item-title>新建文件</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="showDialog('NewFolder')">
+          <v-list-item-title>新建文件夹</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="showDialog('UploadFile')">
+          <v-list-item-title>上传文件</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="showDialog('UploadFolder')">
+          <v-list-item-title>上传文件夹</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <div v-if="isRoot">
+          <!-- 根目录 -->
+          <v-list-item @click="callService('script.reload')">
+            <v-list-item-title>重载脚本</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="callService('scene.reload')">
+            <v-list-item-title>重载场景</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="callService('automation.reload')">
+            <v-list-item-title>重载自动化</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="callService('python_script.reload')">
+            <v-list-item-title>重载Python Script</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="callService('group.reload')">
+            <v-list-item-title>重载分组及通知服务</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item @click="callService('homeassistant.restart')">
+            <v-list-item-title>重新启动HA</v-list-item-title>
+          </v-list-item>
+        </div>
+        <div v-else>
+          <!-- 子目录 -->
+          <v-list-item @click="showDialog('RenameFolder')">
+            <v-list-item-title>重命名</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="deleteClick">
+            <v-list-item-title>删除</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>移动</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-list-item-title>下载此目录到当前电脑</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>下载网络文件到此目录</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-list-item-title>上传此目录到七牛云</v-list-item-title>
+          </v-list-item>
+        </div>
+      </v-list>
+    </v-menu>
 
-        <NewFile ref="NewFile" />
-        <NewFolder ref="NewFolder" />
-        <UploadFile ref="UploadFile" />
-        <UploadFolder ref="UploadFolder" />
-        <RenameFolder ref="RenameFolder" />
+    <NewFile ref="NewFile" />
+    <NewFolder ref="NewFolder" />
+    <UploadFile ref="UploadFile" />
+    <UploadFolder ref="UploadFolder" />
+    <RenameFolder ref="RenameFolder" />
 
-    </AppBar>
+  </AppBar>
 
 </template>
 <script>
@@ -73,7 +98,12 @@ export default {
   data() {
     return {};
   },
-  computed: mapState(["showSidebar", "filePathList"]),
+  computed: {
+    ...mapState(["showSidebar", "filePathList"]),
+    isRoot() {
+      return this.filePathList.length === 0;
+    }
+  },
   methods: {
     ...mapMutations(["toggleSidebar"]),
     ...mapActions(["operationFile"]),
@@ -92,6 +122,10 @@ export default {
           type: "delete"
         });
       }
+    },
+    callService(service) {
+      window.ha.callService(service);
+      this.$toast(`调用服务${service}`);
     }
   }
 };
