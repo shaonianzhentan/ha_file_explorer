@@ -26,7 +26,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title v-text="item.name"></v-list-item-title>
+            <v-list-item-title>{{item.name.replace('HomeAssistant/', '')}}</v-list-item-title>
             <v-list-item-subtitle>
               <span class="text--disabled">{{item.edit}}</span>
               <span class="font-weight-light"> — {{item.sizeName | fileSizeFormat}}</span>
@@ -49,6 +49,9 @@
                 </v-btn>
               </template>
               <v-list>
+                <v-list-item @click="restoreClick(item)">
+                  <v-list-item-title>还原</v-list-item-title>
+                </v-list-item>
                 <v-list-item @click="deleteClick(item)">
                   <v-list-item-title>删除</v-list-item-title>
                 </v-list-item>
@@ -66,11 +69,15 @@
         </v-list-item>
       </v-list>
     </v-card>
+    <RestoreDialog ref="RestoreDialog" />
   </v-container>
 </template>
 <script>
 import { mapActions } from "vuex";
 export default {
+  components: {
+    RestoreDialog: () => import("@/components/RestoreDialog")
+  },
   data() {
     return {
       fileList: []
@@ -99,6 +106,10 @@ export default {
           };
         });
       });
+    },
+    restoreClick(item) {
+      console.log(item);
+      this.$refs["RestoreDialog"].show(item.url);
     },
     deleteClick(item) {
       this.fetchApi({
