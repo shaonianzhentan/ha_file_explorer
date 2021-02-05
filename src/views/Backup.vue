@@ -24,7 +24,6 @@
               v-text="item.icon"
             ></v-icon>
           </v-list-item-avatar>
-
           <v-list-item-content>
             <v-list-item-title>{{item.name.replace('HomeAssistant/', '')}}</v-list-item-title>
             <v-list-item-subtitle>
