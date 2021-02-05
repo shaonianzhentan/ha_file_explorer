@@ -73,8 +73,8 @@ export default new Vuex.Store({
             icon: 'mdi-database'
           },
           js: {
-            color: 'blue',
-            icon: 'mdi-language-javascript'
+            color: 'light-green',
+            icon: 'mdi-nodejs'
           },
           homeassistant: {
             color: 'light-blue',
@@ -93,7 +93,7 @@ export default new Vuex.Store({
             icon: 'mdi-language-html5'
           },
           video: {
-            color: 'light-green',
+            color: 'blue',
             icon: 'mdi-file-video'
           },
           audio: {

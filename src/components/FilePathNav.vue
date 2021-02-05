@@ -1,9 +1,9 @@
 <template>
-    <v-breadcrumbs :items="items">
-        <template v-slot:divider>
-            <v-icon>mdi-forward</v-icon>
-        </template>
-    </v-breadcrumbs>
+  <v-breadcrumbs :items="items">
+    <template v-slot:divider>
+      <v-icon>mdi-forward</v-icon>
+    </template>
+  </v-breadcrumbs>
 </template>
 <script>
 import { mapActions, mapState } from "vuex";
@@ -16,7 +16,7 @@ export default {
       return filePathList.map(ele => ele);
     },
     items: ({ filePathList }) => {
-      const len = filePathList.length - 1;
+      // const len = filePathList.length - 1;
       return [
         {
           text: "HA",
@@ -26,7 +26,6 @@ export default {
         ...filePathList.map((ele, index) => {
           return {
             text: ele,
-            disabled: len === index,
             href: `#/?index=${index}`
           };
         })
