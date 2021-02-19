@@ -44,6 +44,7 @@
         dense
         nav
       >
+        <!-- 主菜单 -->
         <v-list-item
           v-for="item in items"
           :key="item.title"
@@ -51,7 +52,7 @@
           @click="linkClick(item)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon color="indigo">{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -59,6 +60,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
+        <!-- HA页面 -->
         <v-list-item
           v-for="item in haItems"
           :key="item.title"
@@ -66,7 +68,23 @@
           @click="haLinkClick(item)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon color="light-blue">{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+        <!-- HA功能 -->
+        <v-list-item
+          v-for="item in haAction"
+          :key="item.title"
+          link
+          @click="haActionClick(item)"
+        >
+          <v-list-item-icon>
+            <v-icon color="deep-orange">{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -246,17 +264,17 @@ export default {
       { title: "首页", icon: "mdi-home", href: "/" },
       { title: "云备份", icon: "mdi-backup-restore", href: "/Backup" },
       { title: "我的插件", icon: "mdi-apps-box", href: "/PlugIn" },
-      { title: "工具箱", icon: "mdi-tools", href: "/Tools" },
-      {
-        title: "HA升级",
-        icon: "mdi-home-assistant",
-        href: "/Update"
-      },
-      {
-        title: "设置",
-        icon: "mdi-cog",
-        href: "/Setting"
-      }
+      { title: "工具箱", icon: "mdi-tools", href: "/Tools" }
+      // {
+      //   title: "HA升级",
+      //   icon: "mdi-home-assistant",
+      //   href: "/Update"
+      // },
+      // {
+      //   title: "设置",
+      //   icon: "mdi-cog",
+      //   href: "/Setting"
+      // }
     ],
     haItems: [
       {
@@ -280,6 +298,38 @@ export default {
         href: "/config/lovelace/resources"
       },
       { title: "服务控制", icon: "mdi-server", href: "/config/server_control" }
+    ],
+    haAction: [
+      {
+        title: "重载脚本",
+        icon: "mdi-script-text",
+        href: "script.reload",
+        color: "purple"
+      },
+      {
+        title: "重载场景",
+        icon: "mdi-home-automation",
+        href: "scene.reload",
+        color: "blue"
+      },
+      {
+        title: "重载自动化",
+        icon: "mdi-android",
+        href: "automation.reload",
+        color: "teal"
+      },
+      {
+        title: "重载所有服务",
+        icon: "mdi-reload",
+        href: "reload",
+        color: "lime"
+      },
+      {
+        title: "重新启动HA",
+        icon: "mdi-home-assistant",
+        href: "homeassistant.restart",
+        color: "red"
+      }
     ],
     ver: window.ha.ver || "测试版"
   }),
@@ -310,6 +360,30 @@ export default {
     haLinkClick({ href }) {
       top.history.pushState(null, null, href);
       window.ha.fire("location-changed", { replace: true }, top);
+    },
+    haActionClick({ href }) {
+      if (href === "reload") {
+        [
+          "automation.reload",
+          "group.reload",
+          "input_boolean.reload",
+          "input_datetime.reload",
+          "input_number.reload",
+          "input_select.reload",
+          "input_text.reload",
+          "person.reload",
+          "scene.reload",
+          "script.reload",
+          "zone.reload",
+          "homeassistant.reload_core_config"
+        ].forEach(service => {
+          window.ha.callService(service);
+        });
+        this.$toast(`重新加载所有服务`);
+      } else {
+        window.ha.callService(href);
+        this.$toast(`调用服务${href}`);
+      }
     }
   }
 };

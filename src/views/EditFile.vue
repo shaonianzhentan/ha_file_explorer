@@ -16,48 +16,19 @@
         {{ name }}
       </div>
       <v-spacer></v-spacer>
-      <v-menu
-        bottom
-        left
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            dark
-            icon
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item @click="callService('script.reload')">
-            <v-list-item-title>重载脚本</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('scene.reload')">
-            <v-list-item-title>重载场景</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('automation.reload')">
-            <v-list-item-title>重载自动化</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('python_script.reload')">
-            <v-list-item-title>重载Python Script</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('group.reload')">
-            <v-list-item-title>重载分组及通知服务</v-list-item-title>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item @click="callService('homeassistant.restart')">
-            <v-list-item-title>重新启动HA</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
       <v-btn
         text
         v-show="showSave"
         @click="saveClick"
       >
         <v-icon>mdi-content-save</v-icon>保存
+      </v-btn>
+      <v-btn
+        dark
+        icon
+        @click="toggleSidebar"
+      >
+        <v-icon>{{showSidebar ? 'mdi-menu-open' : 'mdi-menu'}}</v-icon>
       </v-btn>
     </v-app-bar>
     <div
@@ -67,7 +38,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -75,11 +46,15 @@ export default {
       name: ""
     };
   },
-  computed: mapGetters(["getFilePath"]),
+  computed: {
+    ...mapGetters(["getFilePath"]),
+    ...mapState(["showSidebar"])
+  },
   activated() {
     this.loadData();
   },
   methods: {
+    ...mapMutations(["toggleSidebar"]),
     loadData() {
       const { name } = this.$route.params;
       if (!name) {
@@ -137,10 +112,6 @@ export default {
         .then(res => {
           this.$toast(res.msg);
         });
-    },
-    callService(service) {
-      window.ha.callService(service);
-      this.$toast(`调用服务${service}`);
     },
     backClick() {
       this.$router.back();

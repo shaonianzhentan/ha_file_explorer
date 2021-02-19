@@ -27,30 +27,8 @@
         <v-list-item @click="showDialog('UploadFolder')">
           <v-list-item-title>上传文件夹</v-list-item-title>
         </v-list-item>
-        <v-divider></v-divider>
-        <div v-if="isRoot">
-          <!-- 根目录 -->
-          <v-list-item @click="callService('script.reload')">
-            <v-list-item-title>重载脚本</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('scene.reload')">
-            <v-list-item-title>重载场景</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('automation.reload')">
-            <v-list-item-title>重载自动化</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('python_script.reload')">
-            <v-list-item-title>重载Python Script</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="callService('group.reload')">
-            <v-list-item-title>重载分组及通知服务</v-list-item-title>
-          </v-list-item>
+        <div v-if="!isRoot">
           <v-divider></v-divider>
-          <v-list-item @click="callService('homeassistant.restart')">
-            <v-list-item-title>重新启动HA</v-list-item-title>
-          </v-list-item>
-        </div>
-        <div v-else>
           <!-- 子目录 -->
           <v-list-item @click="showDialog('RenameFolder')">
             <v-list-item-title>重命名</v-list-item-title>
@@ -122,10 +100,6 @@ export default {
           type: "delete"
         });
       }
-    },
-    callService(service) {
-      window.ha.callService(service);
-      this.$toast(`调用服务${service}`);
     }
   }
 };
