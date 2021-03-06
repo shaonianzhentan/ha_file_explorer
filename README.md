@@ -9,7 +9,7 @@ cd ~/.homeassistant
 # 下载当前项目
 git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer --depth=1
 # 复制文件夹
-sudo mv ./ha_file_explorer/custom_components/ha_file_explorer custom_components
+sudo cp -r ./ha_file_explorer/custom_components/ha_file_explorer custom_components
 # 删除clone的文件
 sudo rm -rf ha_file_explorer
 
