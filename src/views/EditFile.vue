@@ -43,6 +43,7 @@ export default {
   data() {
     return {
       showSave: false,
+      loading: false,
       name: ""
     };
   },
@@ -52,6 +53,15 @@ export default {
   },
   activated() {
     this.loadData();
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      document.addEventListener("keydown", vm.autoSaveKeydown, false);
+    });
+  },
+  beforeRouteLeave(to, from, next) {
+    document.removeEventListener("keydown", this.autoSaveKeydown);
+    next();
   },
   methods: {
     ...mapMutations(["toggleSidebar"]),
@@ -91,7 +101,7 @@ export default {
               ext = "python";
             }
             let mode = `ace/mode/${ext}`;
-            console.log(mode);
+            // console.log(mode);
             window.editor = window.ace.edit("editor", {
               theme: "ace/theme/chrome",
               mode
@@ -102,6 +112,8 @@ export default {
       });
     },
     saveClick() {
+      if (this.loading) return;
+      this.loading = true;
       let data = window.editor.getValue();
       window.ha
         .post({
@@ -111,7 +123,17 @@ export default {
         })
         .then(res => {
           this.$toast(res.msg);
+        })
+        .finally(() => {
+          this.loading = false;
         });
+    },
+    autoSaveKeydown(event) {
+      if (event.ctrlKey && event.key === "s") {
+        this.$toast("正在保存中...");
+        this.saveClick();
+        event.preventDefault();
+      }
     },
     backClick() {
       this.$router.back();

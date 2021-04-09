@@ -50,6 +50,8 @@ export default new Vuex.Store({
           ext = 'audio'
         } else if (['gz', 'rar', 'tz'].includes(ext)) {
           ext = 'zip'
+        } else if (['html', 'htm'].includes(ext)) {
+          ext = 'html'
         }
         const mode = {
           code: {

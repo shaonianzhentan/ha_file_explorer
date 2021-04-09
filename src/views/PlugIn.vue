@@ -1,11 +1,10 @@
 <template>
 
   <div>
-     <AppBar
+    <AppBar
       color="light-blue"
       title="插件列表"
     />
-  
 
     <v-container>
       <v-list
@@ -40,19 +39,25 @@
           </v-list-item-content>
 
           <v-list-item-action>
-            <v-tooltip left>
+            <v-menu>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
                   v-bind="attrs"
                   v-on="on"
-                  @click="pullClick(item)"
                 >
                   <v-icon color="grey lighten-1">mdi-download</v-icon>
                 </v-btn>
               </template>
-              <span>安装最新组件</span>
-            </v-tooltip>
+              <v-list>
+                <v-list-item
+                  v-for="(git, index) in items"
+                  :key="index"
+                >
+                  <v-list-item-title @click="pullClick(item, git.title)">{{ git.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-list-item-action>
         </v-list-item>
 
@@ -86,19 +91,25 @@
           </v-list-item-content>
 
           <v-list-item-action>
-            <v-tooltip left>
+            <v-menu>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
                   v-bind="attrs"
                   v-on="on"
-                  @click="pullClick(item)"
                 >
                   <v-icon color="grey lighten-1">mdi-download</v-icon>
                 </v-btn>
               </template>
-              <span>安装最新组件</span>
-            </v-tooltip>
+              <v-list>
+                <v-list-item
+                  v-for="(git, index) in items"
+                  :key="index"
+                >
+                  <v-list-item-title @click="pullClick(item, git.title)">{{ git.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-list-item-action>
         </v-list-item>
         <v-divider inset></v-divider>
@@ -144,19 +155,25 @@
           </v-list-item-content>
 
           <v-list-item-action>
-            <v-tooltip left>
+            <v-menu>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
                   v-bind="attrs"
                   v-on="on"
-                  @click="pullClick(pull)"
                 >
                   <v-icon color="grey lighten-1">mdi-download</v-icon>
                 </v-btn>
               </template>
-              <span>安装最新组件</span>
-            </v-tooltip>
+              <v-list>
+                <v-list-item
+                  v-for="(git, index) in items"
+                  :key="index"
+                >
+                  <v-list-item-title @click="pullClick(item, git.title)">{{ git.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-list-item-action>
 
         </v-list-item>
@@ -244,27 +261,35 @@ export default {
           domain: "ble_monitor",
           name: "米家蓝牙设备监听",
           url: "https://github.com/custom-components/ble_monitor"
+        },
+        {
+          domain: "xiaomi_miot",
+          name: "Xiaomi Miot - 小米云端设备",
+          url: "https://github.com/al-one/hass-xiaomi-miot"
         }
       ],
       pull: {
         domain: "",
         url: ""
-      }
+      },
+      items: [
+        { title: "github.com.cnpmjs.org" },
+        { title: "hub.fastgit.org" },
+        { title: "github.com" }
+      ]
     };
   },
   methods: {
     ...mapActions(["fetchApi"]),
-    pullClick({ domain, url }) {
+    pullClick({ domain, url }, gitUrl) {
       if (!domain || !url) {
         return this.$toast("请输入组件名称和项目地址");
       }
+      console.log(gitUrl);
       this.fetchApi({
         type: "update",
         domain,
-        url: url.replace(
-          "https://github.com/",
-          "https://github.com.cnpmjs.org/"
-        )
+        url: url.replace("https://github.com/", `https://${gitUrl}/`)
       }).then(res => {
         if (res.code === 0) {
           this.$toast(res.msg);
