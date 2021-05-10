@@ -14,7 +14,7 @@ DATA_SCHEMA = vol.Schema({
     vol.Optional("secret_key", default = ""): str,
     vol.Optional("bucket_name", default = ""): str,
     vol.Optional("prefix", default = ""): str,
-    vol.Optional("download", default = ""): str}
+    vol.Optional("download", default = ""): str
 })
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

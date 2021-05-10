@@ -4,11 +4,11 @@
             "user": {
                 "description": "项目: https://github.com/shaonianzhentan/ha_file_explorer",
                 "data": {
-                    "access_key": "七牛云配置",
-                    "secret_key": "七牛云配置",
-                    "bucket_name": "七牛云配置",
-                    "prefix": "七牛云配置",
-                    "download": "七牛云配置"
+                    "access_key": "七牛云配置：access_key",
+                    "secret_key": "七牛云配置：secret_key",
+                    "bucket_name": "七牛云配置：bucket_name",
+                    "prefix": "七牛云配置：prefix",
+                    "download": "七牛云配置：download"
                 }
             }
         },
