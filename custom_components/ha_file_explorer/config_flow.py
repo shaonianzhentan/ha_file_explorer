@@ -9,7 +9,13 @@ from .const import DOMAIN  # pylint:disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = vol.Schema({vol.Required("sidebar_title", default = "文件管理"): str, vol.Required("sidebar_icon", default = "mdi:folder"): str})
+DATA_SCHEMA = vol.Schema({
+    vol.Optional("access_key", default = ""): str,
+    vol.Optional("secret_key", default = ""): str,
+    vol.Optional("bucket_name", default = ""): str,
+    vol.Optional("prefix", default = ""): str,
+    vol.Optional("download", default = ""): str}
+})
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
@@ -23,7 +29,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # 如果输入内容不为空，则进行验证
         if user_input is not None:
-            return self.async_create_entry(title="文件管理", data=user_input)
+            return self.async_create_entry(title="", data=user_input)
         
         # 显示表单
         return self.async_show_form(
