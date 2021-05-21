@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0ccbf6"],{"4ef5":function(t,e,c){"use strict";c.r(e);var n=function(){var t=this,e=t.$createElement,c=t._self._c||e;return c("div",[c("AppBar",{attrs:{color:"teal",title:"设置"}})],1)},a=[],r=c("5530"),i=c("2f62"),o={data:function(){return{}},methods:Object(r["a"])(Object(r["a"])({},Object(i["b"])(["fetchApi"])),{},{backClick:function(){this.$router.back()}})},u=o,f=c("2877"),l=Object(f["a"])(u,n,a,!1,null,"3f6e7ae2",null);e["default"]=l.exports}}]);
+//# sourceMappingURL=chunk-2d0ccbf6.46d0efc6.js.map
