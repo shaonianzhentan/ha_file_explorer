@@ -9,13 +9,7 @@ from .const import DOMAIN  # pylint:disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_SCHEMA = vol.Schema({
-    vol.Optional("access_key", default = ""): str,
-    vol.Optional("secret_key", default = ""): str,
-    vol.Optional("bucket_name", default = ""): str,
-    vol.Optional("prefix", default = ""): str,
-    vol.Optional("download", default = ""): str
-})
+DATA_SCHEMA = vol.Schema({})
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 

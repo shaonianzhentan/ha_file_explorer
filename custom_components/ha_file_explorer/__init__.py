@@ -25,15 +25,13 @@ def setup(hass, config):
     项目地址：https://github.com/shaonianzhentan/ha_file_explorer
     
 -------------------------------------------------------------------''')
-    cfg  = config[DOMAIN]
     # 七牛云配置
-    hass.data[DOMAIN] = FileExplorer(hass, cfg)
+    hass.data[DOMAIN] = FileExplorer(hass)
     # 注册静态目录
     hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)    
     hass.http.register_view(HAView)
     # 注册菜单栏
-    hass.components.frontend.async_register_built_in_panel("iframe", NAME, ICON, DOMAIN,
-        {"url": ROOT_PATH + "/index.html?ver=" + VERSION}, require_admin=False)
+    hass.components.frontend.async_register_built_in_panel("iframe", NAME, ICON, DOMAIN, {"url": ROOT_PATH + "/index.html?ver=" + VERSION}, require_admin=False)    
     return True
 
 async def async_setup_entry(hass, entry):

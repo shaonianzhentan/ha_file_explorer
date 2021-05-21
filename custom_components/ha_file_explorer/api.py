@@ -1,26 +1,44 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile
+import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile, homeassistant
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
 from .qn import Qn
-from .const import DOMAIN
+from .const import DOMAIN, MAC_ADDRESS
 
 class FileExplorer():
-    def __init__(self, hass, cfg):
+    def __init__(self, hass):
         self.hass = hass
-        # 七牛云配置
+        self.q = None
+        self.storage_file = hass.config.path(".shaonianzhentan/ha_file_explorer.yaml")
+        # 注册云备份服务
+        hass.services.async_register(DOMAIN, 'config', self.config)
+        # 加载本地配置
+        data = homeassistant.util.yaml.load_yaml(self.storage_file)
+        if data is not None:
+            self.mounted_qn(data)
+
+    # 配置服务
+    def config(self, call):
+        data = call.data
+        self.mounted_qn(data)
+
+    # 注册七牛云备份
+    def mounted_qn(self, cfg):
+        prefix = MAC_ADDRESS[:4]
         access_key = cfg.get('access_key', '')
         secret_key = cfg.get('secret_key', '')
         bucket_name = cfg.get('bucket_name', '')
-        prefix = cfg.get('prefix', '')
         download = cfg.get('download', '')
-        self.q = None
         if access_key != '' and secret_key != '' and bucket_name != '':
             try:
+                # 保存配置
+                homeassistant.util.yaml.save_yaml(self.storage_file, cfg)
                 from asgiref.sync import sync_to_async
                 import qiniu
-                self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), sync_to_async, bucket_name, prefix, download)            
-                hass.services.async_register(DOMAIN, 'upload', self.upload)
+                self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), sync_to_async, bucket_name, prefix, download)
+                # 注册上传服务
+                if self.hass.services.has_service(DOMAIN, 'upload') == False:
+                    self.hass.services.async_register(DOMAIN, 'upload', self.upload)
             except Exception as ex:
                 print(ex)
 
