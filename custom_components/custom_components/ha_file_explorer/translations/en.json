@@ -1,0 +1,14 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "项目: https://github.com/shaonianzhentan/ha_file_explorer",
+                "data": {}
+            }
+        },
+        "error": {},
+        "abort": {
+            "single_instance_allowed": "仅允许单个配置."
+        }
+    }
+}
