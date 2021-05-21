@@ -87,6 +87,11 @@ class HAView(HomeAssistantView):
             elif _type == 'upload-dir':
                 # 上传文件夹
                 return self.json({ 'code': 0, 'msg': '上传文件夹成功'})
+            elif _type == 'download-file':
+                # 下载文件
+                r = web.FileResponse(_path)
+                r.enable_compression()
+                return r
             elif _type == 'download-url':
                 # 下载网络文件到文件夹
                 print(_url)
@@ -124,7 +129,7 @@ class HAView(HomeAssistantView):
                 if fileExplorer.q is None:
                     return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
                 try:
-                    res = await fileExplorer.q.get_list(None)
+                    res = await fileExplorer.q.get_list(res.get('name', ''))
                     # print('测试一下：', res)
                     return self.json({ 'code': 0, 'msg': '获取备份列表', 'data': res})
                 except Exception as e:

@@ -9,17 +9,24 @@ class FileExplorer():
     def __init__(self, hass):
         self.hass = hass
         self.q = None
-        self.storage_file = hass.config.path(".shaonianzhentan/ha_file_explorer.yaml")
+        self.storage_dir = hass.config.path(".shaonianzhentan")
+        self.storage_file = self.storage_dir + "/ha_file_explorer.yaml"
+        self.mkdir(self.storage_dir)        
         # 注册云备份服务
         hass.services.async_register(DOMAIN, 'config', self.config)
         # 加载本地配置
-        data = homeassistant.util.yaml.load_yaml(self.storage_file)
-        if data is not None:
-            self.mounted_qn(data)
+        self.load_config()
+
+    def load_config(self):
+        if os.path.exists(self.storage_file):
+            data = homeassistant.util.yaml.load_yaml(self.storage_file)
+            if data is not None:
+                self.mounted_qn(data)
 
     # 配置服务
     def config(self, call):
         data = call.data
+        print(data)
         self.mounted_qn(data)
 
     # 注册七牛云备份
@@ -32,15 +39,21 @@ class FileExplorer():
         if access_key != '' and secret_key != '' and bucket_name != '':
             try:
                 # 保存配置
-                homeassistant.util.yaml.save_yaml(self.storage_file, cfg)
-                from asgiref.sync import sync_to_async
+                _dict = {}
+                _dict.update(cfg)
+                homeassistant.util.yaml.save_yaml(self.storage_file, _dict)
                 import qiniu
-                self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), sync_to_async, bucket_name, prefix, download)
+                self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), self.hass, bucket_name, prefix, download)
                 # 注册上传服务
                 if self.hass.services.has_service(DOMAIN, 'upload') == False:
                     self.hass.services.async_register(DOMAIN, 'upload', self.upload)
+                self.hass.async_create_task(self.notify("保存配置成功"))
             except Exception as ex:
                 print(ex)
+                self.hass.async_create_task(self.notify("出现异常"))
+        else:
+            self.hass.async_create_task(self.notify("配置不正确"))
+            
 
     def getAllFile(self, dir):
         allcontent = listdir(dir)

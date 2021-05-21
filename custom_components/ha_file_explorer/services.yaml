@@ -24,6 +24,6 @@ config:
         text:
     download:
       name: download
-      description: 七牛云配置download
+      description: 七牛云自定义域名[http://xxx.xxx.com/]（用来下载备份文件）
       selector:
         text:

@@ -3,6 +3,8 @@
 
 ## 安装方式
 
+请在集成中安装
+
 ```bash
 # 切换到HA对应的配置目录
 cd ~/.homeassistant
@@ -17,33 +19,12 @@ sudo rm -rf ha_file_explorer
 pip3 install qiniu asgiref
 ```
 
-## 使用方式
-
-
-```yaml
-# 默认配置
-ha_file_explorer:
-```
-
-```yaml
-# 完整配置
-ha_file_explorer:
-  sidebar_title: 文件管理
-  sidebar_icon: mdi:folder
-  access_key: 七牛云配置
-  secret_key: 七牛云配置
-  bucket_name: 七牛云配置
-  prefix: 七牛云上传文件前缀(用来区分多个HA)
-  download: 七牛云自定义域名[http://xxx.xxx.com/]（用来下载备份文件）
-```
-
-
 ## 更新日志
 
 ### v2.5.1
-- [ ] 下载文件和文件夹
-- [ ] 七牛云支持搜索
-- [ ] 使用服务配置七牛云相关密钥
+- 新增下载文件功能
+- [x] 七牛云支持搜索
+- [x] 使用服务配置七牛云相关密钥
 
 ### v2.5
 - [x] 插件界面
