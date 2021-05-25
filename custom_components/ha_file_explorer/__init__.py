@@ -1,4 +1,5 @@
 import logging
+from .shaonianzhentan import sidebar_add
 from .api import FileExplorer
 from .view import HAView
 _LOGGER = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ def setup(hass, config):
     hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)    
     hass.http.register_view(HAView)
     # 注册菜单栏
-    hass.components.frontend.async_register_built_in_panel("iframe", NAME, ICON, DOMAIN, {"url": ROOT_PATH + "/index.html?ver=" + VERSION}, require_admin=False)    
+    sidebar_add(hass, NAME, ICON, DOMAIN, ROOT_PATH + "/index.html?ver=" + VERSION)
     return True
 
 async def async_setup_entry(hass, entry):

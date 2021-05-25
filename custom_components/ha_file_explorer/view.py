@@ -4,6 +4,7 @@ from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
 from .util import pip_install
 from .const import DOMAIN, VERSION, URL, ROOT_PATH
+from .shaonianzhentan import move_file
 
 class HAView(HomeAssistantView):
 
@@ -158,7 +159,8 @@ class HAView(HomeAssistantView):
                 return self.json({ 'code': 0, 'msg': '删除成功'})
             ## ====================== 移动文件 ==========================
             elif _type == 'move-file':
-                # 移动文件                
+                # 移动文件
+                move_file(hass.config.path(f'./{_url}'), _path)
                 return self.json({ 'code': 0, 'msg': '移动文件成功'})
             elif _type == 'move-tmpfile':
                 # 还原数据

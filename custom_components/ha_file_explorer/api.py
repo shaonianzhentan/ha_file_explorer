@@ -1,4 +1,5 @@
 import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile, homeassistant
+from .shaonianzhentan import load_yaml, save_yaml, load_content, save_content, delete_file, get_dir_size
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -15,13 +16,7 @@ class FileExplorer():
         # 注册云备份服务
         hass.services.async_register(DOMAIN, 'config', self.config)
         # 加载本地配置
-        self.load_config()
-
-    def load_config(self):
-        if os.path.exists(self.storage_file):
-            data = homeassistant.util.yaml.load_yaml(self.storage_file)
-            if data is not None:
-                self.mounted_qn(data)
+        self.mounted_qn(load_yaml(self.storage_file))
 
     # 配置服务
     def config(self, call):
@@ -39,9 +34,7 @@ class FileExplorer():
         if access_key != '' and secret_key != '' and bucket_name != '':
             try:
                 # 保存配置
-                _dict = {}
-                _dict.update(cfg)
-                homeassistant.util.yaml.save_yaml(self.storage_file, _dict)
+                save_yaml(self.storage_file, cfg)
                 import qiniu
                 self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), self.hass, bucket_name, prefix, download)
                 # 注册上传服务
@@ -98,38 +91,20 @@ class FileExplorer():
                 hashInfo['size'] = int(listInfo.st_size)
             if isdir(join(dir,item)):
                 hashInfo['type'] = 'dir'
-                hashInfo['size'] = self.get_dir_size(join(dir,item))
+                hashInfo['size'] = get_dir_size(join(dir,item))
             dirItem.append(hashInfo)
 
         dirItem.sort(key=lambda x: x['name'], reverse=True)
         return dirItem
     
-    def getContent(self, _path):        
-        fp = open(_path, 'r', encoding='UTF-8')
-        content = fp.read()
-        fp.close()
-        return content
+    def getContent(self, _path):          
+        return load_content(_path)
 
     def setContent(self, _path, _content):
-        fp = open(_path, 'w+', encoding='UTF-8')
-        fp.write(_content)
-        fp.close()
+        save_content(_path, _content)
         
     def delete(self, _path):
-        if exists(_path):
-            if isfile(_path):
-                # 删除文件
-                remove(_path)
-            elif isdir(_path):
-                # 删除目录
-                shutil.rmtree(_path, ignore_errors=True)
-
-    # 获取文件夹大小
-    def get_dir_size(self, dir):
-        size = 0
-        for root, dirs, files in os.walk(dir):
-            size += sum([os.path.getsize(os.path.join(root, name)) for name in files])
-        return size
+        delete_file(_path)
 
     # 创建文件夹
     def mkdir(self, path):
