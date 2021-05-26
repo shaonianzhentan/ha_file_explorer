@@ -10,16 +10,19 @@ config:
     access_key:
       name: access_key
       description: 七牛云配置access_key
+      required: true
       selector:
         text:
     secret_key:
       name: secret_key
       description: 七牛云配置secret_key
+      required: true
       selector:
         text:
     bucket_name:
       name: bucket_name
       description: 七牛云配置bucket_name
+      required: true
       selector:
         text:
     download:

@@ -4,7 +4,7 @@ from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
 from .util import pip_install
 from .const import DOMAIN, VERSION, URL, ROOT_PATH
-from .shaonianzhentan import move_file
+from .shaonianzhentan import move_file, github_url, download, mkdir
 
 class HAView(HomeAssistantView):
 
@@ -167,6 +167,15 @@ class HAView(HomeAssistantView):
                 fileExplorer.move(res['list'])
                 await fileExplorer.notify("还原成功")
                 return self.json({'code':0, 'msg': '还原成功'})
+            elif _type == 'install-blueprint':
+                git = github_url(_url)
+                if git is None:
+                    return self.json({'code':1, 'msg': 'GitHub URL地址不正确'})
+                # 新建目录
+                dir_name = hass.config.path(f"./blueprints/automation/{git['author']}")
+                mkdir(dir_name)
+                await download(git['url'], f"{dir_name}/{git['file_name']}")
+                return self.json({'code':0, 'msg': '下载安装成功'})
             elif _type == 'install-package':
                 # 安装依赖包
                 package_name = _url

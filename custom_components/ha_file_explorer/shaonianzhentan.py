@@ -1,4 +1,4 @@
-import os, shutil, uuid, yaml, logging, aiohttp, json, urllib, hashlib, datetime, asyncio, base64
+import os, shutil, uuid, yaml, logging, aiohttp, json, urllib, hashlib, datetime, asyncio, base64, re
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -193,6 +193,23 @@ def sidebar_add(hass, name, icon, path, url):
 def sidebar_remove(hass, path):
     if path in hass.data.get("frontend_panels", {}):
         hass.components.frontend.async_remove_panel(path)
+
+''' ---------------------- GitHub --------------------------- '''
+# GitHub地址
+def github_url(url):
+    GITHUB_FILE_PATTERN = re.compile(
+        r"^https://github.com/(?P<repository>.+)/blob/(?P<path>.+)$"
+    )
+    match = GITHUB_FILE_PATTERN.match(url)
+    if match is not None:
+        repo, path = match.groups()
+        author = repo.split('/')[0]
+        file_name = path.split('/')[-1]
+        return {
+            'author': author,
+            'file_name': file_name,
+            'url': f"https://raw.fastgit.org/{repo}/{path}"
+        }
 
 ''' ---------------------- HTTP库 --------------------------- '''
 

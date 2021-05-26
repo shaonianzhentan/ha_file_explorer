@@ -44,8 +44,6 @@ class FileExplorer():
             except Exception as ex:
                 print(ex)
                 self.hass.async_create_task(self.notify("出现异常"))
-        else:
-            self.hass.async_create_task(self.notify("配置不正确"))
             
 
     def getAllFile(self, dir):
@@ -79,19 +77,20 @@ class FileExplorer():
             if item.startswith('.'):
                 continue
             '''
-            if exists(join(dir,item)) == False:
+            path_name = join(dir,item)
+            if exists(path_name) == False:
                 continue
-            listInfo = stat(join(dir,item))
+            listInfo = stat(path_name)
             hashInfo['name'] = item
             hashInfo['url']  = item
             hashInfo['edit'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
                         
-            if isfile(join(dir,item)):
+            if isfile(path_name):
                 hashInfo['type'] = 'file'
                 hashInfo['size'] = int(listInfo.st_size)
-            if isdir(join(dir,item)):
+            if isdir(path_name):
                 hashInfo['type'] = 'dir'
-                hashInfo['size'] = get_dir_size(join(dir,item))
+                hashInfo['size'] = get_dir_size(path_name)
             dirItem.append(hashInfo)
 
         dirItem.sort(key=lambda x: x['name'], reverse=True)
