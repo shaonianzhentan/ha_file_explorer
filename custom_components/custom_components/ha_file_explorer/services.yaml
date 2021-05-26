@@ -1,0 +1,32 @@
+upload:
+  description: 上传备份文件（文件太多且大时，请勿重复调用，避免程序卡死）
+  fields:
+    filter:
+      description: 要过滤的文件夹名称
+      example: "['www', 'home-assistant.log']"
+config:
+  description: 配置
+  fields:
+    access_key:
+      name: access_key
+      description: 七牛云配置access_key
+      required: true
+      selector:
+        text:
+    secret_key:
+      name: secret_key
+      description: 七牛云配置secret_key
+      required: true
+      selector:
+        text:
+    bucket_name:
+      name: bucket_name
+      description: 七牛云配置bucket_name
+      required: true
+      selector:
+        text:
+    download:
+      name: download
+      description: 七牛云自定义域名[http://xxx.xxx.com/]（用来下载备份文件）
+      selector:
+        text:
