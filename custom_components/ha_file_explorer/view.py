@@ -53,7 +53,7 @@ class HAView(HomeAssistantView):
         res = await request.json()
         _type = res.get('type', '')
         _url = res.get('url', '')
-        _path = hass.config.path('./' + res.get('path', ''))
+        _path = hass.config.path('') + '/' +  res.get('path', '').lstrip('/')
         try:
             if _type == 'get':
                 # 获取目录和文件
@@ -88,6 +88,12 @@ class HAView(HomeAssistantView):
             elif _type == 'upload-dir':
                 # 上传文件夹
                 return self.json({ 'code': 0, 'msg': '上传文件夹成功'})
+            elif _type == 'unzip':
+                # 解压文件
+                zip_path = _path + '解压目录'
+                print(_path)
+                fileExplorer.unzip(_path, zip_path)
+                return self.json({ 'code': 0, 'msg': '解压成功'})
             elif _type == 'download-file':
                 # 下载文件
                 r = web.FileResponse(_path)
@@ -95,26 +101,15 @@ class HAView(HomeAssistantView):
                 return r
             elif _type == 'download-url':
                 # 下载网络文件到文件夹
-                print(_url)
-                down_res = None
-                # 下载文件流
-                async with aiohttp.request('GET', _url) as r:
-                    down_res = await r.read()
-                # 保存文件
-                with open(_path + '/' + os.path.basename(_url), "wb") as code:
-                    code.write(down_res)
+                await download(_url, f"{_path}/{os.path.basename(_url)}")
                 return self.json({'code':0, 'msg': '下载成功'})
             elif _type == 'download-tmpfile':
                 # 下载临时文件
                 print(_url)
-                down_res = None
-                async with aiohttp.request('GET', _url) as r:
-                    down_res = await r.read()
                 # 获取临时文件目录
                 _path = tempfile.gettempdir()
                 backup_path = _path + '/ha_file_explorer_backup.zip'
-                with open(backup_path, "wb") as code:
-                    code.write(down_res)
+                await download(_url, backup_path)
                 # 解压文件
                 fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
                 # 删除下截的备份文件
