@@ -69,8 +69,8 @@ def delete_file(file_path):
     if os.path.exists(file_path):
         if os.path.isfile(file_path):
             # 删除文件
-            os.path.remove(file_path)
-        elif isdir(file_path):
+            os.remove(file_path)
+        elif os.path.isdir(file_path):
             # 删除目录
             shutil.rmtree(file_path, ignore_errors=True)
 
