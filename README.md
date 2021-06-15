@@ -16,7 +16,7 @@ sudo cp -r ./ha_file_explorer/custom_components/ha_file_explorer custom_componen
 sudo rm -rf ha_file_explorer
 
 # 安装依赖
-pip3 install qiniu asgiref
+pip3 install qiniu
 ```
 
 ## 更新日志

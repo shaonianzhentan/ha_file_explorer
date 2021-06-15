@@ -16,16 +16,16 @@ class FileExplorer():
         # 注册云备份服务
         hass.services.async_register(DOMAIN, 'config', self.config)
         # 加载本地配置
-        self.mounted_qn(load_yaml(self.storage_file))
+        self.mounted_qn(load_yaml(self.storage_file), 0)
 
     # 配置服务
     def config(self, call):
         data = call.data
         print(data)
-        self.mounted_qn(data)
+        self.mounted_qn(data, 1)
 
     # 注册七牛云备份
-    def mounted_qn(self, cfg):
+    def mounted_qn(self, cfg, flags):
         prefix = MAC_ADDRESS[:4]
         access_key = cfg.get('access_key', '')
         secret_key = cfg.get('secret_key', '')
@@ -40,10 +40,12 @@ class FileExplorer():
                 # 注册上传服务
                 if self.hass.services.has_service(DOMAIN, 'upload') == False:
                     self.hass.services.async_register(DOMAIN, 'upload', self.upload)
-                self.hass.async_create_task(self.notify("保存配置成功"))
+                if flags == 1:
+                  self.hass.async_create_task(self.notify("保存配置成功"))
             except Exception as ex:
                 print(ex)
-                self.hass.async_create_task(self.notify("出现异常"))
+                if flags == 1:
+                  self.hass.async_create_task(self.notify("出现异常"))
             
 
     def getAllFile(self, dir):

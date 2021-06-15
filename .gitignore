@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /dist
+custom_components/ha_file_explorer/local
 
 
 # local env files
@@ -21,3 +22,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+node_modules
