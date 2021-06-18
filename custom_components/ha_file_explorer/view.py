@@ -1,4 +1,4 @@
-import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile
+import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile, re
 from aiohttp import web
 from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
@@ -193,18 +193,18 @@ class HAView(HomeAssistantView):
                     old_content = load_content(hass_download_file)
                     if 'cdn.jsdelivr.net' not in old_content:
                         new_content = old_content.replace('_LOGGER.debug("Downloading %s", url)', '''
-                        _LOGGER.debug("Downloading %s", url)
-                        if "https://raw.githubusercontent.com" in url:
-                            arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
-                            arr[1] = arr[1] + "@" + arr[2]
-                            arr[2] = ""
-                            _list = ["https://cdn.jsdelivr.net/gh"]
-                            for item in arr:
-                                if item != "":
-                                    _list.append(item)
-                            url = "/".join(_list)
-                            _LOGGER.debug("下载链接： %s", url)
-                        ''')
+    _LOGGER.debug("Downloading %s", url)
+    if "https://raw.githubusercontent.com" in url:
+        arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
+        arr[1] = arr[1] + "@" + arr[2]
+        arr[2] = ""
+        _list = ["https://cdn.jsdelivr.net/gh"]
+        for item in arr:
+            if item != "":
+                _list.append(item)
+        url = "/".join(_list)
+        _LOGGER.debug("下载链接： %s", url)
+        ''')
                         save_content(hass_download_file, new_content)
                 return self.json({'code':0, 'msg': '更新成功'})
             elif _type == 'install-package':
