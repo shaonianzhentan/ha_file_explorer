@@ -4,7 +4,7 @@ from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
 from .util import pip_install
 from .const import DOMAIN, VERSION, URL, ROOT_PATH
-from .shaonianzhentan import move_file, github_url, download, mkdir
+from .shaonianzhentan import move_file, github_url, download, mkdir, load_content, save_content, fetch_text
 
 class HAView(HomeAssistantView):
 
@@ -171,6 +171,42 @@ class HAView(HomeAssistantView):
                 mkdir(dir_name)
                 await download(git['url'], f"{dir_name}/{git['file_name']}")
                 return self.json({'code':0, 'msg': '下载安装成功'})
+            elif _type == 'update-source':
+                # 换pip源
+                if _url == 'pip':
+                    os.system('pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple')
+                elif _url == 'github':
+                    # 换github源
+                    hosts_file = '/etc/hosts'
+                    old_hosts_content = load_content(hosts_file)
+                    githosts = await fetch_text('https://raw.fastgit.org/521xueweihan/GitHub520/main/hosts')
+                    # 检测是否已经添加
+                    reg = re.match(r".*(# GitHub520 Host Start.*# GitHub520 Host End)", old_hosts_content, flags = re.S)
+                    if reg is None:
+                        new_hosts_content = old_hosts_content + githosts
+                    else:
+                        new_hosts_content = old_hosts_content.replace(reg.groups(0)[0], githosts)
+                    save_content(hosts_file, new_hosts_content)
+                elif _url == 'hacs':
+                    # 修改hacs下载文件
+                    hass_download_file = hass.config.path('custom_components/hacs/helpers/functions/download.py')
+                    old_content = load_content(hass_download_file)
+                    if 'cdn.jsdelivr.net' not in old_content:
+                        new_content = old_content.replace('_LOGGER.debug("Downloading %s", url)', '''
+                        _LOGGER.debug("Downloading %s", url)
+                        if "https://raw.githubusercontent.com" in url:
+                            arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
+                            arr[1] = arr[1] + "@" + arr[2]
+                            arr[2] = ""
+                            _list = ["https://cdn.jsdelivr.net/gh"]
+                            for item in arr:
+                                if item != "":
+                                    _list.append(item)
+                            url = "/".join(_list)
+                            _LOGGER.debug("下载链接： %s", url)
+                        ''')
+                        save_content(hass_download_file, new_content)
+                return self.json({'code':0, 'msg': '更新成功'})
             elif _type == 'install-package':
                 # 安装依赖包
                 package_name = _url
@@ -200,7 +236,7 @@ class HAView(HomeAssistantView):
                 if os.name == 'nt':
                     _cmd = _sh
                 subprocess.Popen(_cmd, shell=True)
-                return self.json({'code':0, 'msg': '正在异步拉取代码，请自行查看是否成功'})        
+                return self.json({'code':0, 'msg': '正在异步拉取代码，请自行查看是否成功'})
         except Exception as ex:
             print(ex)
             return self.json({'code': 1, 'msg': f'出现异常：{ex}'})

@@ -2,48 +2,29 @@
   <v-app>
     <!-- loading -->
     <v-overlay :value="loading">
-      <v-progress-circular
-        indeterminate
-        size="64"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <!-- toast -->
     <v-snackbar v-model="snackbar.show">
       {{ snackbar.text }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          text
-          v-bind="attrs"
-          @click="snackbar.show = false"
-        >
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar.show = false">
           关闭
         </v-btn>
       </template>
     </v-snackbar>
     <!-- 导航 -->
-    <v-navigation-drawer
-      app
-      right
-      v-model="showSidebar"
-    >
+    <v-navigation-drawer app right v-model="showSidebar">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title">
-            文件管理
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            File Explorer
-          </v-list-item-subtitle>
+          <v-list-item-title class="title"> 文件管理 </v-list-item-title>
+          <v-list-item-subtitle> File Explorer </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
 
-      <v-list
-        dense
-        nav
-      >
+      <v-list dense nav>
         <!-- 主菜单 -->
         <v-list-item
           v-for="item in items"
@@ -100,15 +81,8 @@
     </v-main>
     <!-- footer -->
     <v-footer padless>
-      <v-card
-        elevation="2"
-        flat
-        tile
-        class="text-center"
-        style="width:100%;"
-      >
+      <v-card elevation="2" flat tile class="text-center" style="width: 100%">
         <v-card-text>
-
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -119,9 +93,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-book-edit
-                </v-icon>
+                <v-icon size="24px"> mdi-book-edit </v-icon>
               </v-btn>
             </template>
             <span>Home Assistant 学习笔记</span>
@@ -137,9 +109,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-file-video
-                </v-icon>
+                <v-icon size="24px"> mdi-file-video </v-icon>
               </v-btn>
             </template>
             <span>Home Assistant 视频学习记录</span>
@@ -155,9 +125,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-github
-                </v-icon>
+                <v-icon size="24px"> mdi-github </v-icon>
               </v-btn>
             </template>
             <span>GitHub项目地址</span>
@@ -172,9 +140,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-home-assistant
-                </v-icon>
+                <v-icon size="24px"> mdi-home-assistant </v-icon>
               </v-btn>
             </template>
             <span>Home Assistant 官网</span>
@@ -185,14 +151,12 @@
               <v-btn
                 class="mx-4"
                 icon
-                href="https://unpkg.com/@mdi/font@5.8.55/preview.html"
+                href="https://unpkg.com/@mdi/font@5.9.55/preview.html"
                 target="_blank"
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-format-font
-                </v-icon>
+                <v-icon size="24px"> mdi-format-font </v-icon>
               </v-btn>
             </template>
             <span>MDI图标预览</span>
@@ -208,9 +172,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-npm
-                </v-icon>
+                <v-icon size="24px"> mdi-npm </v-icon>
               </v-btn>
             </template>
             <span>MDI图标NPM包</span>
@@ -226,14 +188,11 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <v-icon size="24px">
-                  mdi-vuetify
-                </v-icon>
+                <v-icon size="24px"> mdi-vuetify </v-icon>
               </v-btn>
             </template>
             <span>前端UI框架 - Vuetify</span>
           </v-tooltip>
-
         </v-card-text>
 
         <v-card-text class="pt-0">
@@ -243,7 +202,7 @@
         <v-divider></v-divider>
 
         <v-card-text>
-          {{ new Date().getFullYear() }} — <strong>版本：{{ver}}</strong>
+          {{ new Date().getFullYear() }} — <strong>版本：{{ ver }}</strong>
         </v-card-text>
       </v-card>
     </v-footer>
@@ -258,7 +217,7 @@ export default {
   data: () => ({
     snackbar: {
       text: "",
-      show: false
+      show: false,
     },
     items: [
       { title: "首页", icon: "mdi-home", href: "/" },
@@ -279,58 +238,58 @@ export default {
       {
         title: "自动化",
         icon: "mdi-android",
-        href: "/config/automation/dashboard"
+        href: "/config/automation/dashboard",
       },
       {
         title: "场景",
         icon: "mdi-home-automation",
-        href: "/config/scene/dashboard"
+        href: "/config/scene/dashboard",
       },
       {
         title: "脚本",
         icon: "mdi-script-text",
-        href: "/config/script/dashboard"
+        href: "/config/script/dashboard",
       },
       {
         title: "资源",
         icon: "mdi-view-quilt",
-        href: "/config/lovelace/resources"
+        href: "/config/lovelace/resources",
       },
-      { title: "服务控制", icon: "mdi-server", href: "/config/server_control" }
+      { title: "服务控制", icon: "mdi-server", href: "/config/server_control" },
     ],
     haAction: [
       {
         title: "重载脚本",
         icon: "mdi-script-text",
         href: "script.reload",
-        color: "purple"
+        color: "purple",
       },
       {
         title: "重载场景",
         icon: "mdi-home-automation",
         href: "scene.reload",
-        color: "blue"
+        color: "blue",
       },
       {
         title: "重载自动化",
         icon: "mdi-android",
         href: "automation.reload",
-        color: "teal"
+        color: "teal",
       },
       {
         title: "重载所有服务",
         icon: "mdi-reload",
         href: "reload",
-        color: "lime"
+        color: "lime",
       },
       {
         title: "重新启动HA",
         icon: "mdi-home-assistant",
         href: "homeassistant.restart",
-        color: "red"
-      }
+        color: "red",
+      },
     ],
-    ver: window.ha.ver || "测试版"
+    ver: window.ha.ver || "测试版",
   }),
   computed: {
     ...mapState(["loading"]),
@@ -342,11 +301,11 @@ export default {
         if (value != this.$store.state.showSidebar) {
           this.toggleSidebar && this.toggleSidebar();
         }
-      }
-    }
+      },
+    },
   },
   beforeCreate() {
-    Vue.$toast = Vue.prototype.$toast = text => {
+    Vue.$toast = Vue.prototype.$toast = (text) => {
       this.snackbar.text = text;
       this.snackbar.show = true;
     };
@@ -374,8 +333,8 @@ export default {
           "scene.reload",
           "script.reload",
           "zone.reload",
-          "homeassistant.reload_core_config"
-        ].forEach(service => {
+          "homeassistant.reload_core_config",
+        ].forEach((service) => {
           window.ha.callService(service);
         });
         this.$toast(`重新加载所有服务`);
@@ -383,7 +342,7 @@ export default {
         window.ha.callService(href);
         this.$toast(`调用服务${href}`);
       }
-    }
-  }
+    },
+  },
 };
 </script>
