@@ -6,12 +6,15 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link rel="stylesheet" href="https://unpkg.com/@mdi/font@5.9.55/css/materialdesignicons.min.css">
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
+  <script src="https://unpkg.com/ace-builds@1.4.12/src-min-noconflict/ace.js"
+    onerror="this.src = 'js/src-min-noconflict/ace.js' "></script>
   <style>
     ::-webkit-scrollbar-track {
-      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       background-color: #F5F5F5;
     }
 
@@ -27,7 +30,6 @@
           color-stop(.5, transparent), to(transparent));
     }
   </style>
-  <script src="js/src-min-noconflict/ace.js"></script>
 </head>
 
 <body>
