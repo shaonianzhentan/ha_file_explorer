@@ -131,7 +131,7 @@
       <v-card elevation="2" style="padding: 20px">
         <v-card-text class="text--primary">
           <p class="text-h6">
-            注意：不会用千万别点以面按钮，否则可能造成数据异常
+            注意：不会用千万别点下面的按钮，否则可能造成数据异常
           </p>
           修改pip的镜像源、github的域名解析、修改hacs的资源下载链接
         </v-card-text>
