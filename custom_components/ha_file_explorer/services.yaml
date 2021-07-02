@@ -3,7 +3,7 @@ upload:
   fields:
     filter:
       description: 要过滤的文件夹名称
-      example: "['www', 'home-assistant.log']"
+      example: "['www', 'home-assistant.log', 'custom_components/ha_file_explorer']"
 config:
   description: 配置
   fields:

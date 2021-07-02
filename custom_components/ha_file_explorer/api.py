@@ -1,5 +1,5 @@
 import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile, homeassistant
-from .shaonianzhentan import load_yaml, save_yaml, load_content, save_content, delete_file, get_dir_size
+from .shaonianzhentan import load_yaml, save_yaml, load_content, save_content, delete_file, get_dir_size, zip
 
 from os         import listdir, stat, remove
 from os.path    import exists, isdir, isfile, join
@@ -32,21 +32,20 @@ class FileExplorer():
         bucket_name = cfg.get('bucket_name', '')
         download = cfg.get('download', '')
         if access_key != '' and secret_key != '' and bucket_name != '':
-            try:
-                # 保存配置
+            # 保存配置
+            if flags == 1:
                 save_yaml(self.storage_file, cfg)
+                self.hass.async_create_task(self.notify("保存配置成功"))
+            try:
                 import qiniu
                 self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), self.hass, bucket_name, prefix, download)
                 # 注册上传服务
                 if self.hass.services.has_service(DOMAIN, 'upload') == False:
                     self.hass.services.async_register(DOMAIN, 'upload', self.upload)
-                if flags == 1:
-                  self.hass.async_create_task(self.notify("保存配置成功"))
             except Exception as ex:
                 print(ex)
                 if flags == 1:
-                  self.hass.async_create_task(self.notify("出现异常"))
-            
+                    self.hass.async_create_task(self.notify("出现异常"))
 
     def getAllFile(self, dir):
         allcontent = listdir(dir)
@@ -201,18 +200,10 @@ class FileExplorer():
 
     async def upload(self, call):
         data = call.data
-        _filter = data.get('filter', [])
-        _filter.extend(['ha_file_explorer_backup', 'home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core'])
-        config_path = self.hass.config.path('./')
-        file_list = self.getDirectory(config_path)
-        print('过滤目录')
-        print(_filter)
-        # 上传文件
-        filter_list = filter(lambda x: _filter.count(x['name']) == 0, file_list)        
-        list_name = list(map(lambda x: x['name'], list(filter_list)))
-        # print(list_name)
+        filter_dir = data.get('filter', [])
+        filter_dir.extend(['home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core', 'custom_components/ha_file_explorer'])
         await self.notify('开始压缩上传备份文件')
-        zf = self.zip(list_name, ['custom_components\\ha_file_explorer'])
+        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__'])
         await self.q.upload(zf)
         self.delete(zf)
         print('上传成功')
