@@ -5,7 +5,7 @@
   "config_flow": true,
   "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
   "requirements": [
-    "qiniu==7.4"
+    "qiniu==7.4.1"
   ],
   "dependencies": [],
   "codeowners": []

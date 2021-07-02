@@ -12,7 +12,7 @@ class FileExplorer():
         self.q = None
         self.storage_dir = hass.config.path(".shaonianzhentan")
         self.storage_file = self.storage_dir + "/ha_file_explorer.yaml"
-        self.mkdir(self.storage_dir)        
+        self.mkdir(self.storage_dir)
         # 注册云备份服务
         hass.services.async_register(DOMAIN, 'config', self.config)
         # 加载本地配置
@@ -45,7 +45,7 @@ class FileExplorer():
             except Exception as ex:
                 print(ex)
                 if flags == 1:
-                    self.hass.async_create_task(self.notify("出现异常"))
+                    self.hass.async_create_task(self.notify("出现异常" + str(ex)))
 
     def getAllFile(self, dir):
         allcontent = listdir(dir)
@@ -203,7 +203,7 @@ class FileExplorer():
         filter_dir = data.get('filter', [])
         filter_dir.extend(['home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core', 'custom_components/ha_file_explorer'])
         await self.notify('开始压缩上传备份文件')
-        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__'])
+        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__', '.npm'])
         await self.q.upload(zf)
         self.delete(zf)
         print('上传成功')
