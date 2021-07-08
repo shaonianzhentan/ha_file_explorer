@@ -53,7 +53,7 @@ export default {
       },
     }),
     isAction() {
-      return this.filePathList.join("/") === "blueprints/automation";
+      return this.filePathList.join("/").indexOf("blueprints/automation") === 0;
     },
   },
   watch: {

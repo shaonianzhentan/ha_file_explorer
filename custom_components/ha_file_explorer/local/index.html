@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <!--[if IE]><link rel="icon" href="favicon.ico"><![endif]-->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/@mdi/font@5.9.55/css/materialdesignicons.min.css">
-  <title>文件管理 - File Explorer</title>
-  <script src="https://unpkg.com/ace-builds@1.4.12/src-min-noconflict/ace.js"
-    onerror="this.src = 'js/src-min-noconflict/ace.js'"></script>
-  <style>
-    ::-webkit-scrollbar-track {
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.5.0/400.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css"><title>文件管理 - File Explorer</title><script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js" onerror="this.src = 'js/src-min-noconflict/ace.js'"></script><style>::-webkit-scrollbar-track {
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       background-color: #F5F5F5;
     }
@@ -27,67 +13,7 @@
       background-image: -webkit-gradient(linear, 0 0, 0 100%,
           color-stop(.5, rgba(255, 255, 255, .2)),
           color-stop(.5, transparent), to(transparent));
-    }
-  </style>
-  <link href="css/chunk-0486b194.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-10d0807f.a5decad6.css" rel="prefetch">
-  <link href="css/chunk-1655e5b6.a5c6e440.css" rel="prefetch">
-  <link href="css/chunk-1747b17e.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-2fdff89c.bc1b9fdf.css" rel="prefetch">
-  <link href="css/chunk-35d96bf8.7d887a01.css" rel="prefetch">
-  <link href="css/chunk-46887928.a5decad6.css" rel="prefetch">
-  <link href="css/chunk-543c295d.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-5c732be6.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-64922f76.681a6b6f.css" rel="prefetch">
-  <link href="css/chunk-6fbb8d7f.6069453a.css" rel="prefetch">
-  <link href="css/chunk-7cc5e0d6.15fe9a91.css" rel="prefetch">
-  <link href="css/chunk-7ff8088c.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-a2d7322e.fae4c610.css" rel="prefetch">
-  <link href="css/chunk-ca64ef86.01cf6fd8.css" rel="prefetch">
-  <link href="css/chunk-d7e5c3c0.4486b097.css" rel="prefetch">
-  <link href="js/chunk-0486b194.6e0261b7.js" rel="prefetch">
-  <link href="js/chunk-10d0807f.6c5c9bb1.js" rel="prefetch">
-  <link href="js/chunk-1655e5b6.3cfb29df.js" rel="prefetch">
-  <link href="js/chunk-1747b17e.90728011.js" rel="prefetch">
-  <link href="js/chunk-2d0b2007.765cd12e.js" rel="prefetch">
-  <link href="js/chunk-2d0ccbf6.a23473b6.js" rel="prefetch">
-  <link href="js/chunk-2d0daf50.6675eb8c.js" rel="prefetch">
-  <link href="js/chunk-2d0e88ff.a6a3850e.js" rel="prefetch">
-  <link href="js/chunk-2fdff89c.99f3086d.js" rel="prefetch">
-  <link href="js/chunk-35d96bf8.ccbfddf7.js" rel="prefetch">
-  <link href="js/chunk-46887928.31127439.js" rel="prefetch">
-  <link href="js/chunk-543c295d.36deb575.js" rel="prefetch">
-  <link href="js/chunk-5c732be6.f8f83240.js" rel="prefetch">
-  <link href="js/chunk-6023431e.73e192a5.js" rel="prefetch">
-  <link href="js/chunk-64922f76.4550cdfa.js" rel="prefetch">
-  <link href="js/chunk-6fbb8d7f.ac164e5a.js" rel="prefetch">
-  <link href="js/chunk-772fe7bd.fd8c19b0.js" rel="prefetch">
-  <link href="js/chunk-7cc5e0d6.4081b169.js" rel="prefetch">
-  <link href="js/chunk-7ff8088c.37fa3606.js" rel="prefetch">
-  <link href="js/chunk-a2d7322e.629a677a.js" rel="prefetch">
-  <link href="js/chunk-ca64ef86.b3cdc466.js" rel="prefetch">
-  <link href="js/chunk-d7e5c3c0.a5b209a9.js" rel="prefetch">
-  <link href="css/chunk-vendors.bb0829cd.css" rel="preload" as="style">
-  <link href="js/app.356b1d21.js" rel="preload" as="script">
-  <link href="js/chunk-vendors.f06a1e0f.js" rel="preload" as="script">
-  <link href="css/chunk-vendors.bb0829cd.css" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4DBA87">
-  <meta name="apple-mobile-web-app-capable" content="no">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ha_file_explorer">
-  <link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png">
-  <link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87">
-  <meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png">
-  <meta name="msapplication-TileColor" content="#000000">
-</head>
-
-<body><noscript><strong>We're sorry but 文件管理 - File Explorer doesn't work properly without JavaScript enabled. Please
-      enable it to continue.</strong></noscript>
-  <div id="app"></div>
-  <script>class HA {
+    }</style><link href="css/chunk-13855cd0.9c6fab9e.css" rel="prefetch"><link href="css/chunk-20380a1a.233fe1cd.css" rel="prefetch"><link href="css/chunk-2d976c01.7d887a01.css" rel="prefetch"><link href="css/chunk-4671f6ee.fae4c610.css" rel="prefetch"><link href="css/chunk-56177c72.38fb335c.css" rel="prefetch"><link href="css/chunk-7a2d47bc.bc1b9fdf.css" rel="prefetch"><link href="css/chunk-b4e01c08.03bd01ed.css" rel="prefetch"><link href="css/chunk-cfbfc824.03bd01ed.css" rel="prefetch"><link href="css/chunk-d4a9ed12.a5c6e440.css" rel="prefetch"><link href="css/chunk-f0c54aa0.01cf6fd8.css" rel="prefetch"><link href="css/chunk-f0d8deb2.01cf6fd8.css" rel="prefetch"><link href="css/chunk-f1194808.01cf6fd8.css" rel="prefetch"><link href="css/chunk-f12a3540.01cf6fd8.css" rel="prefetch"><link href="css/chunk-f638bb00.01cf6fd8.css" rel="prefetch"><link href="css/chunk-f67376ba.01cf6fd8.css" rel="prefetch"><link href="css/chunk-faeacd78.839c719d.css" rel="prefetch"><link href="js/chunk-13855cd0.3bc24771.js" rel="prefetch"><link href="js/chunk-20380a1a.d1aa9cd4.js" rel="prefetch"><link href="js/chunk-2d0b2007.e7a0f417.js" rel="prefetch"><link href="js/chunk-2d0ccbf6.434b0946.js" rel="prefetch"><link href="js/chunk-2d0daf50.55e9b1a4.js" rel="prefetch"><link href="js/chunk-2d0e88ff.303738b8.js" rel="prefetch"><link href="js/chunk-2d2293db.a552f950.js" rel="prefetch"><link href="js/chunk-2d976c01.4b041eb3.js" rel="prefetch"><link href="js/chunk-4671f6ee.26e701dc.js" rel="prefetch"><link href="js/chunk-56177c72.cb7edd35.js" rel="prefetch"><link href="js/chunk-6021c06a.b2011537.js" rel="prefetch"><link href="js/chunk-7a2d47bc.c4ed927d.js" rel="prefetch"><link href="js/chunk-b4e01c08.dc512508.js" rel="prefetch"><link href="js/chunk-cfbfc824.0ce7418d.js" rel="prefetch"><link href="js/chunk-d4a9ed12.baf85c5d.js" rel="prefetch"><link href="js/chunk-f0c54aa0.bec88cb1.js" rel="prefetch"><link href="js/chunk-f0d8deb2.7ac7ccee.js" rel="prefetch"><link href="js/chunk-f1194808.03022367.js" rel="prefetch"><link href="js/chunk-f12a3540.64352ae4.js" rel="prefetch"><link href="js/chunk-f638bb00.3fd9d86d.js" rel="prefetch"><link href="js/chunk-f67376ba.957e1fbd.js" rel="prefetch"><link href="js/chunk-faeacd78.efa2c02a.js" rel="prefetch"><link href="css/chunk-vendors.8a4f2814.css" rel="preload" as="style"><link href="js/app.fa38e4ce.js" rel="preload" as="script"><link href="js/chunk-vendors.c979d3cc.js" rel="preload" as="script"><link href="css/chunk-vendors.8a4f2814.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="ha_file_explorer"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but 文件管理 - File Explorer doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script>class HA {
       constructor() {
         // url参数
         let query = new URLSearchParams(location.search)
@@ -186,9 +112,4 @@
     }
 
     window.ha = new HA();
-    window.ha.fullscreen()</script>
-  <script src="js/chunk-vendors.f06a1e0f.js"></script>
-  <script src="js/app.356b1d21.js"></script>
-</body>
-
-</html>
+    window.ha.fullscreen()</script><script src="js/chunk-vendors.c979d3cc.js"></script><script src="js/app.fa38e4ce.js"></script></body></html>
