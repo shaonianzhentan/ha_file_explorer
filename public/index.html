@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,8 +11,7 @@
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
-  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js"
-    onerror="this.src = 'js/src-min-noconflict/ace.js' "></script>
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.min.js"></script>
   <style>
     ::-webkit-scrollbar-track {
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -32,6 +30,11 @@
           color-stop(.5, transparent), to(transparent));
     }
   </style>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vuex/3.6.2/vuex.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue-router/3.5.2/vue-router.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.js"></script>
 </head>
 
 <body>
