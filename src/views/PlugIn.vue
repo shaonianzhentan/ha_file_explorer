@@ -196,6 +196,11 @@ export default {
           name: "和风天气",
           url: "https://github.com/shaonianzhentan/hf_weather",
         },
+        {
+          domain: "mipad_android",
+          name: "小米平板",
+          url: "https://github.com/shaonianzhentan/MiPadAndroid",
+        },
       ],
       list: [
         {
