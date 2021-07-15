@@ -1,37 +1,24 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    width="500"
-  >
+  <v-dialog v-model="dialog" width="500">
     <v-card>
-      <v-card-title>
-        新建文件
-      </v-card-title>
+      <v-card-title> 新建文件 </v-card-title>
 
       <v-card-text>
-        <v-form @submit="saveClick">
+        <v-form @submit.prevent="saveClick">
           <v-text-field
             label="文件名"
             v-model.trim="name"
             :autofocus="true"
           ></v-text-field>
         </v-form>
-        <span class="red--text">
-          注意：新建文件会覆盖已有文件
-        </span>
+        <span class="red--text"> 注意：新建文件会覆盖已有文件 </span>
       </v-card-text>
 
       <v-divider></v-divider>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          text
-          @click="saveClick"
-        >
-          保存
-        </v-btn>
+        <v-btn color="primary" text @click="saveClick"> 保存 </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -42,7 +29,7 @@ export default {
   data() {
     return {
       dialog: false,
-      name: ""
+      name: "",
     };
   },
   computed: mapGetters(["getFilePath"]),
@@ -62,7 +49,7 @@ export default {
           this.dialog = false;
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>

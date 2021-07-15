@@ -9,7 +9,7 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form @submit="saveClick">
+        <v-form @submit.prevent="saveClick">
           <v-text-field
             label="新文件名"
             v-model.trim="name"

@@ -4,7 +4,7 @@
       <v-card-title> 添加GitHub蓝图 </v-card-title>
 
       <v-card-text>
-        <v-form @submit="saveClick">
+        <v-form @submit.prevent="saveClick">
           <v-text-field
             label="GitHub地址"
             v-model.trim="url"

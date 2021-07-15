@@ -4,7 +4,7 @@
       <v-card-title> 下载网络文件 </v-card-title>
 
       <v-card-text>
-        <v-form @submit="saveClick">
+        <v-form @submit.prevent="saveClick">
           <v-text-field
             label="URL地址"
             v-model.trim="url"
