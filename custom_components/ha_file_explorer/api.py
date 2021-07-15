@@ -59,7 +59,6 @@ class FileExplorer():
             # 过滤指定目录
             if item == '__pycache__':
                 continue
-            listInfo = stat(filePath)
             hashInfo['name'] = item
             hashInfo['url']  = filePath
             if isdir(filePath):
@@ -71,28 +70,26 @@ class FileExplorer():
         allcontent = listdir(dir)
         dirItem    = [] 
 
-        for item in allcontent:
-            hashInfo = {}
-            '''
-            print(item)
-            if item.startswith('.'):
-                continue
-            '''
-            path_name = join(dir,item)
-            if exists(path_name) == False:
-                continue
-            listInfo = stat(path_name)
-            hashInfo['name'] = item
-            hashInfo['url']  = item
-            hashInfo['edit'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
-                        
-            if isfile(path_name):
-                hashInfo['type'] = 'file'
-                hashInfo['size'] = int(listInfo.st_size)
-            if isdir(path_name):
-                hashInfo['type'] = 'dir'
-                hashInfo['size'] = get_dir_size(path_name)
-            dirItem.append(hashInfo)
+        for item in allcontent:            
+            try:
+                hashInfo = {}
+                path_name = join(dir,item)
+                if exists(path_name) == False:
+                    continue
+                listInfo = stat(path_name)
+                hashInfo['name'] = item
+                hashInfo['url']  = item
+                hashInfo['edit'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
+                            
+                if isfile(path_name):
+                    hashInfo['type'] = 'file'
+                    hashInfo['size'] = int(listInfo.st_size)
+                if isdir(path_name):
+                    hashInfo['type'] = 'dir'
+                    hashInfo['size'] = get_dir_size(path_name)
+                dirItem.append(hashInfo)
+            except Exception as ex:
+                print(ex)
 
         dirItem.sort(key=lambda x: x['name'], reverse=True)
         return dirItem

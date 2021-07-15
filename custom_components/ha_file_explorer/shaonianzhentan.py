@@ -1,4 +1,5 @@
 import os, shutil, uuid, yaml, logging, aiohttp, json, urllib, hashlib, datetime, asyncio, base64, re, zipfile, tempfile, time
+from urllib.parse import urlparse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -255,9 +256,10 @@ def unescape(name):
 
 # 获取HTTP内容
 async def fetch_text(url):
+    p = urlparse(url)
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Referer': url
+        'Referer': f'{p.scheme}//{p.netloc}'
     }
     text = None
     async with aiohttp.ClientSession(headers=headers) as session:
@@ -275,7 +277,12 @@ async def fetch_json(url):
 
 # 获取HTTP请求信息
 async def fetch_info(url):
-    async with aiohttp.ClientSession() as session:
+    p = urlparse(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+        'Referer': f'{p.scheme}//{p.netloc}'
+    }
+    async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url) as response:
             return {
               'status': response.status,
