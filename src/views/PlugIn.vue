@@ -201,6 +201,11 @@ export default {
           name: "小米平板",
           url: "https://github.com/shaonianzhentan/MiPadAndroid",
         },
+        {
+          domain: "xiaomi_radio",
+          name: "小米电台",
+          url: "https://github.com/shaonianzhentan/xiaomi_radio",
+        },
       ],
       list: [
         {
