@@ -206,6 +206,11 @@ export default {
           name: "小米电台",
           url: "https://github.com/shaonianzhentan/xiaomi_radio",
         },
+        {
+          domain: "ha_status_notification",
+          name: "状态提醒",
+          url: "https://github.com/shaonianzhentan/ha_status_notification",
+        },
       ],
       list: [
         {
@@ -264,7 +269,7 @@ export default {
       if (!domain || !url) {
         return this.$toast("请输入组件名称和项目地址");
       }
-      console.log(gitUrl);
+      // console.log(gitUrl);
       this.fetchApi({
         type: "update",
         domain,

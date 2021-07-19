@@ -6,6 +6,6 @@ MAC_ADDRESS = get_mac_address_key().lower()
 NAME = "文件管理"
 ICON = "mdi:folder"
 DOMAIN = "ha_file_explorer"
-VERSION = '2.5.5.8'
+VERSION = '2.5.5.9'
 URL = '/' + DOMAIN +'-api'
 ROOT_PATH = '/' + DOMAIN +'-local/' + VERSION
