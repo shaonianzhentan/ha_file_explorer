@@ -262,7 +262,8 @@ async def fetch_text(url):
         'Referer': f'{p.scheme}//{p.netloc}'
     }
     text = None
-    async with aiohttp.ClientSession(headers=headers) as session:
+    connector = aiohttp.TCPConnector(verify_ssl=False)
+    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
         async with session.get(url) as resp:
             text = await resp.text()
     return text
@@ -282,7 +283,8 @@ async def fetch_info(url):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
         'Referer': f'{p.scheme}//{p.netloc}'
     }
-    async with aiohttp.ClientSession(headers=headers) as session:
+    connector = aiohttp.TCPConnector(verify_ssl=False)
+    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
         async with session.get(url) as response:
             return {
               'status': response.status,
@@ -292,7 +294,8 @@ async def fetch_info(url):
 # 下载文件
 async def download(url, file_path):
     headers = {'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'}
-    async with aiohttp.ClientSession(headers=headers) as session:
+    connector = aiohttp.TCPConnector(verify_ssl=False)
+    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
         async with session.get(url) as response:
             file = await response.read()
             with open(file_path, 'wb') as f:
