@@ -133,16 +133,19 @@
           method,
           body
         }).then(async res => {
-          const contentType = res.headers.get('Content-Type')
-          if (contentType === 'application/octet-stream') {
-            const blob = await res.blob()
-            let bl = new Blob([blob], { type: blob.type });
-            var link = top.document.createElement('a');
-            link.href = top.URL.createObjectURL(blob);
-            link.download = params.path.substr(params.path.lastIndexOf('/') + 1)
-            link.click();
-            top.URL.revokeObjectURL(link.href)
-            return { msg: '下载成功' }
+          try {
+            if (params.type === 'download-file') {
+              const blob = await res.blob()
+              let bl = new Blob([blob], { type: blob.type });
+              var link = top.document.createElement('a');
+              link.href = top.URL.createObjectURL(blob);
+              link.download = params.path.substr(params.path.lastIndexOf('/') + 1)
+              link.click();
+              top.URL.revokeObjectURL(link.href)
+              return { msg: '下载成功' }
+            }
+          } catch (ex) {
+            console.error(ex)
           }
           return res.json()
         })
