@@ -145,6 +145,12 @@
                 <v-list-item @click="uploadQnClick(item)">
                   <v-list-item-title>上传此文件到七牛云</v-list-item-title>
                 </v-list-item>
+                <v-list-item
+                  @click="restoreClick(item)"
+                  v-if="isRestoreFile(item)"
+                >
+                  <v-list-item-title>还原</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </v-list-item-action>
@@ -152,6 +158,7 @@
       </v-list>
     </v-card>
     <RenameFile ref="RenameFile" />
+    <RestoreDialog ref="RestoreDialog" />
   </v-container>
 </template>
 <script>
@@ -161,6 +168,7 @@ export default {
     HeaderPanel: () => import("./HeaderPanel"),
     FilePathNav: () => import("./FilePathNav"),
     RenameFile: () => import("./RenameFile"),
+    RestoreDialog: () => import("@/components/RestoreDialog"),
   },
   data() {
     return {
@@ -280,6 +288,20 @@ export default {
     },
     renameClick({ name }) {
       this.$refs["RenameFile"].show(name);
+    },
+    // 数据还原
+    restoreClick({ name }) {
+      const url = location.href.split("index.html")[0] + "backup/" + name;
+      console.log(url);
+      // this.$refs["RestoreDialog"].show(item.url);
+    },
+    isRestoreFile(item) {
+      const { filePathList } = this;
+      const filePath = filePathList.join("/");
+      return (
+        filePath.indexOf("custom_components/ha_file_explorer/local/backup") >=
+          0 && /.+\.zip$/.test(item.name)
+      );
     },
   },
 };
