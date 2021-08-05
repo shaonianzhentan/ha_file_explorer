@@ -15,6 +15,9 @@ class FileExplorer():
         self.mkdir(self.storage_dir)
         # 注册云备份服务
         hass.services.async_register(DOMAIN, 'config', self.config)
+        # 注册上传服务
+        if self.hass.services.has_service(DOMAIN, 'upload') == False:
+            self.hass.services.async_register(DOMAIN, 'upload', self.upload)
         # 加载本地配置
         self.mounted_qn(load_yaml(self.storage_file), 0)
 
@@ -30,7 +33,7 @@ class FileExplorer():
         access_key = cfg.get('access_key', '')
         secret_key = cfg.get('secret_key', '')
         bucket_name = cfg.get('bucket_name', '')
-        download = cfg.get('download', '')
+        download = cfg.get('download', '')        
         if access_key != '' and secret_key != '' and bucket_name != '':
             # 保存配置
             if flags == 1:
@@ -39,9 +42,6 @@ class FileExplorer():
             try:
                 import qiniu
                 self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), self.hass, bucket_name, prefix, download)
-                # 注册上传服务
-                if self.hass.services.has_service(DOMAIN, 'upload') == False:
-                    self.hass.services.async_register(DOMAIN, 'upload', self.upload)
             except Exception as ex:
                 print(ex)
                 if flags == 1:
@@ -200,8 +200,12 @@ class FileExplorer():
         filter_dir = data.get('filter', [])
         filter_dir.extend(['home-assistant_v2.db', 'home-assistant.log', 'deps', 'media', 'core', 'custom_components/ha_file_explorer'])
         await self.notify('开始压缩上传备份文件')
-        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__', '.npm'])
-        await self.q.upload(zf)
-        self.delete(zf)
-        print('上传成功')
-        await self.notify('备份文件上传成功')
+        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__', '.npm'], self.hass.config.path('./custom_components/ha_file_explorer/backup/'))
+        # 如果配置了七牛云服务
+        if self.q is not None:
+            await self.q.upload(zf)
+            self.delete(zf)
+            print('上传成功')
+            await self.notify('备份文件上传成功')
+        else:
+            await self.notify('备份文件成功，请在文件管理器内查看')

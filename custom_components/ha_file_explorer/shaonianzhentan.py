@@ -148,9 +148,10 @@ root_path: 压缩目录
 filter_dir: 过滤目录
 filter_name: 全局过滤名称
 '''
-def zip(root_path, filter_dir=None, filter_name=None):
+def zip(root_path, filter_dir=None, filter_name=None, tmpdir=None):
     # 临时目录
-    tmpdir = tempfile.gettempdir()
+    if tmpdir is None:
+        tmpdir = tempfile.gettempdir()
     # print(tmpdir)
     # 压缩文件
     zf = os.path.join(tmpdir, time.strftime('%y_%m_%d_%H%M%S',time.localtime(time.time())) + ".zip")
