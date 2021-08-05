@@ -292,8 +292,7 @@ export default {
     // 数据还原
     restoreClick({ name }) {
       const url = location.href.split("index.html")[0] + "backup/" + name;
-      console.log(url);
-      // this.$refs["RestoreDialog"].show(item.url);
+      this.$refs["RestoreDialog"].show(url);
     },
     isRestoreFile(item) {
       const { filePathList } = this;
