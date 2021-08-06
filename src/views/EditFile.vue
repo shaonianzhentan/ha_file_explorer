@@ -1,39 +1,23 @@
 <template>
   <div>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
+    <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
-        <v-btn
-          dark
-          icon
-          @click="backClick"
-        >
+        <v-btn dark icon @click="backClick">
           <v-icon>mdi-keyboard-backspace</v-icon>
         </v-btn>
         {{ name }}
       </div>
       <v-spacer></v-spacer>
-      <v-btn
-        text
-        v-show="showSave"
-        @click="saveClick"
-      >
+      <v-btn text v-show="showSave" @click="saveClick">
         <v-icon>mdi-content-save</v-icon>保存
       </v-btn>
-      <v-btn
-        dark
-        icon
-        @click="toggleSidebar"
-      >
-        <v-icon>{{showSidebar ? 'mdi-menu-open' : 'mdi-menu'}}</v-icon>
+      <v-btn dark icon @click="toggleSidebar">
+        <v-icon>{{ showSidebar ? "mdi-menu-open" : "mdi-menu" }}</v-icon>
       </v-btn>
     </v-app-bar>
     <div
       id="editor-panel"
-      style="width:100%; height:calc(100vh - 65px);padding-top:2px;"
+      style="width: 100%; height: calc(100vh - 65px); padding-top: 2px"
     ></div>
   </div>
 </template>
@@ -44,18 +28,18 @@ export default {
     return {
       showSave: false,
       loading: false,
-      name: ""
+      name: "",
     };
   },
   computed: {
     ...mapGetters(["getFilePath"]),
-    ...mapState(["showSidebar"])
+    ...mapState(["showSidebar"]),
   },
   activated() {
     this.loadData();
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       document.addEventListener("keydown", vm.autoSaveKeydown, false);
     });
   },
@@ -81,7 +65,7 @@ export default {
         window.ha
           .post({
             type: "get-content",
-            path: this.getFilePath(name)
+            path: this.getFilePath(name),
           })
           .then(({ code, data, msg }) => {
             if (code > 0) {
@@ -96,15 +80,18 @@ export default {
             }
             if (["js", "ts", "jsx"].includes(ext)) {
               ext = "javascript";
-            }
-            if (["py", "pyc"].includes(ext)) {
+            } else if (["py", "pyc"].includes(ext)) {
               ext = "python";
+            } else if (["md"].includes(ext)) {
+              ext = "markdown";
+            } else if (["yml", "yaml"].includes(ext)) {
+              ext = "yaml";
             }
             let mode = `ace/mode/${ext}`;
             // console.log(mode);
             window.editor = window.ace.edit("editor", {
               theme: "ace/theme/chrome",
-              mode
+              mode,
             });
             this.showSave = true;
             document.body.scrollIntoView();
@@ -119,9 +106,9 @@ export default {
         .post({
           type: "new-file",
           path: this.getFilePath(this.name),
-          data
+          data,
         })
-        .then(res => {
+        .then((res) => {
           this.$toast(res.msg);
         })
         .finally(() => {
@@ -137,8 +124,8 @@ export default {
     },
     backClick() {
       this.$router.back();
-    }
-  }
+    },
+  },
 };
 </script>
 
