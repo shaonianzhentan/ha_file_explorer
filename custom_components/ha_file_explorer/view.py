@@ -172,6 +172,7 @@ class HAView(HomeAssistantView):
                 await download(git['url'], f"{dir_name}/{git['file_name']}")
                 return self.json({'code':0, 'msg': '下载安装成功'})
             elif _type == 'update-source':
+                msg = '更新成功'
                 # 换pip源
                 if _url == 'pip':
                     os.system('pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple')
@@ -184,14 +185,29 @@ class HAView(HomeAssistantView):
                     reg = re.match(r".*(# GitHub520 Host Start.*# GitHub520 Host End)", old_hosts_content, flags = re.S)
                     if reg is None:
                         new_hosts_content = old_hosts_content + githosts
+                        msg = "初次更新host"
                     else:
                         new_hosts_content = old_hosts_content.replace(reg.groups(0)[0], githosts)
+                        msg = "更新host"
                     save_content(hosts_file, new_hosts_content)
+                elif _url == 'github-clear':
+                    # 换github源
+                    hosts_file = '/etc/hosts'
+                    old_hosts_content = load_content(hosts_file)
+                    # 检测是否已经添加
+                    reg = re.match(r".*(# GitHub520 Host Start.*# GitHub520 Host End)", old_hosts_content, flags = re.S)
+                    if reg is not None:
+                        new_hosts_content = old_hosts_content.replace(reg.groups(0)[0], '')
+                        save_content(hosts_file, new_hosts_content)
+                        msg = "清除host成功"
+                    else:
+                        msg = "没有需要清除的host"
                 elif _url == 'hacs':
                     # 修改hacs下载文件
                     hass_download_file = hass.config.path('custom_components/hacs/helpers/functions/download.py')
                     old_content = load_content(hass_download_file)
                     if 'cdn.jsdelivr.net' not in old_content:
+                        msg = "初次更新hacs"
                         new_content = old_content.replace('_LOGGER.debug("Downloading %s", url)', '''
     _LOGGER.debug("Downloading %s", url)
     if "https://raw.githubusercontent.com" in url:
@@ -206,7 +222,9 @@ class HAView(HomeAssistantView):
         _LOGGER.debug("下载链接： %s", url)
         ''')
                         save_content(hass_download_file, new_content)
-                return self.json({'code':0, 'msg': '更新成功'})
+                    else:
+                        msg = 'hacs已经添加过了'
+                return self.json({'code':0, 'msg': msg})
             elif _type == 'install-package':
                 # 安装依赖包
                 package_name = _url
