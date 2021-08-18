@@ -213,6 +213,11 @@ export default {
           domain: "ha_status_notification",
           name: "状态提醒",
           url: "https://github.com/shaonianzhentan/ha_status_notification"
+        },
+        {
+          domain: "meizu_ble",
+          name: "魅族智能遥控器",
+          url: "https://github.com/shaonianzhentan/meizu_ble"
         }
       ],
       list: [
