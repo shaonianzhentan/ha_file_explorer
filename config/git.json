@@ -96,6 +96,16 @@
             "domain": "xiaomi_miot",
             "name": "Xiaomi Miot - 小米云端设备",
             "url": "https://github.com/al-one/hass-xiaomi-miot"
+        },
+        {
+            "domain": "baidu_fanyi_tts",
+            "name": "百度翻译的TTS服务",
+            "url": "https://github.com/al-one/hass-baidu-fanyi-tts"
+        },
+        {
+            "domain": "smartir",
+            "name": "SmartIR红外控制器",
+            "url": "https://github.com/smartHomeHub/SmartIR"
         }
     ]
 }
