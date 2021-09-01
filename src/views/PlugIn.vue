@@ -171,6 +171,16 @@ export default {
       ],
     };
   },
+  created() {
+    fetch(
+      `https://cdn.jsdelivr.net/gh/shaonianzhentan/ha_file_explorer@master/config/git.json?ver=${window.ha.ver}`
+    )
+      .then((res) => res.json())
+      .then(({ my, all }) => {
+        this.mylist = my;
+        this.list = all;
+      });
+  },
   methods: {
     ...mapActions(["fetchApi"]),
     gitClick(gitUrl) {

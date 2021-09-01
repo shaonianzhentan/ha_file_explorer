@@ -52,6 +52,8 @@ export default new Vuex.Store({
           ext = 'zip'
         } else if (['html', 'htm'].includes(ext)) {
           ext = 'html'
+        } else if (['db-shm', 'db-wal'].includes(ext)) {
+          ext = 'db'
         }
         const mode = {
           code: {
