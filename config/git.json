@@ -56,6 +56,11 @@
             "url": "https://github.com/shaonianzhentan/ha_status_notification"
         },
         {
+            "domain": "ha_notify",
+            "name": "通知提醒",
+            "url": "https://github.com/shaonianzhentan/ha_notify"
+        },
+        {
           "domain": "meizu_ble",
           "name": "魅族智能遥控器",
           "url": "https://github.com/shaonianzhentan/meizu_ble"
