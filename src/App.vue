@@ -151,7 +151,7 @@
               <v-btn
                 class="mx-4"
                 icon
-                href="https://unpkg.com/@mdi/font@5.9.55/preview.html"
+                href="https://unpkg.com/@mdi/font@6.4.95/preview.html"
                 target="_blank"
                 v-bind="attrs"
                 v-on="on"
