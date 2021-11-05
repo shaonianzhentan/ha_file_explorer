@@ -61,9 +61,14 @@
             "url": "https://github.com/shaonianzhentan/ha_notify"
         },
         {
-          "domain": "meizu_ble",
-          "name": "魅族智能遥控器",
-          "url": "https://github.com/shaonianzhentan/meizu_ble"
+            "domain": "meizu_ble",
+            "name": "魅族智能遥控器",
+            "url": "https://github.com/shaonianzhentan/meizu_ble"
+        },
+        {
+            "domain": "ha_tv",
+            "name": "我的电视",
+            "url": "https://github.com/shaonianzhentan/ha-tv"
         }
     ],
     "all": [
