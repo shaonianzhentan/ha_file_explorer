@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.5.0/400.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.9.55/css/materialdesignicons.min.css"><title>文件管理 - File Explorer</title><style>::-webkit-scrollbar-track {
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.5.0/400.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.4.95/css/materialdesignicons.min.css"><title>文件管理 - File Explorer</title><style>::-webkit-scrollbar-track {
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
       background-color: #F5F5F5;
     }
@@ -14,7 +14,7 @@
           color-stop(.5, rgba(255, 255, 255, .2)),
           color-stop(.5, transparent), to(transparent));
     }</style><script src="https://cdn.jsdelivr.net/npm/vue@2"></script><script src="https://cdn.jsdelivr.net/npm/vuex@3"></script><script src="https://cdn.jsdelivr.net/npm/vue-router@3"></script><link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.css" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.js"></script><script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js"></script><script>ace.config.set('basePath', 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/');
-    window.onbeforeunload = function () { return "确定离开当前页吗？"; }</script><link href="css/chunk-c548ffe8.dee6badb.css" rel="prefetch"><link href="css/chunk-e868250c.2b987982.css" rel="prefetch"><link href="js/chunk-0b8e1363.28e71c96.js" rel="prefetch"><link href="js/chunk-2d0b2007.ae740451.js" rel="prefetch"><link href="js/chunk-2d0b2536.aa1846ee.js" rel="prefetch"><link href="js/chunk-2d0c17b9.50e51c13.js" rel="prefetch"><link href="js/chunk-2d0ccbf6.fd580af7.js" rel="prefetch"><link href="js/chunk-2d0daf50.627b9153.js" rel="prefetch"><link href="js/chunk-2d0e88ff.da75929b.js" rel="prefetch"><link href="js/chunk-2d20f8d9.c787b268.js" rel="prefetch"><link href="js/chunk-2d2105d2.5b61e6f6.js" rel="prefetch"><link href="js/chunk-2d213ebd.b1a95147.js" rel="prefetch"><link href="js/chunk-2d2248b2.0091e110.js" rel="prefetch"><link href="js/chunk-2d2293db.c1def1e4.js" rel="prefetch"><link href="js/chunk-2d229989.425db9be.js" rel="prefetch"><link href="js/chunk-2d35d068.897c42c4.js" rel="prefetch"><link href="js/chunk-3c2917bf.e1270303.js" rel="prefetch"><link href="js/chunk-6021c06a.ea0d6d3d.js" rel="prefetch"><link href="js/chunk-c548ffe8.db1d4f73.js" rel="prefetch"><link href="js/chunk-e868250c.a4be8977.js" rel="prefetch"><link href="js/app.1252b41e.js" rel="preload" as="script"><link href="js/chunk-vendors.f147ec59.js" rel="preload" as="script"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="ha_file_explorer"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but 文件管理 - File Explorer doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script>class HA {
+    window.onbeforeunload = function () { return "确定离开当前页吗？"; }</script><link href="css/chunk-c548ffe8.dee6badb.css" rel="prefetch"><link href="css/chunk-e868250c.2b987982.css" rel="prefetch"><link href="js/chunk-0b8e1363.91f9d6d1.js" rel="prefetch"><link href="js/chunk-2d0b2007.5b0eed7e.js" rel="prefetch"><link href="js/chunk-2d0b2536.ada4dd98.js" rel="prefetch"><link href="js/chunk-2d0c17b9.c78c1181.js" rel="prefetch"><link href="js/chunk-2d0ccbf6.818525cd.js" rel="prefetch"><link href="js/chunk-2d0daf50.0b511186.js" rel="prefetch"><link href="js/chunk-2d0e88ff.d317b838.js" rel="prefetch"><link href="js/chunk-2d20f8d9.6c138abe.js" rel="prefetch"><link href="js/chunk-2d2105d2.a75417cd.js" rel="prefetch"><link href="js/chunk-2d213ebd.c50fbbdc.js" rel="prefetch"><link href="js/chunk-2d2248b2.d7c7251d.js" rel="prefetch"><link href="js/chunk-2d2293db.46175584.js" rel="prefetch"><link href="js/chunk-2d229989.280a421b.js" rel="prefetch"><link href="js/chunk-2d35d068.88358c99.js" rel="prefetch"><link href="js/chunk-3c2917bf.8ab65390.js" rel="prefetch"><link href="js/chunk-6021c06a.afecd0fb.js" rel="prefetch"><link href="js/chunk-c548ffe8.1f2f40a7.js" rel="prefetch"><link href="js/chunk-e868250c.d05e689b.js" rel="prefetch"><link href="js/app.68a311db.js" rel="preload" as="script"><link href="js/chunk-vendors.6e678194.js" rel="preload" as="script"><link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4DBA87"><meta name="apple-mobile-web-app-capable" content="no"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="ha_file_explorer"><link rel="apple-touch-icon" href="img/icons/apple-touch-icon-152x152.png"><link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#4DBA87"><meta name="msapplication-TileImage" content="img/icons/msapplication-icon-144x144.png"><meta name="msapplication-TileColor" content="#000000"></head><body><noscript><strong>We're sorry but 文件管理 - File Explorer doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script>class HA {
       constructor() {
         // url参数
         let query = new URLSearchParams(location.search)
@@ -39,11 +39,24 @@
             .querySelector("home-assistant")
             .shadowRoot.querySelector("home-assistant-main")
             .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver ha-panel-iframe").shadowRoot
-          let ha_card = haPanelIframe.querySelector("iframe");
-          ha_card.style.position = 'absolute'
-          haPanelIframe.querySelector('app-toolbar').style.display = 'none'
-          ha_card.style.top = '0'
-          ha_card.style.height = '100%'
+
+
+          let iframe = null, toolbar = null;
+          let subpage = haPanelIframe.querySelector("hass-subpage")
+          if (subpage) {
+            // 新版
+            iframe = subpage.querySelector("iframe");
+            toolbar = subpage.shadowRoot.querySelector('.toolbar')
+            subpage.shadowRoot.querySelector('.content').style.height = '100vh'
+          } else {
+            // 旧版
+            iframe = haPanelIframe.querySelector("iframe");
+            toolbar = haPanelIframe.querySelector('app-toolbar')
+          }
+          iframe.style.position = 'absolute'
+          toolbar.style.display = 'none'
+          iframe.style.top = '0'
+          iframe.style.height = '100%'
         } catch {
 
         }
@@ -116,4 +129,4 @@
     }
 
     window.ha = new HA();
-    window.ha.fullscreen()</script><script src="js/chunk-vendors.f147ec59.js"></script><script src="js/app.1252b41e.js"></script></body></html>
+    window.ha.fullscreen()</script><script src="js/chunk-vendors.6e678194.js"></script><script src="js/app.68a311db.js"></script></body></html>
