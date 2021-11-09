@@ -69,6 +69,11 @@
             "domain": "ha_tv",
             "name": "我的电视",
             "url": "https://github.com/shaonianzhentan/ha-tv"
+        },
+        {
+            "domain": "workday",
+            "name": "工作日",
+            "url": "https://github.com/shaonianzhentan/workday"
         }
     ],
     "all": [
