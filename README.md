@@ -1,6 +1,9 @@
 # ha_file_explorer
 在HA里使用的文件管理器
 
+[![hacs_badge](https://img.shields.io/badge/Home-Assistant-%23049cdb)](https://www.home-assistant.io/)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+
 ## 安装方式
 
 请在集成中安装
@@ -27,7 +30,7 @@ pip3 install qiniu
 
 ## 更新日志
 
-### v2.6.4
+### v2.7
 - 支持无需云服务，也能备份文件
 - 增加本地备份文件还原功能
 - 过滤HA数据库相关文件

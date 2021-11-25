@@ -29,7 +29,7 @@ def setup(hass, config):
     # 七牛云配置
     hass.data[DOMAIN] = FileExplorer(hass)
     # 注册静态目录
-    hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)    
+    hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)
     hass.http.register_view(HAView)
     # 注册菜单栏
     sidebar_add(hass, NAME, ICON, DOMAIN, ROOT_PATH + "/index.html?ver=" + VERSION)
