@@ -113,9 +113,19 @@
             "url": "https://github.com/al-one/hass-xiaomi-miot"
         },
         {
-            "domain": "baidu_fanyi_tts",
-            "name": "百度翻译的TTS服务",
-            "url": "https://github.com/al-one/hass-baidu-fanyi-tts"
+            "domain": "edge_tts",
+            "name": "Microsoft Edge TTS",
+            "url": "https://github.com/hasscc/hass-edge-tts"
+        },
+        {
+            "domain": "pyscript",
+            "name": "PyScript",
+            "url": "https://github.com/custom-components/pyscript"
+        },
+        {
+            "domain": "xiaomi_gateway3",
+            "name": "XiaomiGateway3 - 小米网关第3代",
+            "url": "https://github.com/AlexxIT/XiaomiGateway3"
         },
         {
             "domain": "smartir",
