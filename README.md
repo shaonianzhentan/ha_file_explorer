@@ -4,6 +4,11 @@
 [![hacs_badge](https://img.shields.io/badge/Home-Assistant-%23049cdb)](https://www.home-assistant.io/)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
+![ha_file_explorer](https://visitor-badge.glitch.me/badge?page_id=shaonianzhentan.ha_file_explorer&left_text=ha_file_explorer)
+![ha_file_explorer](https://img.shields.io/github/forks/shaonianzhentan/ha_file_explorer)
+![ha_file_explorer](https://img.shields.io/github/stars/shaonianzhentan/ha_file_explorer)
+![ha_file_explorer](https://img.shields.io/github/license/shaonianzhentan/ha_file_explorer)
+
 ## 安装方式
 
 安装完成重启HA，刷新一下页面，在集成里搜索`文件管理`即可
