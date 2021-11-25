@@ -2,8 +2,14 @@
     "config": {
         "step": {
             "user": {
-                "description": "项目: https://github.com/shaonianzhentan/ha_file_explorer",
-                "data": {}
+                "title": "文件管理器",
+                "description": "如果不会使用云备份功能可不填，详情请看GitHub项目文档",
+                "data": {
+                    "access_key": "七牛云配置access_key",
+                    "secret_key": "七牛云配置secret_key",
+                    "bucket_name": "七牛云配置bucket_name",
+                    "download": "七牛云自定义域名[http://xxx.xxx.com/]（用来下载备份文件）"
+                }
             }
         },
         "error": {},

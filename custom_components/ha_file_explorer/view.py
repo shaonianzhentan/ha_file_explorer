@@ -1,10 +1,8 @@
-import os, logging, time, importlib, base64, json, string, sys, requests, urllib, aiohttp, subprocess, tempfile, re
+import os, subprocess, tempfile, re
 from aiohttp import web
-from homeassistant.util import package
 from homeassistant.components.http import HomeAssistantView
-from .util import pip_install
-from .const import DOMAIN, VERSION, URL, ROOT_PATH
-from .shaonianzhentan import move_file, github_url, download, mkdir, load_content, save_content, fetch_text
+from .const import DOMAIN, URL
+from .shaonianzhentan import delete_file, move_file, github_url, download, mkdir, load_content, save_content, fetch_text
 
 class HAView(HomeAssistantView):
 
@@ -15,7 +13,6 @@ class HAView(HomeAssistantView):
     ''' 推送接口 '''
     async def put(self, request):
         hass = request.app["hass"]
-        fileExplorer = hass.data[DOMAIN]
         try:
             reader = await request.multipart()
             print(reader)
@@ -32,8 +29,7 @@ class HAView(HomeAssistantView):
             file = await reader.next()
             # 生成文件
             _path = hass.config.path(f"./{folder_path}")
-            if os.path.isdir(_path) == False:
-                fileExplorer.mkdir(_path)
+            mkdir(_path)
             filename = f"{_path}/{file_name}"
             size = 0
             with open(filename, 'wb') as f:
@@ -61,14 +57,14 @@ class HAView(HomeAssistantView):
                 return self.json(data)
             elif _type == 'get-content':
                 # 获取文件内容
-                data = fileExplorer.getContent(_path)
+                data = load_content(_path)
                 return self.json({ 'code': 0, 'data': data})
             elif _type == 'get-cloud-list':
                 # 获取七牛云备份列表
                 return self.json({ 'code': 0, 'data': []})
             elif _type == 'delete':
                 # 删除文件
-                fileExplorer.delete(_path)
+                delete_file(_path)
                 return self.json({ 'code': 0, 'msg': '删除成功'})
             elif _type == 'delete-qiniu':
                 # 删除备份文件
@@ -76,11 +72,11 @@ class HAView(HomeAssistantView):
             elif _type == 'new-file':
                 # 新建文件
                 data = res.get('data', '')
-                fileExplorer.setContent(_path, data)
+                save_content(_path, data)
                 return self.json({ 'code': 0, 'msg': '保存成功'})
             elif _type == 'new-dir':
                 # 新建文件夹
-                fileExplorer.mkdir(_path)
+                mkdir(_path)
                 return self.json({ 'code': 0, 'msg': '新建成功'})
             elif _type == 'upload-file':
                 # 上传文件
@@ -113,7 +109,7 @@ class HAView(HomeAssistantView):
                 # 解压文件
                 fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
                 # 删除下截的备份文件
-                fileExplorer.delete(backup_path)
+                delete_file(backup_path)
                 # 返回文件夹里的数据
                 return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})        
             elif _type == 'rename':
@@ -142,7 +138,7 @@ class HAView(HomeAssistantView):
                 try:
                     await fileExplorer.q.upload(zf)
                     # 上传成功，删除文件
-                    fileExplorer.delete(zf)
+                    delete_file(zf)
                     return self.json({ 'code': 0, 'msg': '上传成功'})
                 except Exception as ex:
                     print(ex)
@@ -225,17 +221,6 @@ class HAView(HomeAssistantView):
                     else:
                         msg = 'hacs已经添加过了'
                 return self.json({'code':0, 'msg': msg})
-            elif _type == 'install-package':
-                # 安装依赖包
-                package_name = _url
-                if package.is_installed(package_name) == False:
-                    package.install_package(package_name)
-                    return self.json({'code':0, 'msg': '正在更新依赖包'})
-                return self.json({'code':0, 'msg': '已经安装成功啦'})
-            elif _type == 'update-package':
-                # 更新系统依赖包
-                data = pip_install(_url)
-                return self.json({'code':0, 'data': data, 'msg': '更新依赖包完成'})
             elif _type == 'update':
                 # 拉取组件
                 _domain = res['domain']

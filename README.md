@@ -6,7 +6,9 @@
 
 ## 安装方式
 
-请在集成中安装
+安装完成重启HA，刷新一下页面，在集成里搜索`文件管理`即可
+
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
 
 ```bash
 # 切换到HA对应的配置目录
@@ -29,6 +31,11 @@ pip3 install qiniu
 ```
 
 ## 更新日志
+
+### v2.7.1
+- 注意：如使用云备份功能，则需要重新配置密钥
+- 仅支持集成安装
+- 删除七牛配置服务
 
 ### v2.7
 - 支持无需云服务，也能备份文件
@@ -177,7 +184,7 @@ pip3 install qiniu
 - 文本编辑功能
 
 
-## 如果这个项目对你有帮助，请我喝杯<del><small>咖啡</small></del><b>奶茶</b>吧😘
-|支付宝|微信|
-|---|---|
-<img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/alipay.png" align="left" height="160" width="160" alt="支付宝" title="支付宝">  |  <img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/wechat.png" align="left" height="160" width="160" alt="微信支付" title="微信">
+## 如果这个项目对你有帮助，请我喝杯<del style="font-size: 14px;">咖啡</del>奶茶吧😘
+|  |支付宝|微信|
+|---|---|---|
+奶茶= | <img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/alipay.png" align="left" height="160" width="160" alt="支付宝" title="支付宝">  |  <img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/wechat.png" align="left" height="160" width="160" alt="微信支付" title="微信">

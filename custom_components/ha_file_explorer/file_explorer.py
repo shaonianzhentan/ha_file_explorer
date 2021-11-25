@@ -1,51 +1,42 @@
-import datetime, shutil, json, re, zipfile, time, os, uuid, sys, tempfile, homeassistant
-from .shaonianzhentan import load_yaml, save_yaml, load_content, save_content, delete_file, get_dir_size, zip
+import datetime, shutil, zipfile, time, os, tempfile
+from .shaonianzhentan import sidebar_add, delete_file, get_dir_size, zip, mkdir
 
-from os         import listdir, stat, remove
+from os         import listdir, stat
 from os.path    import exists, isdir, isfile, join
 from .qn import Qn
-from .const import DOMAIN, MAC_ADDRESS
+from .const import DOMAIN, MAC_ADDRESS, VERSION, ROOT_PATH, NAME, ICON
+from .view import HAView
 
 class FileExplorer():
-    def __init__(self, hass):
+
+    def __init__(self, hass, config):
         self.hass = hass
         self.q = None
-        self.storage_dir = hass.config.path(".shaonianzhentan")
-        self.storage_file = self.storage_dir + "/ha_file_explorer.yaml"
-        self.mkdir(self.storage_dir)
-        # 注册云备份服务
-        hass.services.async_register(DOMAIN, 'config', self.config)
+        # 注册静态目录
+        hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)
+        hass.http.register_view(HAView)
+        # 注册菜单栏
+        sidebar_add(hass, NAME, ICON, DOMAIN, ROOT_PATH + "/index.html?ver=" + VERSION)
+        # 初始化七牛云服务
+        self.mounted_qn(config)
         # 注册上传服务
         if self.hass.services.has_service(DOMAIN, 'upload') == False:
             self.hass.services.async_register(DOMAIN, 'upload', self.upload)
-        # 加载本地配置
-        self.mounted_qn(load_yaml(self.storage_file), 0)
-
-    # 配置服务
-    def config(self, call):
-        data = call.data
-        print(data)
-        self.mounted_qn(data, 1)
 
     # 注册七牛云备份
-    def mounted_qn(self, cfg, flags):
+    def mounted_qn(self, cfg):
         prefix = MAC_ADDRESS[:4]
         access_key = cfg.get('access_key', '')
         secret_key = cfg.get('secret_key', '')
         bucket_name = cfg.get('bucket_name', '')
-        download = cfg.get('download', '')        
+        download = cfg.get('download', '')
         if access_key != '' and secret_key != '' and bucket_name != '':
-            # 保存配置
-            if flags == 1:
-                save_yaml(self.storage_file, cfg)
-                self.hass.async_create_task(self.notify("保存配置成功"))
             try:
                 import qiniu
                 self.q = Qn(qiniu, qiniu.Auth(access_key, secret_key), self.hass, bucket_name, prefix, download)
             except Exception as ex:
                 print(ex)
-                if flags == 1:
-                    self.hass.async_create_task(self.notify("出现异常" + str(ex)))
+                self.hass.async_create_task(self.notify("七牛云备份出现异常" + str(ex)))
 
     def getAllFile(self, dir):
         allcontent = listdir(dir)
@@ -94,25 +85,6 @@ class FileExplorer():
         dirItem.sort(key=lambda x: x['name'], reverse=True)
         return dirItem
     
-    def getContent(self, _path):          
-        return load_content(_path)
-
-    def setContent(self, _path, _content):
-        save_content(_path, _content)
-        
-    def delete(self, _path):
-        delete_file(_path)
-
-    # 创建文件夹
-    def mkdir(self, path):
-        folders = []        
-        while not os.path.isdir(path):
-            path, suffix = os.path.split(path)
-            folders.append(suffix)
-        for folder in folders[::-1]:
-            path = os.path.join(path, folder)
-            os.mkdir(path)
-    
     # 替换文件
     def move(self, _list):
         tmp_path = tempfile.gettempdir() + '/ha_file_explorer_backup'
@@ -125,9 +97,7 @@ class FileExplorer():
                 # 创建目录
                 lastIndex = _dst.replace('\\','/').rindex('/')
                 _dir = _dst[0:lastIndex]
-                if os.path.isdir(_dir) == False:
-                    self.mkdir(_dir)
-                    print(_dir)
+                mkdir(_dir)
                 shutil.copy2(src, _dst)
         except Exception as ex:
             print(ex)        
@@ -136,7 +106,7 @@ class FileExplorer():
     def zipdir(self, dirname):
         hass = self.hass
         local = tempfile.gettempdir()
-        zipfilename = local + '/' + time.strftime('%y_%m_%d_%H%M%S',time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
+        zipfilename = local + '/' + time.strftime('%y_%m_%d_%H%M%S', time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
         print(zipfilename)
         filelist = []
         dirname = hass.config.path('./' + dirname)
@@ -160,7 +130,7 @@ class FileExplorer():
         hass = self.hass
         root_path = hass.config.path('./')
         local = tempfile.gettempdir()
-        zf = local + '/' + time.strftime('%y_%m_%d_%H%M%S',time.localtime(time.time())) + ".zip"
+        zf = local + '/' + time.strftime('%y_%m_%d_%H%M%S', time.localtime(time.time())) + ".zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 try:
@@ -204,7 +174,7 @@ class FileExplorer():
         # 如果配置了七牛云服务
         if self.q is not None:
             await self.q.upload(zf)
-            self.delete(zf)
+            delete_file(zf)
             print('上传成功')
             await self.notify('备份文件上传成功')
         else:
