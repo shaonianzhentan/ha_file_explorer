@@ -11,16 +11,6 @@
             "url": "https://github.com/shaonianzhentan/conversation"
         },
         {
-            "domain": "ha_baidu_map",
-            "name": "百度地图",
-            "url": "https://github.com/shaonianzhentan/ha_baidu_map"
-        },
-        {
-            "domain": "ha_sidebar",
-            "name": "侧边栏管理",
-            "url": "https://github.com/shaonianzhentan/ha_sidebar"
-        },
-        {
             "domain": "ha_file_explorer",
             "name": "文件管理",
             "url": "https://github.com/shaonianzhentan/ha_file_explorer"
