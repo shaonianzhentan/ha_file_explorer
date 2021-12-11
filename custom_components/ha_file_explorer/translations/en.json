@@ -2,8 +2,21 @@
     "config": {
         "step": {
             "user": {
-                "title": "文件管理器",
-                "description": "如果不会使用云备份功能可不填，详情请看GitHub项目文档",
+                "title": "文件管理",
+                "description": "项目：https://github.com/shaonianzhentan/ha_file_explorer",
+                "data": {}
+            }
+        },
+        "error": {},
+        "abort": {
+            "single_instance_allowed": "仅允许单个配置."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "title": "文件管理",
+                "description": "使用七牛云免费备份文件",
                 "data": {
                     "access_key": "七牛云配置access_key",
                     "secret_key": "七牛云配置secret_key",
@@ -12,9 +25,6 @@
                 }
             }
         },
-        "error": {},
-        "abort": {
-            "single_instance_allowed": "仅允许单个配置."
-        }
+        "error": {}
     }
 }
