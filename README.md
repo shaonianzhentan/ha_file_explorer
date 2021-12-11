@@ -4,7 +4,7 @@
 [![hacs_badge](https://img.shields.io/badge/Home-Assistant-%23049cdb)](https://www.home-assistant.io/)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-![ha_file_explorer](https://visitor-badge.glitch.me/badge?page_id=shaonianzhentan.ha_file_explorer&left_text=ha_file_explorer)
+![visit](https://visitor-badge.glitch.me/badge?page_id=shaonianzhentan.ha_file_explorer&left_text=ha_file_explorer)
 ![ha_file_explorer](https://img.shields.io/github/forks/shaonianzhentan/ha_file_explorer)
 ![ha_file_explorer](https://img.shields.io/github/stars/shaonianzhentan/ha_file_explorer)
 ![ha_file_explorer](https://img.shields.io/github/license/shaonianzhentan/ha_file_explorer)
@@ -15,29 +15,9 @@
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
 
-```bash
-# 切换到HA对应的配置目录
-cd ~/homeassistant
-# 下载当前项目
-git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer --depth=1
-# 删除已存在的文件夹
-rm -rf custom_components/ha_file_explorer
-# 创建自定义组件目录
-if [ ! -d "custom_components" ]; then
-  mkdir custom_components
-fi
-# 复制文件夹
-cp -r ./ha_file_explorer/custom_components/ha_file_explorer custom_components/ha_file_explorer
-# 删除clone的文件
-rm -rf ha_file_explorer
-
-# 安装依赖
-pip3 install qiniu
-```
-
 ## 更新日志
 
-### v2.7.1
+### v2.7.2
 - 注意：如使用云备份功能，则需要重新配置密钥
 - 仅支持集成安装
 - 删除七牛配置服务

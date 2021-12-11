@@ -24,7 +24,8 @@ class SimpleConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is None:
             errors = {}
-            return self.async_show_form(step_id="user", data_schema={}, errors=errors)
+            DATA_SCHEMA = vol.Schema({})
+            return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA, errors=errors)
 
         return self.async_create_entry(title=DOMAIN, data=user_input)
 
@@ -44,12 +45,13 @@ class OptionsFlowHandler(OptionsFlow):
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is None:
+            options = self.config_entry.options
             errors = {}
             DATA_SCHEMA = vol.Schema({
-                vol.Optional("access_key", default=user_input.get('access_key', '')): str,
-                vol.Optional("secret_key", default=user_input.get('secret_key', '')): str,
-                vol.Optional("bucket_name", default=user_input.get('bucket_name', '')): str,
-                vol.Optional("download", default=user_input.get('download', '')): str
+                vol.Optional("access_key", default=options.get('access_key', '')): str,
+                vol.Optional("secret_key", default=options.get('secret_key', '')): str,
+                vol.Optional("bucket_name", default=options.get('bucket_name', '')): str,
+                vol.Optional("download", default=options.get('download', '')): str
             })
             return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA, errors=errors)
         # 选项更新
