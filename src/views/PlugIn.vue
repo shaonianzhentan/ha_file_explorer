@@ -4,6 +4,52 @@
 
     <v-container>
       <v-list subheader two-line>
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-icon class="red lighten-1" dark> mdi-github </v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-form>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model.trim="pull.domain"
+                    label="自定义组件名称"
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="12" md="8">
+                  <v-text-field
+                    type="url"
+                    v-model.trim="pull.url"
+                    label="GitHub项目地址"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-menu>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon color="grey lighten-1">mdi-download</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item v-for="(git, index) in items" :key="index">
+                  <v-list-item-title @click="gitClick(git.title)">{{
+                    git.title
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-list-item-action>
+        </v-list-item>
+                
         <v-subheader inset>我的插件</v-subheader>
 
         <v-list-item v-for="item in mylist" :key="item.title">
@@ -81,52 +127,7 @@
             </v-menu>
           </v-list-item-action>
         </v-list-item>
-        <v-divider inset></v-divider>
-        <v-list-item>
-          <v-list-item-avatar>
-            <v-icon class="red lighten-1" dark> mdi-github </v-icon>
-          </v-list-item-avatar>
-
-          <v-list-item-content>
-            <v-form>
-              <v-row>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model.trim="pull.domain"
-                    label="自定义组件名称"
-                    required
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="8">
-                  <v-text-field
-                    type="url"
-                    v-model.trim="pull.url"
-                    label="GitHub项目地址"
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-list-item-content>
-
-          <v-list-item-action>
-            <v-menu>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon color="grey lighten-1">mdi-download</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item v-for="(git, index) in items" :key="index">
-                  <v-list-item-title @click="gitClick(git.title)">{{
-                    git.title
-                  }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-list-item-action>
-        </v-list-item>
+      
       </v-list>
       <v-card elevation="2" style="padding: 20px">
         <v-card-text class="text--primary">
