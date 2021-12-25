@@ -16,9 +16,9 @@
             "url": "https://github.com/shaonianzhentan/ha_file_explorer"
         },
         {
-            "domain": "ha_qqmail",
+            "domain": "smtp",
             "name": "QQ邮箱通知",
-            "url": "https://github.com/shaonianzhentan/ha_qqmail"
+            "url": "https://github.com/shaonianzhentan/smtp"
         },
         {
             "domain": "xiaomi_tv",
@@ -31,9 +31,9 @@
             "url": "https://github.com/shaonianzhentan/hf_weather"
         },
         {
-            "domain": "mipad_android",
-            "name": "小米平板",
-            "url": "https://github.com/shaonianzhentan/MiPadAndroid"
+            "domain": "google_maps",
+            "name": "百度地图",
+            "url": "https://github.com/shaonianzhentan/google_maps"
         },
         {
             "domain": "xiaomi_radio",
@@ -41,9 +41,9 @@
             "url": "https://github.com/shaonianzhentan/xiaomi_radio"
         },
         {
-            "domain": "ha_status_notification",
-            "name": "状态提醒",
-            "url": "https://github.com/shaonianzhentan/ha_status_notification"
+            "domain": "bluetooth_tracker",
+            "name": "蓝牙检测",
+            "url": "https://github.com/shaonianzhentan/bluetooth_tracker"
         },
         {
             "domain": "ha_notify",
