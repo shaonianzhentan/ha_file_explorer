@@ -61,6 +61,11 @@
             "url": "https://github.com/shaonianzhentan/ha-tv"
         },
         {
+            "domain": "panel_iframe",
+            "name": "侧边栏面板",
+            "url": "https://github.com/shaonianzhentan/panel_iframe"
+        },
+        {
             "domain": "workday",
             "name": "工作日",
             "url": "https://github.com/shaonianzhentan/workday"
