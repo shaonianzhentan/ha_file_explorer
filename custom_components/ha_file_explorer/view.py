@@ -215,7 +215,9 @@ class HAView(HomeAssistantView):
             if item != "":
                 _list.append(item)
         url = "/".join(_list)
-        _LOGGER.debug("下载链接： %s", url)
+    if "https://github.com/" in url and "/releases/download/" in url:
+        url = url.replace("https://github.com/", "https://hub.fastgit.org/")
+    _LOGGER.debug("下载链接： %s", url)
         ''')
                         save_content(hass_download_file, new_content)
                     else:
