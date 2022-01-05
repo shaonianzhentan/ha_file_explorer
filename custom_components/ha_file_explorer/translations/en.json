@@ -15,8 +15,8 @@
     "options": {
         "step": {
             "user": {
-                "title": "文件管理",
-                "description": "使用七牛云免费备份文件",
+                "title": "使用七牛云备份文件",
+                "description": "每月免费10GB存储，千万别充钱，注册地址：https://s.qiniu.com/Efuu6f",
                 "data": {
                     "access_key": "七牛云配置access_key",
                     "secret_key": "七牛云配置secret_key",

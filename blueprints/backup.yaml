@@ -1,0 +1,22 @@
+blueprint:
+  name: 定时备份
+  description: 凌晨4点，自动备份
+  domain: automation
+  source_url: https://github.com/shaonianzhentan/ha_file_explorer/blob/master/blueprints/backup.yaml
+  input:
+    backup_success:
+      name: 备份成功
+      description: 备份成功后执行（可不选）
+      default: []
+      selector:
+        action: {}
+trigger:
+- platform: time_pattern
+  hours: '4'
+  minutes: '0'
+  seconds: '0'
+action:
+- choose:
+  sequence:
+    - service: ha_file_explorer.upload
+  sequence: !input 'backup_success'

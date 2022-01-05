@@ -1,4 +1,4 @@
-# ha_file_explorer
+# File Explorer
 在HA里使用的文件管理器
 
 [![hacs_badge](https://img.shields.io/badge/Home-Assistant-%23049cdb)](https://www.home-assistant.io/)
@@ -15,6 +15,12 @@
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
 
+
+定时备份
+
+[![导入蓝图](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fshaonianzhentan%2Fha_file_explorer%2Fblob%2Fmaster%2Fblueprints%2Fbackup.yaml)
+
+
 ## 更新日志
 
 ### v2.7.3
@@ -22,6 +28,7 @@
 - 仅支持集成安装
 - 删除七牛配置服务
 - 支持图标显示
+- 增加自动备份蓝图
 
 ### v2.7
 - 支持无需云服务，也能备份文件
