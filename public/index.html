@@ -66,13 +66,13 @@
       }
 
       get hass() {
-        const homeassistant = top.document.querySelector('home-assistant')
+        const homeassistant = parent.document.querySelector('home-assistant')
         return homeassistant ? homeassistant.hass : null
       }
 
       fullscreen() {
         try {
-          let haPanelIframe = top.document.body
+          let haPanelIframe = parent.document.body
             .querySelector("home-assistant")
             .shadowRoot.querySelector("home-assistant-main")
             .shadowRoot.querySelector("app-drawer-layout partial-panel-resolver ha-panel-iframe").shadowRoot
@@ -102,14 +102,14 @@
       // 触发事件
       fire(type, data, ele = null) {
         console.log(type, data)
-        const event = new top.Event(type, {
+        const event = new parent.Event(type, {
           bubbles: true,
           cancelable: false,
           composed: true
         });
         event.detail = data;
         if (!ele) {
-          ele = top.document.querySelector("home-assistant")
+          ele = parent.document.querySelector("home-assistant")
             .shadowRoot.querySelector("home-assistant-main")
             .shadowRoot.querySelector("app-drawer-layout")
         }
@@ -134,7 +134,7 @@
         const body = toString.call(params) == '[object FormData]' ? params : JSON.stringify(params)
         const { hass } = this
         if (!hass) {
-          return fetch(top.location.origin + url, {
+          return fetch(parent.location.origin + url, {
             method,
             body,
             headers: {
@@ -150,11 +150,11 @@
             if (params.type === 'download-file') {
               const blob = await res.blob()
               let bl = new Blob([blob], { type: blob.type });
-              var link = top.document.createElement('a');
-              link.href = top.URL.createObjectURL(blob);
+              var link = parent.document.createElement('a');
+              link.href = parent.URL.createObjectURL(blob);
               link.download = params.path.substr(params.path.lastIndexOf('/') + 1)
               link.click();
-              top.URL.revokeObjectURL(link.href)
+              parent.URL.revokeObjectURL(link.href)
               return { msg: '下载成功' }
             }
           } catch (ex) {
