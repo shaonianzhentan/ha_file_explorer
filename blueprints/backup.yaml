@@ -4,10 +4,11 @@ blueprint:
   domain: automation
   source_url: https://github.com/shaonianzhentan/ha_file_explorer/blob/master/blueprints/backup.yaml
   input:
-    backup_success:
-      name: 备份成功
-      description: 备份成功后执行（可不选）
-      default: []
+    start_backup:
+      name: 开始备份
+      description: 调用文件上传服务
+      default:
+        - service: ha_file_explorer.upload
       selector:
         action: {}
 trigger:
@@ -15,8 +16,4 @@ trigger:
   hours: '4'
   minutes: '0'
   seconds: '0'
-action:
-- choose:
-  sequence:
-    - service: ha_file_explorer.upload
-  sequence: !input 'backup_success'
+action: !input 'start_backup'
