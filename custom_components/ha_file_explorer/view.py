@@ -205,19 +205,19 @@ class HAView(HomeAssistantView):
                     if 'cdn.jsdelivr.net' not in old_content:
                         msg = "初次更新hacs"
                         new_content = old_content.replace('self.log.debug("Downloading %s", url)', '''
-    self.log.debug("Downloading %s", url)
-    if "https://raw.githubusercontent.com" in url:
-        arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
-        arr[1] = arr[1] + "@" + arr[2]
-        arr[2] = ""
-        _list = ["https://cdn.jsdelivr.net/gh"]
-        for item in arr:
-            if item != "":
-                _list.append(item)
-        url = "/".join(_list)
-    if "https://github.com/" in url and "/releases/download/" in url:
-        url = url.replace("https://github.com/", "https://hub.fastgit.org/")
-    self.log.debug("下载链接 %s", url)
+        self.log.debug("Downloading %s", url)
+        if "https://raw.githubusercontent.com" in url:
+            arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
+            arr[1] = arr[1] + "@" + arr[2]
+            arr[2] = ""
+            _list = ["https://cdn.jsdelivr.net/gh"]
+            for item in arr:
+                if item != "":
+                    _list.append(item)
+            url = "/".join(_list)
+        if "https://github.com/" in url and "/releases/download/" in url:
+            url = url.replace("https://github.com/", "https://hub.fastgit.org/")
+        self.log.debug("下载链接 %s", url)
         ''')
                         save_content(hass_download_file, new_content)
                     else:
