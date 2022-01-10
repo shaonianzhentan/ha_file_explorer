@@ -200,12 +200,12 @@ class HAView(HomeAssistantView):
                         msg = "没有需要清除的host"
                 elif _url == 'hacs':
                     # 修改hacs下载文件
-                    hass_download_file = hass.config.path('custom_components/hacs/helpers/functions/download.py')
+                    hass_download_file = hass.config.path('custom_components/hacs/base.py')
                     old_content = load_content(hass_download_file)
                     if 'cdn.jsdelivr.net' not in old_content:
                         msg = "初次更新hacs"
-                        new_content = old_content.replace('_LOGGER.debug("Downloading %s", url)', '''
-    _LOGGER.debug("Downloading %s", url)
+                        new_content = old_content.replace('self.log.debug("Downloading %s", url)', '''
+    self.log.debug("Downloading %s", url)
     if "https://raw.githubusercontent.com" in url:
         arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
         arr[1] = arr[1] + "@" + arr[2]
@@ -217,7 +217,7 @@ class HAView(HomeAssistantView):
         url = "/".join(_list)
     if "https://github.com/" in url and "/releases/download/" in url:
         url = url.replace("https://github.com/", "https://hub.fastgit.org/")
-    _LOGGER.debug("下载链接： %s", url)
+    self.log.debug("下载链接 %s", url)
         ''')
                         save_content(hass_download_file, new_content)
                     else:
