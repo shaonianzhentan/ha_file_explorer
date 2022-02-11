@@ -79,7 +79,7 @@
               </template>
               <v-list>
                 <v-list-item v-for="(git, index) in items" :key="index">
-                  <v-list-item-title @click="pullClick(item, git.title)">{{
+                  <v-list-item-title @click="pullClick(item, git.url)">{{
                     git.title
                   }}</v-list-item-title>
                 </v-list-item>
@@ -119,7 +119,7 @@
               </template>
               <v-list>
                 <v-list-item v-for="(git, index) in items" :key="index">
-                  <v-list-item-title @click="pullClick(item, git.title)">{{
+                  <v-list-item-title @click="pullClick(item, git.url)">{{
                     git.title
                   }}</v-list-item-title>
                 </v-list-item>
@@ -166,9 +166,10 @@ export default {
         url: "",
       },
       items: [
-        { title: "github.com.cnpmjs.org" },
-        { title: "hub.fastgit.org" },
-        { title: "github.com" },
+        { title: "github.com.cnpmjs.org", url: 'github.com.cnpmjs.org' },
+        { title: "hub.fastgit.org", url: 'hub.fastgit.org'},
+        { title: "mirror.ghproxy.com", url: 'mirror.ghproxy.com/https://github.com'},
+        { title: "github.com", url: 'github.com'},
       ],
     };
   },
