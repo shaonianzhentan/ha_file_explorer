@@ -168,7 +168,7 @@ export default {
       items: [
         { title: "github.com.cnpmjs.org", url: 'github.com.cnpmjs.org' },
         { title: "hub.fastgit.org", url: 'hub.fastgit.org'},
-        { title: "mirror.ghproxy.com", url: 'mirror.ghproxy.com/https://github.com'},
+        { title: "ghproxy.com", url: 'ghproxy.com/https://github.com'},
         { title: "github.com", url: 'github.com'},
       ],
     };

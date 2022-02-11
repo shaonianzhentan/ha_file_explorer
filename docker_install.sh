@@ -1,7 +1,7 @@
 # 切换到HA对应的配置目录
 cd /config
 # 下载当前项目
-git clone https://github.com.cnpmjs.org/shaonianzhentan/ha_file_explorer --depth=1
+git clone https://ghproxy.com/https://github.com/shaonianzhentan/ha_file_explorer --depth=1
 # 删除已存在的文件夹
 rm -rf custom_components/ha_file_explorer
 # 创建自定义组件目录
