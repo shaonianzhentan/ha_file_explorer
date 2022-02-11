@@ -176,7 +176,7 @@ class HAView(HomeAssistantView):
                     # 换github源
                     hosts_file = '/etc/hosts'
                     old_hosts_content = load_content(hosts_file)
-                    githosts = await fetch_text('https://raw.fastgit.org/521xueweihan/GitHub520/main/hosts')
+                    githosts = await fetch_text('https://raw.hellogithub.com/hosts')
                     # 检测是否已经添加
                     reg = re.match(r".*(# GitHub520 Host Start.*# GitHub520 Host End)", old_hosts_content, flags = re.S)
                     if reg is None:
@@ -216,7 +216,7 @@ class HAView(HomeAssistantView):
                     _list.append(item)
             url = "/".join(_list)
         if "https://github.com/" in url and "/releases/download/" in url:
-            url = url.replace("https://github.com/", "https://hub.fastgit.org/")
+            url = url.replace("https://github.com/", "https://mirror.ghproxy.com/https://github.com/")
         self.log.debug("下载链接 %s", url)
         ''')
                         save_content(hass_download_file, new_content)
