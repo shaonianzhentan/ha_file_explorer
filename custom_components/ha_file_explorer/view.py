@@ -131,7 +131,7 @@ class HAView(HomeAssistantView):
                 if fileExplorer.q is None:
                     return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
                 if 'path' in res:
-                    zf = fileExplorer.zipdir(res['path'])
+                    zf = fileExplorer.zip([res['path']])
                 elif 'list' in res:
                     # 压缩多个文件
                     zf = fileExplorer.zip(res['list'])
