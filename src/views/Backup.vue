@@ -11,7 +11,7 @@
         ></v-text-field>
       </div>
       <v-list subheader two-line>
-        <v-subheader inset @click="loadData">文件列表</v-subheader>
+        <v-subheader inset @click="loadData">文件列表 - {{ prefix }}</v-subheader>
         <v-list-item v-for="item in fileList" :key="item.name">
           <v-list-item-avatar>
             <v-icon :class="item.color" dark v-text="item.icon"></v-icon>
@@ -65,6 +65,7 @@ export default {
     return {
       fileList: [],
       name: "",
+      prefix: "",
     };
   },
   activated() {
@@ -78,6 +79,7 @@ export default {
         name: this.name,
       }).then(({ data }) => {
         console.log(data);
+        this.prefix = data.prefix;
         this.fileList = data.list.items.map((ele) => {
           return {
             name: ele.key,

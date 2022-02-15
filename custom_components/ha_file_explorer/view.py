@@ -107,11 +107,13 @@ class HAView(HomeAssistantView):
                 backup_path = _path + '/ha_file_explorer_backup.zip'
                 await download(_url, backup_path)
                 # 解压文件
-                fileExplorer.unzip(backup_path, _path + '/ha_file_explorer_backup')
+                backup_dir = _path + '/ha_file_explorer_backup'
+                delete_file(backup_dir)
+                fileExplorer.unzip(backup_path, backup_dir)
                 # 删除下截的备份文件
                 delete_file(backup_path)
                 # 返回文件夹里的数据
-                return self.json({'code':0, 'data': fileExplorer.getAllFile(_path + '/ha_file_explorer_backup') , 'msg': '下载成功'})        
+                return self.json({'code':0, 'data': fileExplorer.getAllFile(backup_dir) , 'msg': '下载成功'})
             elif _type == 'rename':
                 rename_path = hass.config.path(f"./{res['rename_path']}")
                 os.rename(_path, rename_path)
@@ -131,7 +133,7 @@ class HAView(HomeAssistantView):
                 if fileExplorer.q is None:
                     return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
                 if 'path' in res:
-                    zf = fileExplorer.zipdir(res['path'])
+                    zf = fileExplorer.zip([res['path']])
                 elif 'list' in res:
                     # 压缩多个文件
                     zf = fileExplorer.zip(res['list'])

@@ -25,6 +25,7 @@ class Qn():
         ret, eof, info = await self.hass.async_add_executor_job(bucket.list, bucket_name, prefix, marker, limit, delimiter)
         # print(info)
         return {
+            'prefix': self.prefix,
             'download': self.download,
             'list': ret
         }

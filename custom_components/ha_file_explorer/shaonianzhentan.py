@@ -149,13 +149,13 @@ root_path: 压缩目录
 filter_dir: 过滤目录
 filter_name: 全局过滤名称
 '''
-def zip(root_path, filter_dir=None, filter_name=None, tmpdir=None):
+def zip(root_path, zip_name, filter_dir=None, filter_name=None, tmpdir=None):
     # 临时目录
     if tmpdir is None:
         tmpdir = tempfile.gettempdir()
     # print(tmpdir)
     # 压缩文件
-    zf = os.path.join(tmpdir, time.strftime('%y_%m_%d_%H%M%S',time.localtime(time.time())) + ".zip")
+    zf = os.path.join(tmpdir, zip_name)
     with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
         # 遍历文件
         for file_name in os.listdir(root_path):

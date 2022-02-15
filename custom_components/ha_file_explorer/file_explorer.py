@@ -1,6 +1,7 @@
 import datetime, shutil, zipfile, time, os, tempfile
 from .shaonianzhentan import sidebar_add, delete_file, get_dir_size, zip, mkdir
 
+from homeassistant.const import __version__ as current_version
 from os         import listdir, stat
 from os.path    import exists, isdir, isfile, join
 from .qn import Qn
@@ -100,37 +101,14 @@ class FileExplorer():
                 mkdir(_dir)
                 shutil.copy2(src, _dst)
         except Exception as ex:
-            print(ex)        
+            print(ex)
 
-    # 压缩单个项
-    def zipdir(self, dirname):
-        hass = self.hass
-        local = tempfile.gettempdir()
-        zipfilename = local + '/' + time.strftime('%y_%m_%d_%H%M%S', time.localtime(time.time())) + '+' + str(dirname.replace('\\','+').replace('/','+')) + ".zip"
-        print(zipfilename)
-        filelist = []
-        dirname = hass.config.path('./' + dirname)
-        if os.path.isfile(dirname):
-            filelist.append(dirname)
-        else :
-            for root, dirs, files in os.walk(dirname):
-                for name in files:
-                    filelist.append(os.path.join(root, name))
-        zf = zipfile.ZipFile(zipfilename, "w", zipfile.ZIP_DEFLATED)
-        for tar in filelist:
-            arcname = tar[len(dirname):]
-            #print arcname
-            zf.write(tar,arcname)
-        zf.close()
-
-        return zipfilename
-
-    # 压缩
+    # 压缩多个文件
     def zip(self, _list, filter_dir=None):
         hass = self.hass
         root_path = hass.config.path('./')
         local = tempfile.gettempdir()
-        zf = local + '/' + time.strftime('%y_%m_%d_%H%M%S', time.localtime(time.time())) + ".zip"
+        zf = f"{local}/_{current_version}_{int(time.time())}.zip"
         with zipfile.ZipFile(zf, 'w', zipfile.ZIP_DEFLATED) as zip:
             for item in _list:
                 try:
@@ -139,7 +117,7 @@ class FileExplorer():
                     if isdir(dirpath):
                         for path,dirnames,filenames in os.walk(dirpath):
                             # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-                            fpath = path.replace(root_path,'')                            
+                            fpath = path.replace(root_path, '')
                             # 如果过滤的文件
                             if filter_dir is not None and len(list(filter(lambda x: x in fpath, filter_dir))) > 0:
                                 continue
@@ -157,7 +135,8 @@ class FileExplorer():
     def unzip(self, src_file, dest_dir):
         zf = zipfile.ZipFile(src_file)
         try:
-           zf.extractall(path=dest_dir)
+            for info in zf.infolist():
+                zf.extract(info, dest_dir)
         except RuntimeError as e:
            print(e)
         zf.close()
@@ -170,7 +149,7 @@ class FileExplorer():
         filter_dir = data.get('filter', [])
         filter_dir.extend(['home-assistant_v2.db', 'home-assistant_v2.db-shm', 'home-assistant_v2.db-wal', 'home-assistant.log', 'deps', 'media', 'core', 'custom_components/ha_file_explorer'])
         await self.notify('开始压缩上传备份文件')
-        zf = zip(self.hass.config.path('./'), filter_dir, ['node_modules', '__pycache__', '.npm'], self.hass.config.path('./custom_components/ha_file_explorer/local/backup/'))
+        zf = zip(self.hass.config.path('./'), f"_{current_version}_{int(time.time())}.zip", filter_dir, ['node_modules', '__pycache__', '.npm'], self.hass.config.path('./custom_components/ha_file_explorer/local/backup/'))
         # 如果配置了七牛云服务
         if self.q is not None:
             await self.q.upload(zf)
