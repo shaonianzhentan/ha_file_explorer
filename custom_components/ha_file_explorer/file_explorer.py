@@ -136,8 +136,7 @@ class FileExplorer():
         zf = zipfile.ZipFile(src_file)
         try:
             for info in zf.infolist():
-                unzip_path = os.path.abspath(dest_dir + '/' + info.filename)
-                zf.extract(info, unzip_path)
+                zf.extract(info, dest_dir)
         except RuntimeError as e:
            print(e)
         zf.close()
