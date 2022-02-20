@@ -18,7 +18,7 @@
         {
             "domain": "smtp",
             "name": "QQ邮箱通知",
-            "url": "https://github.com/shaonianzhentan/smtp"
+            "url": "https://gitee.com/shaonianzhentan/smtp"
         },
         {
             "domain": "xiaomi_tv",
@@ -46,9 +46,9 @@
             "url": "https://github.com/shaonianzhentan/bluetooth_tracker"
         },
         {
-            "domain": "ha_notify",
-            "name": "通知提醒",
-            "url": "https://github.com/shaonianzhentan/ha_notify"
+            "domain": "twitter",
+            "name": "微信通知提醒",
+            "url": "https://gitee.com/shaonianzhentan/twitter"
         },
         {
             "domain": "meizu_ble",
