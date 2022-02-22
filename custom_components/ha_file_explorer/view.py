@@ -152,7 +152,8 @@ class HAView(HomeAssistantView):
                 return self.json({ 'code': 0, 'msg': '删除成功'})
             elif _type == 'gitee-list':
                 # 获取gitee项目列表
-                return self.json(fetch_json('https://gitee.com/shaonianzhentan/ha_file_explorer/raw/master/config/git.json'))
+                data = await fetch_json('https://gitee.com/shaonianzhentan/ha_file_explorer/raw/master/config/git.json')
+                return self.json(data)
             ## ====================== 移动文件 ==========================
             elif _type == 'move-file':
                 # 移动文件
