@@ -3,7 +3,7 @@
         {
             "domain": "ha_cloud_music",
             "name": "网易云音乐",
-            "url": "https://github.com/shaonianzhentan/ha_cloud_music"
+            "url": "https://gitee.com/shaonianzhentan/ha_cloud_music"
         },
         {
             "domain": "conversation",
@@ -23,7 +23,7 @@
         {
             "domain": "xiaomi_tv",
             "name": "小米电视",
-            "url": "https://github.com/shaonianzhentan/xiaomi_tv"
+            "url": "https://gitee.com/shaonianzhentan/xiaomi_tv"
         },
         {
             "domain": "hf_weather",
