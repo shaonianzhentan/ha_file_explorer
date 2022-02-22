@@ -2,7 +2,7 @@ import os, subprocess, tempfile, re
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from .const import DOMAIN, URL
-from .shaonianzhentan import delete_file, move_file, github_url, download, mkdir, load_content, save_content, fetch_text
+from .shaonianzhentan import delete_file, move_file, github_url, download, mkdir, load_content, save_content, fetch_text, fetch_json
 
 class HAView(HomeAssistantView):
 
@@ -150,6 +150,9 @@ class HAView(HomeAssistantView):
                     return self.json({ 'code': 1, 'msg': '请配置七牛云相关密钥信息'})
                 await fileExplorer.q.delete(res.get('key'))
                 return self.json({ 'code': 0, 'msg': '删除成功'})
+            elif _type == 'gitee-list':
+                # 获取gitee项目列表
+                return self.json(fetch_json('https://gitee.com/shaonianzhentan/ha_file_explorer/raw/master/config/git.json'))
             ## ====================== 移动文件 ==========================
             elif _type == 'move-file':
                 # 移动文件
@@ -168,7 +171,7 @@ class HAView(HomeAssistantView):
                 dir_name = hass.config.path(f"./blueprints/automation/{git['author']}")
                 mkdir(dir_name)
                 await download(git['url'], f"{dir_name}/{git['file_name']}")
-                return self.json({'code':0, 'msg': '下载安装成功'})
+                return self.json({'code':0, 'msg': '下载安装成功'})            
             elif _type == 'update-source':
                 msg = '更新成功'
                 # 换pip源

@@ -51,6 +51,11 @@
             "url": "https://gitee.com/shaonianzhentan/twitter"
         },
         {
+            "domain": "todoist",
+            "name": "待办事项",
+            "url": "https://gitee.com/shaonianzhentan/todoist"
+        },
+        {
             "domain": "meizu_ble",
             "name": "魅族智能遥控器",
             "url": "https://github.com/shaonianzhentan/meizu_ble"
