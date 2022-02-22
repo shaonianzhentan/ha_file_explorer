@@ -75,37 +75,32 @@
         {
             "domain": "sonoff",
             "name": "SonoffLAN - 易微联",
-            "url": "https://github.com/AlexxIT/SonoffLAN"
+            "url": "https://gitee.com/mirrors_AlexxIT/SonoffLAN"
         },
         {
-            "domain": "xiaomi_miio_airconditioningcompanion",
-            "name": "小米空调伴侣",
-            "url": "https://github.com/syssi/xiaomi_airconditioningcompanion"
-        },
-        {
-            "domain": "hacs",
-            "name": "HACS - 插件商店",
-            "url": "https://github.com/hacs/integration"
-        },
-        {
-            "domain": "bemfa",
-            "name": "bemfa - 巴法云",
-            "url": "https://github.com/larry-wong/bemfa"
-        },
-        {
-            "domain": "nodered",
-            "name": "hass-node-red",
-            "url": "https://github.com/zachowj/hass-node-red"
-        },
-        {
-            "domain": "ble_monitor",
-            "name": "米家蓝牙设备监听",
-            "url": "https://github.com/custom-components/ble_monitor"
+            "domain": "xiaomi_gateway3",
+            "name": "XiaomiGateway3 - 小米网关第3代",
+            "url": "https://gitee.com/mirrors_AlexxIT/XiaomiGateway3"
         },
         {
             "domain": "xiaomi_miot",
             "name": "Xiaomi Miot - 小米云端设备",
-            "url": "https://github.com/al-one/hass-xiaomi-miot"
+            "url": "https://gitee.com/cuihaijun/hass-xiaomi-miot"
+        },
+        {
+            "domain": "hacs",
+            "name": "HACS - 插件商店",
+            "url": "https://gitee.com/cuihaijun/hacs"
+        },
+        {
+            "domain": "nodered",
+            "name": "hass-node-red",
+            "url": "https://gitee.com/im-in-tianwai/hass-node-red"
+        },
+        {
+            "domain": "ble_monitor",
+            "name": "米家蓝牙设备监听",
+            "url": "https://gitee.com/mirrors_custom-components/ble_monitor"
         },
         {
             "domain": "edge_tts",
@@ -123,9 +118,9 @@
             "url": "https://github.com/custom-components/pyscript"
         },
         {
-            "domain": "xiaomi_gateway3",
-            "name": "XiaomiGateway3 - 小米网关第3代",
-            "url": "https://github.com/AlexxIT/XiaomiGateway3"
+            "domain": "bemfa",
+            "name": "bemfa - 巴法云",
+            "url": "https://github.com/larry-wong/bemfa"
         },
         {
             "domain": "smartir",
