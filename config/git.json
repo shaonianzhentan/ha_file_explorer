@@ -8,7 +8,7 @@
         {
             "domain": "conversation",
             "name": "语音小助手",
-            "url": "https://github.com/shaonianzhentan/conversation"
+            "url": "https://gitee.com/shaonianzhentan/conversation"
         },
         {
             "domain": "ha_file_explorer",
@@ -68,7 +68,7 @@
         {
             "domain": "workday",
             "name": "工作日",
-            "url": "https://github.com/shaonianzhentan/workday"
+            "url": "https://gitee.com/shaonianzhentan/workday"
         }
     ],
     "all": [
