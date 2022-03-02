@@ -197,5 +197,5 @@
 |---|---|---|
 奶茶= | <img src="https://cdn.jsdelivr.net/gh/shaonianzhentan/ha-docs@master/docs/img/alipay.png" align="left" height="160" width="160" alt="支付宝" title="支付宝">  |  <img src="https://cdn.jsdelivr.net/gh/shaonianzhentan/ha-docs@master/docs/img/wechat.png" align="left" height="160" width="160" alt="微信支付" title="微信">
 
-#### 关注我的微信订阅号，了解更多HomeAssistant相关知识
+## 关注我的微信订阅号，了解更多HomeAssistant相关知识
 <img src="https://cdn.jsdelivr.net/gh/shaonianzhentan/ha-docs@master/docs/img/wechat-channel.png" height="160" alt="HomeAssistant家庭助理" title="HomeAssistant家庭助理"> 
