@@ -16,9 +16,8 @@ console() {
     echo -e  "${RED}$1${RES}"
 }
 
-console "清除hacs.zip文件"
-
-rm -rf hacs.zip
+console "清除hacs临时文件"
+rm -rf hacs.zip hacs.sh
 
 console "下载最新hacs发布文件"
 wget https://hub.fastgit.xyz/hacs-china/integration/releases/latest/download/hacs.zip
@@ -33,8 +32,7 @@ unzip hacs.zip -d custom_components/hacs
 if [ $? -eq 0 ]
 then
     console "安装成功，请重启HomeAssistant使用其生效"
-    # 删除
-    rm -rf hacs.zip
+    rm -rf hacs.zip hacs.sh
 else
     console "安装失败，请手动解压"
 fi

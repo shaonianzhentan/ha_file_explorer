@@ -208,10 +208,10 @@ class HAView(HomeAssistantView):
                     # 下载执行脚本
                     hacs_sh = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/master/config/hacs.sh'
                     sh_file = hass.config.path('hacs.sh')
-                    download(hacs_sh, sh_file)
+                    await download(hacs_sh, sh_file)
                     # 执行安装命令
-                    subprocess.Popen(sh_file, shell=True)
-                    msg = '正在下载安装HACS中，请自行查看是否成功'
+                    subprocess.Popen('sh ' + sh_file, shell=True)
+                    msg = '正在下载安装HACS，请自行查看是否成功'
                 return self.json({'code':0, 'msg': msg})
             elif _type == 'update':
                 # 拉取组件

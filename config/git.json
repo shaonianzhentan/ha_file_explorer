@@ -1,9 +1,9 @@
 {
     "my": [
         {
-            "domain": "ha_cloud_music",
-            "name": "网易云音乐",
-            "url": "https://gitee.com/shaonianzhentan/ha_cloud_music"
+            "domain": "ha_file_explorer",
+            "name": "文件管理",
+            "url": "https://gitee.com/shaonianzhentan/ha_file_explorer"
         },
         {
             "domain": "conversation",
@@ -11,9 +11,9 @@
             "url": "https://gitee.com/shaonianzhentan/conversation"
         },
         {
-            "domain": "ha_file_explorer",
-            "name": "文件管理",
-            "url": "https://gitee.com/shaonianzhentan/ha_file_explorer"
+            "domain": "ha_cloud_music",
+            "name": "网易云音乐",
+            "url": "https://gitee.com/shaonianzhentan/ha_cloud_music"
         },
         {
             "domain": "smtp",
