@@ -147,7 +147,7 @@
             清除GitHub
           </v-btn>
           <v-btn color="orange" @click="updateSourceClick('hacs')" text>
-            HACS
+            安装HACS极速版
           </v-btn>
         </v-card-actions>
       </v-card>

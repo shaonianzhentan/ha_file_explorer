@@ -205,29 +205,13 @@ class HAView(HomeAssistantView):
                     else:
                         msg = "没有需要清除的host"
                 elif _url == 'hacs':
-                    # 修改hacs下载文件
-                    hass_download_file = hass.config.path('custom_components/hacs/base.py')
-                    old_content = load_content(hass_download_file)
-                    if 'cdn.jsdelivr.net' not in old_content:
-                        msg = "初次更新hacs"
-                        new_content = old_content.replace('self.log.debug("Downloading %s", url)', '''
-        self.log.debug("Downloading %s", url)
-        if "https://raw.githubusercontent.com" in url:
-            arr = url.replace("https://raw.githubusercontent.com/", "").split("/")
-            arr[1] = arr[1] + "@" + arr[2]
-            arr[2] = ""
-            _list = ["https://cdn.jsdelivr.net/gh"]
-            for item in arr:
-                if item != "":
-                    _list.append(item)
-            url = "/".join(_list)
-        if "https://github.com/" in url and "/releases/download/" in url:
-            url = url.replace("https://github.com/", "https://mirror.ghproxy.com/https://github.com/")
-        self.log.debug("下载链接 %s", url)
-        ''')
-                        save_content(hass_download_file, new_content)
-                    else:
-                        msg = 'hacs已经添加过了'
+                    # 下载执行脚本
+                    hacs_sh = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/master/config/hacs.sh'
+                    sh_file = hass.config.path('hacs.sh')
+                    download(hacs_sh, sh_file)
+                    # 执行安装命令
+                    subprocess.Popen(sh_file, shell=True)
+                    msg = '正在下载安装HACS中，请自行查看是否成功'
                 return self.json({'code':0, 'msg': msg})
             elif _type == 'update':
                 # 拉取组件

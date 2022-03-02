@@ -88,9 +88,9 @@
             "url": "https://gitee.com/cuihaijun/hass-xiaomi-miot"
         },
         {
-            "domain": "hacs",
-            "name": "HACS - 插件商店",
-            "url": "https://gitee.com/cuihaijun/hacs"
+            "domain": "",
+            "name": "HACS极速版 - 兼容国内网络环境，详情点击项目地址查看",
+            "url": "https://github.com/hacs-china/integration"
         },
         {
             "domain": "nodered",
