@@ -147,7 +147,9 @@ class FileExplorer():
     async def upload(self, call):
         data = call.data
         filter_dir = data.get('filter', [])
-        filter_dir.extend(['home-assistant_v2.db', 'home-assistant_v2.db-shm', 'home-assistant_v2.db-wal', 'home-assistant.log', 'deps', 'media', 'core', 'custom_components/ha_file_explorer'])
+        filter_dir.extend(['deps', 'media', 'core', 'custom_components/ha_file_explorer',
+            'home-assistant_v2.db', 'home-assistant_v2.db-shm', 'home-assistant_v2.db-wal',
+            'home-assistant.log', 'home-assistant.log.fault', 'home-assistant.log.1'])
         await self.notify('开始压缩上传备份文件')
         zf = zip(self.hass.config.path('./'), f"_{current_version}_{int(time.time())}.zip", filter_dir, ['node_modules', '__pycache__', '.npm'], self.hass.config.path('./custom_components/ha_file_explorer/local/backup/'))
         # 如果配置了七牛云服务
