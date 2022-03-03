@@ -26,24 +26,19 @@
             "url": "https://gitee.com/shaonianzhentan/xiaomi_tv"
         },
         {
-            "domain": "hf_weather",
-            "name": "和风天气",
-            "url": "https://github.com/shaonianzhentan/hf_weather"
-        },
-        {
             "domain": "google_maps",
             "name": "百度地图",
-            "url": "https://github.com/shaonianzhentan/google_maps"
+            "url": "https://gitee.com/shaonianzhentan/google_maps"
         },
         {
             "domain": "xiaomi_radio",
             "name": "小米电台",
-            "url": "https://github.com/shaonianzhentan/xiaomi_radio"
+            "url": "https://gitee.com/shaonianzhentan/xiaomi_radio"
         },
         {
             "domain": "bluetooth_tracker",
             "name": "蓝牙检测",
-            "url": "https://github.com/shaonianzhentan/bluetooth_tracker"
+            "url": "https://gitee.com/shaonianzhentan/bluetooth_tracker"
         },
         {
             "domain": "twitter",
@@ -63,7 +58,12 @@
         {
             "domain": "panel_iframe",
             "name": "侧边栏面板",
-            "url": "https://github.com/shaonianzhentan/panel_iframe"
+            "url": "https://gitee.com/shaonianzhentan/panel_iframe"
+        },
+        {
+            "domain": "hf_weather",
+            "name": "和风天气",
+            "url": "https://github.com/shaonianzhentan/hf_weather"
         },
         {
             "domain": "workday",
