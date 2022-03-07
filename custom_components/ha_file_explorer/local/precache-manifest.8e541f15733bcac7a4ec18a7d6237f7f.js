@@ -60,8 +60,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "fonts/roboto-vietnamese-400-normal.756af8e5.woff2"
   },
   {
-    "revision": "854488e7871d70cad660cd29ee06fc49",
+    "revision": "bcda140ebd8fdb8b7228da8560124814",
     "url": "index.html"
+  },
+  {
+    "revision": "444ff118c949d422774e2a9e341e28ba",
+    "url": "js/ace.js"
   },
   {
     "revision": "b0faf485470040001fc4",
