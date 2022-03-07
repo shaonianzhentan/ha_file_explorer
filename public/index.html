@@ -166,7 +166,10 @@
 
     function aceLoad() {
       console.log(ace)
-      ace.config.set('basePath', 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/');
+      const cdn = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.14/src-min-noconflict/'
+      ace.config.set('basePath', cdn);
+      ace.config.set('modePath', cdn);
+      ace.config.set('themePath', cdn);
     }
   </script>
   <script src="js/ace.js" onload="aceLoad()" async="async"></script>
