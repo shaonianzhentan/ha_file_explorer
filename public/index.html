@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet"> -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.5.0/400.css" />
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.5.0/400.css" /> -->
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.4.95/css/materialdesignicons.min.css"> -->
   <title>
     <%= htmlWebpackPlugin.options.title %>
@@ -30,17 +30,12 @@
           color-stop(.5, transparent), to(transparent));
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vuex@3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue-router@3"></script>
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vuex@3"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue-router@3"></script> -->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.css" rel="stylesheet"> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.6/dist/vuetify.min.js"></script> -->
   <!-- 加载编辑器 -->
-  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js"></script>
-  <script>
-    ace.config.set('basePath', 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/');
-    window.onbeforeunload = function () { return "确定离开当前页吗？"; }
-  </script>
 </head>
 
 <body>
@@ -167,8 +162,11 @@
 
     window.ha = new HA();
     window.ha.fullscreen()
-
-
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/ace.js"></script>
+  <script>
+    ace.config.set('basePath', 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.12/src-min-noconflict/');
+    window.onbeforeunload = function () { return "确定离开当前页吗？"; }
   </script>
 </body>
 

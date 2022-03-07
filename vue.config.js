@@ -2,15 +2,15 @@ module.exports = {
   publicPath: './',
   outputDir: 'custom_components/ha_file_explorer/local',
   productionSourceMap: false,
-  // "transpileDependencies": [
-  //   "vuetify"
-  // ],
+  "transpileDependencies": [
+    "vuetify"
+  ],
   configureWebpack: {
     externals: {
-      'vue': 'Vue',
-      'vuex': 'Vuex',
-      'vue-router': 'VueRouter',
-      'vuetify': 'Vuetify',
+      // 'vue': 'Vue',
+      // 'vuex': 'Vuex',
+      // 'vue-router': 'VueRouter',
+      // 'vuetify': 'Vuetify',
     }
   },
   chainWebpack: config => {
