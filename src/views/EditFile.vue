@@ -40,10 +40,12 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
+      document.body.classList.add("edit-page");
       document.addEventListener("keydown", vm.autoSaveKeydown, false);
     });
   },
   beforeRouteLeave(to, from, next) {
+    document.body.classList.remove("edit-page");
     document.removeEventListener("keydown", this.autoSaveKeydown);
     next();
   },
@@ -128,7 +130,14 @@ export default {
   },
 };
 </script>
-
+<style lang="less">
+.edit-page {
+  overflow: hidden;
+  .v-footer {
+    display: none;
+  }
+}
+</style>
 <style lang="less" scoped>
 /deep/ .ace_print-margin-layer {
   display: none;
