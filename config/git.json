@@ -41,9 +41,9 @@
             "url": "https://gitee.com/shaonianzhentan/bluetooth_tracker"
         },
         {
-            "domain": "twitter",
-            "name": "微信通知提醒",
-            "url": "https://gitee.com/shaonianzhentan/twitter"
+            "domain": "feedreader",
+            "name": "小说阅读器",
+            "url": "https://gitee.com/shaonianzhentan/ha-novel"
         },
         {
             "domain": "todoist",
