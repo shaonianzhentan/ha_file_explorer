@@ -247,6 +247,20 @@ def github_url(url):
             'file_name': file_name,
             'url': f"https://raw.fastgit.org/{repo}/{path}"
         }
+    # 匹配Gitee
+    GITHUB_FILE_PATTERN = re.compile(
+        r"^https://gitee.com/(?P<repository>.+)/blob/(?P<path>.+)$"
+    )
+    match = GITHUB_FILE_PATTERN.match(url)
+    if match is not None:
+        repo, path = match.groups()
+        author = repo.split('/')[0]
+        file_name = path.split('/')[-1]
+        return {
+            'author': author,
+            'file_name': file_name,
+            'url': f"https://gitee.com/{repo}/raw/{path}"
+        }
 
 ''' ---------------------- HTTP库 --------------------------- '''
 
