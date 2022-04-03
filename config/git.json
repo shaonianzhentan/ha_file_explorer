@@ -69,6 +69,11 @@
             "domain": "workday",
             "name": "工作日",
             "url": "https://gitee.com/shaonianzhentan/workday"
+        },
+        {
+            "domain": "homepage",
+            "name": "浏览器主页",
+            "url": "https://gitee.com/shaonianzhentan/ha-homepage"
         }
     ],
     "all": [
