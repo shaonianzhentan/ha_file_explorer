@@ -74,6 +74,11 @@
             "domain": "homepage",
             "name": "浏览器主页",
             "url": "https://gitee.com/shaonianzhentan/ha-homepage"
+        },
+        {
+            "domain": "hikvision",
+            "name": "云眸社区（门禁开关）",
+            "url": "https://gitee.com/shaonianzhentan/hikvision"
         }
     ],
     "all": [
