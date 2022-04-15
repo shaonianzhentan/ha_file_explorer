@@ -79,6 +79,11 @@
             "domain": "hikvision",
             "name": "云眸社区（门禁开关）",
             "url": "https://gitee.com/shaonianzhentan/hikvision"
+        },
+        {
+            "domain": "yoosee",
+            "name": "Yoosee摄像头",
+            "url": "https://gitee.com/shaonianzhentan/yoosee"
         }
     ],
     "all": [
