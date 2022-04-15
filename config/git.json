@@ -100,7 +100,7 @@
         {
             "domain": "xiaomi_miot",
             "name": "Xiaomi Miot - 小米云端设备",
-            "url": "https://gitee.com/cuihaijun/hass-xiaomi-miot"
+            "url": "https://gitee.com/al-one/hass-xiaomi-miot"
         },
         {
             "domain": "",
