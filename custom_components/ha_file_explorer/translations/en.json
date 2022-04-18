@@ -3,8 +3,10 @@
         "step": {
             "user": {
                 "title": "文件管理",
-                "description": "项目：https://github.com/shaonianzhentan/ha_file_explorer",
-                "data": {}
+                "description": "使用方法请参考项目文档",
+                "data": {
+                    "require_admin": "管理员可见"
+                }
             }
         },
         "error": {},

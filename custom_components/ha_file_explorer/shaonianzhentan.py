@@ -222,9 +222,9 @@ def register_service(hass, domain, service, func):
         hass.async_create_task(hass.services.async_register(domain, service, func))
 
 # 添加面板
-def sidebar_add(hass, name, icon, path, url):
+def sidebar_add(hass, name, icon, path, url, require_admin=False):
     sidebar_remove(hass, path)
-    hass.components.frontend.async_register_built_in_panel("iframe", name, icon, path, {"url": url}, require_admin=False)
+    hass.components.frontend.async_register_built_in_panel("iframe", name, icon, path, {"url": url}, require_admin)
 
 # 移除面板
 def sidebar_remove(hass, path):

@@ -10,14 +10,14 @@ from .view import HAView
 
 class FileExplorer():
 
-    def __init__(self, hass, config):
+    def __init__(self, hass, config, require_admin):
         self.hass = hass
         self.q = None
         # 注册静态目录
-        hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"), False)
+        hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/" + DOMAIN + "/local"))
         hass.http.register_view(HAView)
         # 注册菜单栏
-        sidebar_add(hass, NAME, ICON, DOMAIN, ROOT_PATH + "/index.html?ver=" + VERSION)
+        sidebar_add(hass, NAME, ICON, DOMAIN, ROOT_PATH + "/index.html?ver=" + VERSION, require_admin)
         # 初始化七牛云服务
         self.mounted_qn(config)
         # 注册上传服务

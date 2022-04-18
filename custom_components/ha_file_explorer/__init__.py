@@ -6,8 +6,7 @@ from .file_explorer import FileExplorer
 from .const import DOMAIN
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.data[DOMAIN] = FileExplorer(hass, entry.options)
-
+    hass.data[DOMAIN] = FileExplorer(hass, entry.options, entry.data.get('require_admin', False))
     entry.async_on_unload(entry.add_update_listener(update_listener))
     return True
 
