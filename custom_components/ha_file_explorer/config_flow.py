@@ -25,7 +25,7 @@ class SimpleConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is None:
             errors = {}
             DATA_SCHEMA = vol.Schema({
-                vol.Required("require_admin", default=False)
+                vol.Required("require_admin", default=False): bool
             })
             return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA, errors=errors)
 
