@@ -1,4 +1,4 @@
-import subprocess, requests, os
+import requests, os
 from homeassistant.components.update import (
     UpdateDeviceClass,
     UpdateEntity,
@@ -48,7 +48,7 @@ class EntityUpdate(UpdateEntity):
         sh_file = get_current_path('install.sh')
         await download(url, sh_file)
         os.system('sh ' + sh_file)
-        self._attr_title = '更新完成，重启生效'
+        self._attr_title = '需要重启 Home Assistant'
         manifest.update()
 
     async def async_update(self):
