@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="./favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>文件管理器</title>
+  <script type="module" crossorigin src="./assets/index.2de76b2f.js"></script>
+  <link rel="stylesheet" href="./assets/index.4b7f0d88.css">
+</head>
+
+<body>
+  <div id="app"></div>
+  
+  <script>
+    function aceLoad() {
+      const cdn = 'https://cdn.jsdelivr.net/npm/ace-builds@1.4.14/src-min-noconflict/'
+      ace.config.set('basePath', cdn);
+      ace.config.set('modePath', cdn);
+      ace.config.set('themePath', cdn);
+    }
+  </script>
+  <script src="./js/ace.js" onload="aceLoad()" async="async"></script>
+</body>
+
+</html>

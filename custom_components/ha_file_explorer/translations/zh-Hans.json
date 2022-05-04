@@ -1,17 +1,17 @@
 {
-    "title": "File Explorer",
+    "title": "文件浏览器",
     "config": {
         "step": {
             "user": {
                 "description": "",
                 "data": {
-                    "require_admin": "Visible only to administrators"
+                    "require_admin": "仅管理员可见"
                 }
             }
         },
         "error": {},
         "abort": {
-            "single_instance_allowed": "Single Instance Allowed."
+            "single_instance_allowed": "仅允许单个配置."
         }
     }
 }

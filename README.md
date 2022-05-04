@@ -15,13 +15,10 @@
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
 
-
-定时备份
-
-[![导入蓝图](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fshaonianzhentan%2Fha_file_explorer%2Fblob%2Fmaster%2Fblueprints%2Fbackup.yaml)
-
-
 ## 更新日志
+
+### v3.0
+- 重构界面，精简功能
 
 ### v2.7.14
 - 将部分CDN链接改为本地加载
