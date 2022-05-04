@@ -1,4 +1,4 @@
-import os, shutil, uuid, yaml, logging, json, urllib, hashlib, datetime, asyncio, base64, re, zipfile, tempfile, time
+import os, shutil, uuid, yaml, logging, aiohttp, json, urllib, hashlib, datetime, asyncio, base64, re, zipfile, tempfile, time
 
 # 获取当前路径
 def get_current_path(file_path):
@@ -147,3 +147,12 @@ def load_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
         return data
+
+async def download(url, file_path):
+    headers = {'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'}
+    connector = aiohttp.TCPConnector(verify_ssl=False)
+    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
+        async with session.get(url) as response:
+            file = await response.read()
+            with open(file_path, 'wb') as f:
+                f.write(file)

@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .file_api import get_current_path
+from .file_api import get_current_path, download
 from .manifest import manifest
 
 NAME = manifest.name
@@ -43,9 +43,11 @@ class EntityUpdate(UpdateEntity):
 
     async def async_install(self, version: str, backup: bool):
         print(self._attr_in_progress)
-        if self._attr_in_progress != True:
-            self._attr_in_progress = True
+        self._attr_in_progress = True
+        # download install script
+        url = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/dev/config/install.sh'
         sh_file = get_current_path('install.sh')
+        await download(url, sh_file)
         subprocess.Popen('sh ' + sh_file, shell=True)
 
     async def async_update(self):
