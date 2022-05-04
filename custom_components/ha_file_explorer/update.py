@@ -1,4 +1,4 @@
-import subprocess, requests
+import subprocess, requests, os
 from homeassistant.components.update import (
     UpdateDeviceClass,
     UpdateEntity,
@@ -42,13 +42,14 @@ class EntityUpdate(UpdateEntity):
         return "Lorem ipsum"
 
     async def async_install(self, version: str, backup: bool):
-        print(self._attr_in_progress)
-        self._attr_in_progress = True
+        # self._attr_in_progress = True
         # download install script
         url = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/dev/config/install.sh'
         sh_file = get_current_path('install.sh')
         await download(url, sh_file)
-        subprocess.Popen('sh ' + sh_file, shell=True)
+        os.system('sh ' + sh_file)
+        self._attr_title = '更新完成，重启生效'
+        manifest.update()
 
     async def async_update(self):
         res = await self.hass.async_add_executor_job(requests.get, (manifest.remote_url))
