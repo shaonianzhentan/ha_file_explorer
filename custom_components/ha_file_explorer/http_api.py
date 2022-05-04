@@ -1,6 +1,10 @@
 from homeassistant.components.http import HomeAssistantView
-from .const import DOMAIN, API_URL
 from .file_api import delete_file, get_dir_list, mkdir, load_content, save_content
+
+from .manifest import manifest
+
+DOMAIN = manifest.domain
+API_URL = f"/{DOMAIN}-api"
 
 class HttpApi(HomeAssistantView):
 

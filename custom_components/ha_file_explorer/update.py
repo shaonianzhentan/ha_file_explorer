@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, requests
 from homeassistant.components.update import (
     UpdateDeviceClass,
     UpdateEntity,
@@ -11,13 +11,17 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import VERSION, NAME
 from .file_api import get_current_path
+from .manifest import manifest
+
+NAME = manifest.name
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    async_add_entities([EntityUpdate(entry.entry_id)])
+    ent = EntityUpdate(hass, entry.entry_id)
+    await ent.async_update()
+    async_add_entities([ ent ])
 
 class EntityUpdate(UpdateEntity):
 
@@ -25,14 +29,14 @@ class EntityUpdate(UpdateEntity):
     _attr_name = NAME
     _attr_title = NAME
 
-    def __init__(self, unique_id):
+    def __init__(self, hass, unique_id):
+        self.hass = hass
         self._attr_unique_id = unique_id
         self._attr_release_url = 'https://github.com/shaonianzhentan/ha_file_explorer'
-        self.update()
 
     @property
     def installed_version(self):
-        return VERSION
+        return manifest.version
 
     async def async_release_notes(self):
         return "Lorem ipsum"
@@ -44,9 +48,7 @@ class EntityUpdate(UpdateEntity):
         sh_file = get_current_path('install.sh')
         subprocess.Popen('sh ' + sh_file, shell=True)
 
-    def update(self):
-        self._attr_latest_version = '3.0.3'
-
     async def async_update(self):
-        print('update')
-        self._attr_latest_version = '3.0.3'
+        res = await self.hass.async_add_executor_job(requests.get, (manifest.remote_url))
+        data = res.json()
+        self._attr_latest_version = data.get('version')

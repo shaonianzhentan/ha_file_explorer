@@ -2,7 +2,7 @@ import os, shutil, uuid, yaml, logging, json, urllib, hashlib, datetime, asyncio
 
 # 获取当前路径
 def get_current_path(file_path):
-    return os.path.abspath(file_path)
+    return os.path.abspath('./custom_components/ha_file_explorer/' + file_path)
 
 # 获取当前文件列表
 def get_dir_list(dir):
@@ -139,3 +139,11 @@ def base64_to_file(self, base64_data, file):
     fout = open(file, 'wb')
     fout.write(ori_image_data)
     fout.close()
+
+def load_json(file_path):
+    # 不存在则返回空字典
+    if os.path.exists(file_path) == False:
+        return {}
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        return data
