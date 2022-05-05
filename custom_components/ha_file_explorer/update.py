@@ -39,12 +39,14 @@ class EntityUpdate(UpdateEntity):
         return manifest.version
 
     async def async_release_notes(self):
-        return "Lorem ipsum"
+        return '''
+        - 支持新增文件和文件夹
+        '''
 
     async def async_install(self, version: str, backup: bool):
         # self._attr_in_progress = True
         # download install script
-        url = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/dev/config/install.sh'
+        url = 'https://gitee.com/shaonianzhentan/ha_file_explorer/raw/dev/bash/install.sh'
         sh_file = get_current_path('install.sh')
         await download(url, sh_file)
         os.system('sh ' + sh_file)

@@ -101,6 +101,16 @@ export function setHassFileContent(path: string, data: string) {
     return requestApi({ path, type: "new-file", data })
 }
 
+/**
+ * create dir in hass config dir
+ * @param path 
+ * @returns 
+ */
+export function mkdirHass(path: string) {
+    return requestApi({ path, type: "new-dir" })
+}
+
+
 export function deleteHassFile(path: string) {
     return requestApi({ path, type: "delete" })
 }

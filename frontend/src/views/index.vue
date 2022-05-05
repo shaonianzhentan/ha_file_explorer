@@ -9,7 +9,7 @@ import FolderList from '../components/list/FolderList.vue'
         <template #left>
             <va-button color="#fff" flat :rounded="false">文件管理</va-button>
         </template>
-        <template #right>            
+        <template #right>
         </template>
         <va-card>
             <va-card-title>
@@ -23,29 +23,10 @@ import FolderList from '../components/list/FolderList.vue'
 
         <div class="row">
             <div class="flex md6">
-
-                <va-card>
-
-                    <va-card-title>
-                        文件夹
-                    </va-card-title>
-                    <va-card-content>
-                        <FolderList />
-                    </va-card-content>
-                </va-card>
-
+                <FolderList />
             </div>
             <div class="flex md6">
-
-                <va-card>
-
-                    <va-card-title>
-                        文件列表
-                    </va-card-title>
-                    <va-card-content>
-                        <FileList />
-                    </va-card-content>
-                </va-card>
+                <FileList />
             </div>
         </div>
 
@@ -82,6 +63,14 @@ export default {
 
     .va-breadcrumb-item__label {
         cursor: pointer;
+    }
+
+    .md6 {
+        .va-card__title {
+            justify-content: space-between;
+            padding-right: 40px;
+            padding-left: 30px;
+        }
     }
 
     .va-list-item {
