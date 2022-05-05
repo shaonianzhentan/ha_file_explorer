@@ -8,6 +8,7 @@
             文件夹
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
+                    <va-button @click="deleteClick" v-if="pathList.length > 1">删除</va-button>
                     <va-button @click="addClick">新增</va-button>
                 </va-button-group>
             </va-button-dropdown>
@@ -47,11 +48,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
+import { deleteHassFile } from '@/api/index'
 export default {
     computed: {
-        ...mapState(['folderList'])
+        ...mapState(['folderList', 'path']),
+        ...mapGetters(['pathList'])
     },
     methods: {
         ...mapActions(['getFileList']),
@@ -62,6 +65,16 @@ export default {
             this.$dialog(CreateFile, {
                 type: 'dir'
             })
+        },
+        deleteClick() {
+            const { pathList } = this
+            const { name } = pathList[pathList.length - 1]
+            if (parent.confirm(`确定删除文件夹【${name}】？`)) {
+                deleteHassFile(this.path).then(res => {
+                    this.getFileList(pathList.length - 2)
+                    this.$toast(res.msg)
+                })
+            }
         }
     }
 }

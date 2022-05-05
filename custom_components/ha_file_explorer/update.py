@@ -40,7 +40,8 @@ class EntityUpdate(UpdateEntity):
 
     async def async_release_notes(self):
         return '''
-        - 支持新增文件和文件夹
+        支持新增文件和文件夹
+        支持删除文件夹
         '''
 
     async def async_install(self, version: str, backup: bool):

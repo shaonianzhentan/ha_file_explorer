@@ -50,26 +50,17 @@ export function showQuickBar(key: string) {
     parent.window.dispatchEvent(kb);
 }
 
-async function requestApi(data: any) {
+async function requestApi(data: any, query = {} as any, method = 'post') {
     store.commit('loading', true)
     const ha = parent.document.querySelector('home-assistant') as any
-    let result = null
-    let params = {
-        method: 'post',
-        body: JSON.stringify(data)
+    const params = { method } as any;
+    if (data) {
+        params.body = JSON.stringify(data)
     }
-    if (ha) {
-        result = ha.hass.fetchWithAuth('/ha_file_explorer-api', params)
-    } else {
-        const url = `${parent.location.origin}/ha_file_explorer-api`
-        let token = ''
-        result = fetch(url, {
-            ...params,
-            headers: {
-                authorization: `Bearer ${token}`
-            }
-        })
+    if (method == 'get') {
+        query['t'] = Date.now()
     }
+    const result = ha.hass.fetchWithAuth('/ha_file_explorer-api?' + new URLSearchParams(query).toString(), params)
     return result.then((res: any) => res.json()).finally(() => {
         store.commit('loading', false)
     })
@@ -80,7 +71,7 @@ async function requestApi(data: any) {
  * @returns 
  */
 export function getHassFileList(path: string) {
-    return requestApi({ path, type: "get" })
+    return requestApi(null, { act: 'get', path }, 'get')
 }
 
 /**
@@ -89,16 +80,16 @@ export function getHassFileList(path: string) {
  * @returns 
  */
 export function getHassFileContent(path: string) {
-    return requestApi({ path, type: "get-content" })
+    return requestApi(null, { act: 'content', path }, 'get')
 }
 
 /**
- * 获取文件内容
+ * 设置文件内容
  * @param path 
  * @returns 
  */
 export function setHassFileContent(path: string, data: string) {
-    return requestApi({ path, type: "new-file", data })
+    return requestApi({ path, data }, {}, 'post')
 }
 
 /**
@@ -106,13 +97,13 @@ export function setHassFileContent(path: string, data: string) {
  * @param path 
  * @returns 
  */
-export function mkdirHass(path: string) {
-    return requestApi({ path, type: "new-dir" })
+export function createHassFile(act: string, path: string) {
+    return requestApi({ path }, { act }, 'put')
 }
 
 
 export function deleteHassFile(path: string) {
-    return requestApi({ path, type: "delete" })
+    return requestApi(null, { path }, 'delete')
 }
 
 export default {

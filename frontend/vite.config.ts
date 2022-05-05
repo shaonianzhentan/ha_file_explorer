@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
@@ -12,6 +11,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/ha_file_explorer-api': 'http://localhost:8123'
+    }
+  },
+  resolve: {
+    alias: {
+      "@": '/src/'
     }
   }
 })
