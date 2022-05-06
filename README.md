@@ -20,10 +20,13 @@ After installation, restart home assistant, refresh the page and search for `ha_
 
 ## Features
 
-- create new file or new folder
-- delete file or folder
-- modify file content
-- rename file or folder
+- [x] create new file or new folder
+- [x] delete file or folder
+- [x] modify file content
+- [ ] upload files or folder
+- [ ] rename file or folder
+- [ ] check update
+- [ ] custom theme color
 
 ## Screenshot
 
