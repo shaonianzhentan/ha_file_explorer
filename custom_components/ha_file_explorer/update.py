@@ -15,6 +15,7 @@ from .file_api import get_current_path, download
 from .manifest import manifest
 
 NAME = manifest.name
+DOMAIN = manifest.domain
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -25,9 +26,9 @@ async def async_setup_entry(
 
 class EntityUpdate(UpdateEntity):
 
-    _attr_supported_features = UpdateEntityFeature.INSTALL | UpdateEntityFeature.RELEASE_NOTES
+    _attr_supported_features = UpdateEntityFeature.INSTALL
     _attr_name = NAME
-    _attr_title = NAME
+    _attr_title = DOMAIN
 
     def __init__(self, hass, unique_id):
         self.hass = hass
@@ -37,12 +38,6 @@ class EntityUpdate(UpdateEntity):
     @property
     def installed_version(self):
         return manifest.version
-
-    async def async_release_notes(self):
-        return '''
-        支持新增文件和文件夹
-        支持删除文件夹
-        '''
 
     async def async_install(self, version: str, backup: bool):
         # self._attr_in_progress = True

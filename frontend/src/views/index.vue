@@ -7,7 +7,7 @@ import FolderList from '../components/list/FolderList.vue'
 <template>
     <AppLayout class="views-index">
         <template #left>
-            <va-button color="#fff" flat :rounded="false">文件管理</va-button>
+            <va-button color="#fff" flat :rounded="false" @click="versionClick">文件管理</va-button>
         </template>
         <template #right>
         </template>
@@ -39,6 +39,7 @@ import FolderList from '../components/list/FolderList.vue'
 
 <script lang="ts">
 import { mapGetters, mapActions } from 'vuex'
+import VersionInfo from '@/components/dialogs/VersionInfo.vue'
 export default {
     computed: {
         ...mapGetters(['pathList'])
@@ -48,8 +49,11 @@ export default {
     },
     methods: {
         ...mapActions(['getFileList']),
-        changePathClick(index) {
+        changePathClick(index: number) {
             this.getFileList(index)
+        },
+        versionClick() {
+            this.$dialog(VersionInfo)
         }
     }
 }
