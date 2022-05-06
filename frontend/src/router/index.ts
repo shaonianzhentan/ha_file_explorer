@@ -10,7 +10,7 @@ const routes = [
         component: () => import('../views/index.vue')
     },
     {
-        path: '/editor', 
+        path: '/editor',
         name: 'editor',
         meta: {
             keepAlive: false
