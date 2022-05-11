@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useStore } from 'vuex'
-import { createHassFile } from '../../api/index'
 
 interface VersionInfo {
     name: string,

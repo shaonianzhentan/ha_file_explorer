@@ -23,6 +23,7 @@ import { defineComponent } from 'vue'
 import { mapGetters } from 'vuex'
 import { getHassFileContent, setHassFileContent } from '../api/index'
 import { editorMode } from '../utils/format'
+
 export default defineComponent({
     data() {
         return {
@@ -52,7 +53,7 @@ export default defineComponent({
             }
             this.name = name as string
             const path = this.absolutePath(name)
-            const editor = document.querySelector("#editor")
+            const editor = document.querySelector("#editor") as any
             editor.innerHTML = ''
             getHassFileContent(path).then(({ code, data }) => {
                 if (code > 0) {
@@ -61,7 +62,7 @@ export default defineComponent({
                 editor.textContent = data;
                 window.editor = window.ace.edit("editor", {
                     theme: "ace/theme/chrome",
-                    mode: editorMode(name),
+                    mode: editorMode(this.name),
                 });
                 document.body.scrollIntoView();
             })

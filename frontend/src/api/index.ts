@@ -46,7 +46,7 @@ export function showQuickBar(key: string) {
             }
         }]
     }
-    console.log(kb)
+    // console.log(kb)
     parent.window.dispatchEvent(kb);
 }
 

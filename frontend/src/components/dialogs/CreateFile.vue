@@ -37,3 +37,7 @@ const okClick = async () => {
         </template>
     </va-modal>
 </template>
+<script lang="ts">
+export default {
+}
+</script>

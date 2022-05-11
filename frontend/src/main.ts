@@ -10,6 +10,12 @@ import store from './store/index'
 
 import MdiIcon from './components/globel/mdi-icon.vue'
 
+const vuesticConfig = {
+    colors: {
+        primary: getComputedStyle(parent.document.documentElement).getPropertyValue('--primary-color').trim()
+    }
+}
+
 const app = createApp(App)
 app.config.globalProperties.$toast = (message: string) => {
     app.config.globalProperties.$vaToast.init({ position: 'bottom-right', color: 'primary', message })
@@ -30,7 +36,7 @@ app.config.globalProperties.$dialog = (com: DefineComponent, propsData = {}): Pr
                 reject()
             }
         }))
-        comApp.use(store).use(VuesticPlugin).component('mdi-icon', MdiIcon).mount(div)
+        comApp.use(store).use(VuesticPlugin, vuesticConfig).component('mdi-icon', MdiIcon).mount(div)
     })
 }
-app.use(rotuer).use(store).use(VuesticPlugin).component('mdi-icon', MdiIcon).mount('#app')
+app.use(rotuer).use(store).use(VuesticPlugin, vuesticConfig).component('mdi-icon', MdiIcon).mount('#app')

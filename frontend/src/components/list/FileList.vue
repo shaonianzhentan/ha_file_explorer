@@ -16,7 +16,7 @@
             <va-list style="padding-top:0;">
                 <va-list-item v-for="(item, index) in fileList" :key="index">
                     <va-list-item-section avatar>
-                        <va-avatar>
+                        <va-avatar color="var(--va-primary)">
                             <mdi-icon :name="item.icon" />
                         </va-avatar>
                     </va-list-item-section>

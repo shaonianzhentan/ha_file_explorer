@@ -17,7 +17,7 @@
             <va-list style="padding-top:0;">
                 <va-list-item v-for="(item, index) in folderList" :key="index">
                     <va-list-item-section avatar>
-                        <va-avatar>
+                        <va-avatar color="var(--va-primary)">
                             <mdi-icon :name="item.icon" />
                         </va-avatar>
                     </va-list-item-section>
@@ -47,10 +47,10 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
-import { deleteHassFile } from '@/api/index'
+import { deleteHassFile } from '../../api/index'
 export default {
     computed: {
         ...mapState(['folderList', 'path']),
@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         ...mapActions(['getFileList']),
-        showClick(item) {
+        showClick(item: any) {
             this.getFileList(item.name)
         },
         addClick() {
@@ -70,7 +70,7 @@ export default {
             const { pathList } = this
             const { name } = pathList[pathList.length - 1]
             if (parent.confirm(`确定删除文件夹【${name}】？`)) {
-                deleteHassFile(this.path).then(res => {
+                deleteHassFile(this.path).then((res: any) => {
                     this.getFileList(pathList.length - 2)
                     this.$toast(res.msg)
                 })

@@ -1,7 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 html,
 body {
     margin: 0;
     padding: 0;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--va-primary);
 }

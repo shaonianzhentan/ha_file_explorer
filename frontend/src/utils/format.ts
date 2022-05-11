@@ -29,7 +29,29 @@ export function formatSize(size: number) {
  * @param fileName
  * @returns 
  */
-export function formatFileIcon(fileName: string) {
+export function formatFileIcon(path: any, fileName: string) {
+    // ha root dir
+    if (['.', ''].includes(path)) {
+        if ([
+            '.shopping_list.json',
+            'secrets.yaml',
+            'scripts.yaml',
+            'scenes.yaml',
+            'groups.yaml',
+            'customize.yaml',
+            'configuration.yaml',
+            'automations.yaml',
+            'customize.yaml'
+        ].includes(fileName)) {
+            return { icon: 'mdi-home-assistant' }
+        }
+        else if (/^home-assistant\.log./.test(fileName)) {
+            return { icon: 'mdi-math-log' }
+        }
+        else if (/^home-assistant_v2\.db./.test(fileName)) {
+            return { icon: 'mdi-database' }
+        }
+    }
     let icon = 'mdi-file'
     let ext = getFileExt(fileName)
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'ico'].includes(ext)) {
@@ -41,7 +63,7 @@ export function formatFileIcon(fileName: string) {
         'config_entries',
         'device_registry',
         'entity_registry',
-        'restore_state'
+        'restore_state',
     ].includes(ext)) {
         ext = 'homeassistant'
     } else if (['m3u8', 'mp4', 'flv', 'm3u'].includes(ext)) {
@@ -72,7 +94,7 @@ export function formatFileIcon(fileName: string) {
         svg: 'mdi-svg',
         css: 'mdi-language-css3'
     } as any;
-    return { color: '#118ab2', icon: mode[ext] || icon }
+    return { icon: mode[ext] || icon }
 }
 
 
@@ -81,7 +103,7 @@ export function formatFileIcon(fileName: string) {
  * @param folderName
  * @returns 
  */
-export function formatFolderIcon(folderName: string) {
+export function formatFolderIcon(path: any, folderName: string) {
     let icon = 'mdi-folder'
     let ext = folderName
     if ([
@@ -95,13 +117,17 @@ export function formatFolderIcon(folderName: string) {
         '.cloud',
         'script',
         'automation',
-        'homeassistant'
+        'homeassistant',
+        'python_scripts',
+        'packages'
     ].includes(ext)) {
         icon = 'mdi-home-assistant'
-    } else if (['packages', 'deps', '__pycache__'].includes(ext)) {
+    }
+
+    if (['deps', '__pycache__'].includes(ext)) {
         icon = 'mdi-language-python'
     }
-    return { color: '#2C82E0', icon }
+    return { icon }
 }
 
 /**

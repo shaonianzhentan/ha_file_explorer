@@ -1,4 +1,4 @@
-export function querySelector(ele, selector) {
+export function querySelector(ele: any, selector: any): any {
     // console.log('%O', ele)
     // 正常元素
     let findEle = ele.querySelector(selector)
