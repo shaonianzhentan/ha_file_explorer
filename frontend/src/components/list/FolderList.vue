@@ -17,7 +17,9 @@
             <va-list style="padding-top:0;">
                 <va-list-item v-for="(item, index) in folderList" :key="index">
                     <va-list-item-section avatar>
-                        <va-avatar color="var(--va-primary)">
+                        <img class="brands" v-if="item.iconType == 'img'" :src="loadSrc(item.icon)"
+                            @error="loadIcon($event, item.icon)" />
+                        <va-avatar v-else color="var(--va-primary)">
                             <mdi-icon :name="item.icon" />
                         </va-avatar>
                     </va-list-item-section>
@@ -52,6 +54,11 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
 import { deleteHassFile } from '../../api/index'
 export default {
+    data() {
+        return {
+            brands: new Array<string>()
+        }
+    },
     computed: {
         ...mapState(['folderList', 'path']),
         ...mapGetters(['pathList'])
@@ -75,7 +82,21 @@ export default {
                     this.$toast(res.msg)
                 })
             }
+        },
+        loadSrc(url: any) {
+            if (this.brands.includes(url)) return 'https://brands.home-assistant.io/_/homeassistant/icon.png'
+            return url
+        },
+        loadIcon(event: any, icon: string) {
+            this.brands.push(icon)
+            event.target.src = `https://brands.home-assistant.io/_/homeassistant/icon.png`
         }
     }
 }
 </script>
+<style lang="scss" scoped>
+.brands {
+    width: 48px;
+    height: 48px;
+}
+</style>

@@ -104,6 +104,12 @@ export function formatFileIcon(path: any, fileName: string) {
  * @returns 
  */
 export function formatFolderIcon(path: any, folderName: string) {
+    if (path == './custom_components') {
+        return {
+            iconType: 'img',
+            icon: `https://brands.home-assistant.io/${folderName}/icon.png`
+        }
+    }
     let icon = 'mdi-folder'
     let ext = folderName
     if ([
