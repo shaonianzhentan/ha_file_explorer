@@ -48,6 +48,10 @@ const store = createStore({
                     ...icon
                 }
             })
+            arr.sort((a: any, b: any) => {
+                if (a.name > b.name) return 1
+                return -1
+            })
             state.fileList = arr.filter((ele: any) => ele.type === 'file')
             state.folderList = arr.filter((ele: any) => ele.type === 'dir')
         },
