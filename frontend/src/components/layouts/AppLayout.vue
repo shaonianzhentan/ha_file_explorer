@@ -5,7 +5,7 @@ import { showQuickBar, toggleMenu } from '../../api/index'
     <div class="wrapper">
         <va-app-bar shadow-on-scroll shadow-color="primary" target="#va-app-bar-shadow" style="z-index: 1;
         --va-app-bar-height: 56px;">
-            <va-button :round="true" @click="menuClick" style="margin-left: 10px;">
+            <va-button :round="true" @click="menuClick" style="margin-left: 20px;">
                 <mdi-icon name="mdi-home-assistant" style="color:white; " />
             </va-button>
             <slot name="left"></slot>

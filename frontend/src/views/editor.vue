@@ -93,7 +93,7 @@ export default defineComponent({
 .views-editor {
     #editor {
         width: 100%;
-        height: calc(100vh - 36px);
+        height: calc(100vh - 56px);
     }
 
     .ace_print-margin-layer {
