@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import { getHassFileList } from '../api/index'
+import api from '../api/index'
 import { formatSize, formatFileIcon, formatFolderIcon } from '../utils/format'
 
 const store = createStore({
@@ -69,13 +69,13 @@ const store = createStore({
                 arr.push(data)
             }
             const path = arr.join('/')
-            getHassFileList(path).then((list) => {
+            api.service.getHassFileList(path).then((list: any) => {
                 commit('setFileList', { path, list })
             })
         },
         reloadFileList({ commit, getters, state }) {
             let path = getters.pathList.map((ele: any) => ele.value).join('/')
-            getHassFileList(path).then((list) => {
+            api.service.getHassFileList(path).then((list: any) => {
                 commit('setFileList', { path, list })
             })
         }

@@ -63,6 +63,7 @@ export function formatFileIcon(path: any, fileName: string) {
         'config_entries',
         'device_registry',
         'entity_registry',
+        'area_registry',
         'restore_state',
     ].includes(ext)) {
         ext = 'homeassistant'
@@ -84,6 +85,7 @@ export function formatFileIcon(path: any, fileName: string) {
         log: 'mdi-math-log',
         db: 'mdi-database',
         js: 'mdi-nodejs',
+        sh: 'mdi-bash',
         homeassistant: 'mdi-home-assistant',
         json: 'mdi-code-json',
         md: 'mdi-language-markdown',

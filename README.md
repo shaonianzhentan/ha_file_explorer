@@ -25,8 +25,6 @@ After installation, restart home assistant, refresh the page and search for `ha_
 - [x] modify file content
 - [ ] upload files or folder
 - [ ] rename file or folder
-- [ ] check update
-- [ ] custom theme color
 
 ## Screenshot
 

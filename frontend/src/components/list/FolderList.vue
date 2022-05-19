@@ -52,7 +52,6 @@
 <script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
-import { deleteHassFile } from '../../api/index'
 export default {
     data() {
         return {
@@ -77,7 +76,7 @@ export default {
             const { pathList } = this
             const { name } = pathList[pathList.length - 1]
             if (parent.confirm(`确定删除文件夹【${name}】？`)) {
-                deleteHassFile(this.path).then((res: any) => {
+                this.api.service.deleteHassFile(this.path).then((res: any) => {
                     this.getFileList(pathList.length - 2)
                     this.$toast(res.msg)
                 })

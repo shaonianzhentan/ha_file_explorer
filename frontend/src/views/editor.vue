@@ -21,7 +21,6 @@ import AppLayout from '../components/layouts/AppLayout.vue'
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { mapGetters } from 'vuex'
-import { getHassFileContent, setHassFileContent } from '../api/index'
 import { editorMode } from '../utils/format'
 
 export default defineComponent({
@@ -55,7 +54,7 @@ export default defineComponent({
             const path = this.absolutePath(name)
             const editor = document.querySelector("#editor") as any
             editor.innerHTML = ''
-            getHassFileContent(path).then(({ code, data }) => {
+            this.api.service.getHassFileContent(path).then(({ code, data }) => {
                 if (code > 0) {
                     return;
                 }
@@ -73,7 +72,7 @@ export default defineComponent({
         saveClick() {
             const path = this.absolutePath(this.name)
             let data = window.editor.getValue();
-            setHassFileContent(path, data).then(res => {
+            this.api.service.setHassFileContent(path, data).then(res => {
                 this.$toast(res.msg)
             })
         },

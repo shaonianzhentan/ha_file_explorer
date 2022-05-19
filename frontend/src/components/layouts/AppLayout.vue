@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { showQuickBar, toggleMenu } from '../../api/index'
 </script>
 <template>
     <div class="wrapper">
@@ -33,10 +32,10 @@ export default {
     },
     methods: {
         showQuickBarClick(key: string) {
-            showQuickBar(key)
+            this.api.showQuickBar(key)
         },
         menuClick() {
-            toggleMenu()
+            this.api.fireEvent("hass-toggle-menu")
         }
     }
 }

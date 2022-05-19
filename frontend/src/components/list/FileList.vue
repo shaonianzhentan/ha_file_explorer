@@ -52,7 +52,6 @@
 </template>
 <script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { deleteHassFile } from '../../api/index'
 import CreateFile from '../dialogs/CreateFile.vue'
 export default {
     computed: {
@@ -63,7 +62,7 @@ export default {
         ...mapActions(['reloadFileList']),
         deleteClick(fileName: string) {
             if (parent.confirm(`确定删除文件【${fileName}】？`)) {
-                deleteHassFile(this.absolutePath(fileName)).then(res => {
+                this.api.service.deleteHassFile(this.absolutePath(fileName)).then((res: any) => {
                     this.reloadFileList()
                     this.$toast(res.msg)
                 })

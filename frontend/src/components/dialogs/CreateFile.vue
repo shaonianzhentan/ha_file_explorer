@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useStore } from 'vuex'
-import { createHassFile } from '../../api/index'
+import api from '../../api/index'
 const store = useStore()
 const props = defineProps(['type', 'ok', 'cancel', 'app'])
 const isFile = props.type === 'file'
@@ -17,7 +17,7 @@ const cancelClick = () => {
 const okClick = async () => {
     if (!input.value) return;
     const path = store.getters.absolutePath(input.value)
-    let res = await createHassFile(isFile ? 'file' : 'folder', path)
+    let res = await api.service.createHassFile(isFile ? 'file' : 'folder', path)
     app.$toast(res.msg)
     if (res.code > 0) return;
     store.dispatch('reloadFileList')
