@@ -25,6 +25,11 @@
 - [x] 修改文件内容
 - [ ] rename file or folder
 
+## 预览
+
+![pic](https://cdn.jsdelivr.net/gh/shaonianzhentan/image@main/ha_file_explorer/ha_file_explorer.png)
+
+
 ## 如果这个项目对你有帮助，请我喝杯<del style="font-size: 14px;">咖啡</del>奶茶吧😘
 |  |支付宝|微信|
 |---|---|---|
