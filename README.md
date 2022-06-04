@@ -23,7 +23,7 @@ After installation, restart home assistant, refresh the page and search for `ha_
 - [x] create new file or new folder
 - [x] delete file or folder
 - [x] modify file content
-- [ ] upload files or folder
+- [x] upload files or folder
 - [ ] rename file or folder
 
 ## Screenshot

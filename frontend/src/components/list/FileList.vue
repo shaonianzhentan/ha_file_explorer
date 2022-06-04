@@ -8,6 +8,7 @@
             文件列表
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
+                    <va-button @click="uploadClick">上传</va-button>
                     <va-button @click="addClick">新增</va-button>
                 </va-button-group>
             </va-button-dropdown>
@@ -53,6 +54,7 @@
 <script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
+import UploadFile from '../dialogs/UploadFile.vue'
 export default {
     computed: {
         ...mapState(['fileList']),
@@ -78,6 +80,11 @@ export default {
         },
         addClick() {
             this.$dialog(CreateFile, {
+                type: 'file'
+            })
+        },
+        uploadClick() {
+            this.$dialog(UploadFile, {
                 type: 'file'
             })
         }

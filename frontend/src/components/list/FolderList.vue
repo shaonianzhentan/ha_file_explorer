@@ -8,6 +8,7 @@
             文件夹
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
+                    <va-button @click="uploadClick">上传</va-button>
                     <va-button @click="deleteClick" v-if="pathList.length > 1">删除</va-button>
                     <va-button @click="addClick">新增</va-button>
                 </va-button-group>
@@ -52,6 +53,7 @@
 <script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
+import UploadFile from '../dialogs/UploadFile.vue'
 export default {
     data() {
         return {
@@ -69,6 +71,11 @@ export default {
         },
         addClick() {
             this.$dialog(CreateFile, {
+                type: 'dir'
+            })
+        },
+        uploadClick() {
+            this.$dialog(UploadFile, {
                 type: 'dir'
             })
         },

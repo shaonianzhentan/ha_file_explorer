@@ -14,7 +14,7 @@ import FolderList from '../components/list/FolderList.vue'
         <va-card>
             <va-card-title>
                 <va-breadcrumbs>
-                    <va-breadcrumbs-item :label="item.name" :key="index" href="#" v-for="(item, index) in pathList"
+                    <va-breadcrumbs-item :label="item.name" :key="index" v-for="(item, index) in pathList"
                         @click="changePathClick(index)" />
                 </va-breadcrumbs>
             </va-card-title>

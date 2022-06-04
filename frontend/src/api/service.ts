@@ -3,7 +3,9 @@ async function requestApi(data: any, query = {} as any, method = 'post') {
     store.commit('loading', true)
     const ha = parent.document.querySelector('home-assistant') as any
     const params = { method } as any;
-    if (data) {
+    if (toString.call(data) === '[object FormData]') {
+        params.body = data
+    } else if (data) {
         params.body = JSON.stringify(data)
     }
     if (method == 'get') {
@@ -39,6 +41,16 @@ const service = new Proxy({
      */
     setHassFileContent(path: string, data: string) {
         return requestApi({ path, data }, {}, 'post')
+    },
+    /**
+     * 设置文件内容
+     * @param path 
+     * @returns 
+     */
+    uploadFile(path: string, file: File) {
+        const formData = new FormData();
+        formData.append("file", file);
+        return requestApi(formData, { path }, 'post')
     },
     /**
      * create dir in hass config dir

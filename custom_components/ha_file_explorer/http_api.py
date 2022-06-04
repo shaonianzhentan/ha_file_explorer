@@ -64,8 +64,29 @@ class HttpApi(HomeAssistantView):
 
     async def post(self, request):
         hass = request.app["hass"]
-        body = await request.json()
-        config_path = self.get_config_path(body.get('path'))
-        path = hass.config.path(config_path)
-        save_content(path, body.get('data'))
-        return self.json({ 'code': 0, 'msg': '保存成功'})
+        # 上传文件
+        query = request.query
+        if query.get('path') is not None:
+            config_path = self.get_config_path(query.get('path'))
+            path = hass.config.path(config_path)
+            dir_path = path[:path.rindex('/')]
+            reader = await request.multipart()
+            file = await reader.next()
+            # print(file.filename)
+            mkdir(dir_path)
+            # create file
+            size = 0
+            with open(path, 'wb') as f:
+                while True:
+                    chunk = await file.read_chunk()  # 默认是8192个字节。
+                    if not chunk:
+                        break
+                    size += len(chunk)
+                    f.write(chunk)
+            return self.json({ 'code': 0, 'msg': '上传成功'})
+        else:
+            body = await request.json()
+            config_path = self.get_config_path(body.get('path'))
+            path = hass.config.path(config_path)
+            save_content(path, body.get('data'))
+            return self.json({ 'code': 0, 'msg': '保存成功'})

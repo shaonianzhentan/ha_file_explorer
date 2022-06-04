@@ -19,8 +19,11 @@
         </va-app-bar>
         <div id="va-app-bar-shadow">
             <slot></slot>
-            <va-progress-bar v-show="loading" indeterminate
-                style="position:fixed;bottom:0;left:0; width:100%;z-index: 2;" />
+            <div class="loading">
+
+                <va-progress-bar v-show="loading" indeterminate />
+
+            </div>
         </div>
     </div>
 </template>
@@ -52,5 +55,13 @@ export default {
 
 #va-app-bar-shadow {
     overflow: auto;
+}
+
+.loading {
+    position: fixed;
+    width: 100%;
+    left: 0px;
+    bottom: 10px;
+    height: 8px;
 }
 </style>
