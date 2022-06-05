@@ -11,9 +11,28 @@ import store from './store/index'
 
 import MdiIcon from './components/globel/mdi-icon.vue'
 
+const getParentColor = (cssVar: string) => {
+    return getComputedStyle(parent.document.documentElement).getPropertyValue(cssVar).trim()
+}
+document.body.style.backgroundColor = getParentColor('--primary-background-color')
 const vuesticConfig = {
     colors: {
-        primary: getComputedStyle(parent.document.documentElement).getPropertyValue('--primary-color').trim()
+        primary: getParentColor('--primary-color'),
+        // background: getParentColor('--primary-background-color'),
+        // text: getParentColor('--primary-text-color')
+    },
+    components: {
+        VaAppBar: {
+            color: getParentColor('--app-header-background-color'),
+            text: getParentColor('--app-header-text-color')
+        },
+        VaCard: {
+            color: getParentColor('--card-background-color')
+        }
+        // VaCardContent: {
+        // },
+        // VaCardTitle: {
+        // }
     }
 }
 

@@ -25,7 +25,7 @@ After installation, restart home assistant, refresh the page and search for `ha_
 - [x] upload files or folder
 - [x] rename file or folder
 - [x] modify file content
-- [ ] support homeassistant dark theme
+- [x] support homeassistant theme
 
 ## Screenshot
 
