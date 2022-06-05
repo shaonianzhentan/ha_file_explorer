@@ -10,6 +10,7 @@ import rotuer from './router/index'
 import store from './store/index'
 
 import MdiIcon from './components/globel/mdi-icon.vue'
+import VueThreeShortkey from 'vue-three-shortkey'
 
 const getParentColor = (cssVar: string) => {
     return getComputedStyle(parent.document.documentElement).getPropertyValue(cssVar).trim()
@@ -60,4 +61,4 @@ app.config.globalProperties.$dialog = (com: DefineComponent, propsData = {}): Pr
         comApp.use(store).use(VuesticPlugin, vuesticConfig).component('mdi-icon', MdiIcon).mount(div)
     })
 }
-app.use(rotuer).use(store).use(VuesticPlugin, vuesticConfig).component('mdi-icon', MdiIcon).mount('#app')
+app.use(rotuer).use(store).use(VuesticPlugin, vuesticConfig).component('mdi-icon', MdiIcon).use(VueThreeShortkey).mount('#app')

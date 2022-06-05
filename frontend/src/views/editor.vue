@@ -11,7 +11,8 @@ import locales from '../locales/index'
             </va-chip>
         </template>
         <template #right>
-            <va-button color="#fff" flat :rounded="false" @click="saveClick">{{ locales.save }}</va-button>
+            <va-button color="#fff" flat :rounded="false" v-shortkey="['ctrl', 's']" @shortkey="saveClick()"
+                @click="saveClick">{{ locales.save }}</va-button>
             <va-button color="#fff" flat :rounded="false" @click="cancelClick">{{ locales.cancel }}</va-button>
         </template>
         <div id="editor"></div>
@@ -37,12 +38,10 @@ export default defineComponent({
     },
     mounted() {
         this.loadData()
-        // window.onbeforeunload = function () { return "确定离开当前页吗？" }
-        document.addEventListener("keydown", this.saveKeydown, false);
+        window.onbeforeunload = function () { return "确定离开当前页吗？" }
     },
     beforeRouteLeave() {
-        // window.onbeforeunload = null
-        document.removeEventListener("keydown", this.saveKeydown);
+        window.onbeforeunload = null
     },
     methods: {
         loadData() {
@@ -75,13 +74,6 @@ export default defineComponent({
             this.api.service.setHassFileContent(path, data).then(res => {
                 this.$toast(res.msg)
             })
-        },
-        saveKeydown(event: KeyboardEvent) {
-            if (event.ctrlKey && event.key === "s") {
-                this.$toast("正在保存中...");
-                this.saveClick();
-                event.preventDefault();
-            }
         }
     }
 })
