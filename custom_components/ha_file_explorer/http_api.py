@@ -52,12 +52,22 @@ class HttpApi(HomeAssistantView):
         config_path = self.get_config_path(body.get('path'))
         path = hass.config.path(config_path)
 
+        # rename file or folder
+        if act == 'rename':
+            new_path = hass.config.path(self.get_config_path(body.get('new_path')))
+            if os.path.exists(new_path):
+                return self.json({ 'code': 1, 'msg': '已存在相同名称'})
+
+            os.rename(path, new_path)
+            return self.json({ 'code': 0, 'msg': '操作成功'})
+
+        # create file or folder
         if os.path.exists(path):
             return self.json({ 'code': 1, 'msg': '已存在相同名称'})
 
         if act == 'file':
             save_content(path, '')
-        else:
+        elif act == 'folder':
             mkdir(path)
 
         return self.json({ 'code': 0, 'msg': '创建成功'})
