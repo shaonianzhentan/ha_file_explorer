@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import locales from '../../locales/index'
 </script>
 
 <template>
     <va-card>
 
         <va-card-title>
-            文件夹
+            {{ locales.folder }}
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
-                    <va-button @click="renameClick" v-if="pathList.length > 1">重命名</va-button>
-                    <va-button @click="uploadClick">上传</va-button>
-                    <va-button @click="deleteClick" v-if="pathList.length > 1">删除</va-button>
-                    <va-button @click="addClick">新增</va-button>
+                    <va-button @click="renameClick" v-if="pathList.length > 1">
+                        {{ locales.rename }}</va-button>
+                    <va-button @click="uploadClick">{{ locales.upload }}</va-button>
+                    <va-button @click="deleteClick" v-if="pathList.length > 1">{{ locales.delete }}</va-button>
+                    <va-button @click="addClick">{{ locales.add }}</va-button>
                 </va-button-group>
             </va-button-dropdown>
         </va-card-title>

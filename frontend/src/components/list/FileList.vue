@@ -1,15 +1,17 @@
 <script setup lang="ts">
+
+import locales from '../../locales/index'
 </script>
 
 <template>
     <va-card>
 
         <va-card-title>
-            文件列表
+            {{ locales.file }}
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
-                    <va-button @click="uploadClick">上传</va-button>
-                    <va-button @click="addClick">新增</va-button>
+                    <va-button @click="uploadClick">{{ locales.upload }}</va-button>
+                    <va-button @click="addClick">{{ locales.add }}</va-button>
                 </va-button-group>
             </va-button-dropdown>
         </va-card-title>
@@ -38,9 +40,9 @@
                     <va-list-item-section icon>
                         <va-button-dropdown size="small">
                             <va-button-group outline size="small">
-                                <va-button @click="renameClick(item.name)">重命名</va-button>
-                                <va-button @click="deleteClick(item.name)">删除</va-button>
-                                <va-button @click="editClick(item.name)">编辑</va-button>
+                                <va-button @click="renameClick(item.name)">{{ locales.rename }}</va-button>
+                                <va-button @click="deleteClick(item.name)">{{ locales.delete }}</va-button>
+                                <va-button @click="editClick(item.name)">{{ locales.edit }}</va-button>
                             </va-button-group>
                         </va-button-dropdown>
                     </va-list-item-section>
@@ -65,7 +67,7 @@ export default {
     methods: {
         ...mapActions(['reloadFileList']),
         deleteClick(fileName: string) {
-            if (parent.confirm(`确定删除文件【${fileName}】？`)) {
+            if (parent.confirm(locales.deleteConfirm(fileName))) {
                 this.api.service.deleteHassFile(this.absolutePath(fileName)).then((res: any) => {
                     this.reloadFileList()
                     this.$toast(res.msg)

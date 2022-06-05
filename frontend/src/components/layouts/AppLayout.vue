@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import locales from '../../locales/index'
 </script>
 <template>
     <div class="wrapper">
@@ -12,8 +13,8 @@
             <slot name="right"></slot>
             <va-button-dropdown style="margin-right: 10px;">
                 <va-button-group>
-                    <va-button @click="showQuickBarClick('e')">实体</va-button>
-                    <va-button @click="showQuickBarClick('c')">命令</va-button>
+                    <va-button @click="showQuickBarClick('e')">{{ locales.entities }}</va-button>
+                    <va-button @click="showQuickBarClick('c')">{{ locales.command }}</va-button>
                 </va-button-group>
             </va-button-dropdown>
         </va-app-bar>

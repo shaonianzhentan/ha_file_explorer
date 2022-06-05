@@ -1,6 +1,6 @@
 <script setup lang="ts">
-
 import AppLayout from '../components/layouts/AppLayout.vue'
+import locales from '../locales/index'
 </script>
 
 <template>
@@ -11,8 +11,8 @@ import AppLayout from '../components/layouts/AppLayout.vue'
             </va-chip>
         </template>
         <template #right>
-            <va-button color="#fff" flat :rounded="false" @click="saveClick">保存</va-button>
-            <va-button color="#fff" flat :rounded="false" @click="cancelClick">取消</va-button>
+            <va-button color="#fff" flat :rounded="false" @click="saveClick">{{ locales.save }}</va-button>
+            <va-button color="#fff" flat :rounded="false" @click="cancelClick">{{ locales.cancel }}</va-button>
         </template>
         <div id="editor"></div>
     </AppLayout>

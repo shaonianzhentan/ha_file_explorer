@@ -2,12 +2,13 @@
 import AppLayout from '../components/layouts/AppLayout.vue'
 import FileList from '../components/list/FileList.vue'
 import FolderList from '../components/list/FolderList.vue'
+import locales from '../locales/index'
 </script>
 
 <template>
     <AppLayout class="views-index">
         <template #left>
-            <va-button color="#fff" flat :rounded="false" @click="versionClick">文件管理</va-button>
+            <va-button color="#fff" flat :rounded="false" @click="versionClick">{{locales.name}}</va-button>
         </template>
         <template #right>
         </template>
