@@ -60,6 +60,9 @@ const service = new Proxy({
     createHassFile(act: string, path: string) {
         return requestApi({ path }, { act }, 'put')
     },
+    rename(path: string, new_path: string) {
+        return requestApi({ path, new_path }, { act: 'rename' }, 'put')
+    },
     deleteHassFile(path: string) {
         return requestApi(null, { path }, 'delete')
     }
@@ -74,4 +77,5 @@ const service = new Proxy({
     }
 })
 
-export default service
+
+export default service as Service

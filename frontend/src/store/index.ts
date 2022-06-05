@@ -73,8 +73,8 @@ const store = createStore({
                 commit('setFileList', { path, list })
             })
         },
-        reloadFileList({ commit, getters, state }) {
-            let path = getters.pathList.map((ele: any) => ele.value).join('/')
+        reloadFileList({ commit, getters, state }, path = '') {
+            if (path == '') path = getters.pathList.map((ele: any) => ele.value).join('/')
             api.service.getHassFileList(path).then((list: any) => {
                 commit('setFileList', { path, list })
             })

@@ -38,6 +38,7 @@
                     <va-list-item-section icon>
                         <va-button-dropdown size="small">
                             <va-button-group outline size="small">
+                                <va-button @click="renameClick(item.name)">重命名</va-button>
                                 <va-button @click="deleteClick(item.name)">删除</va-button>
                                 <va-button @click="editClick(item.name)">编辑</va-button>
                             </va-button-group>
@@ -55,6 +56,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
 import UploadFile from '../dialogs/UploadFile.vue'
+import RenameFile from '../dialogs/RenameFile.vue'
 export default {
     computed: {
         ...mapState(['fileList']),
@@ -69,6 +71,12 @@ export default {
                     this.$toast(res.msg)
                 })
             }
+        },
+        renameClick(fileName: string) {
+            this.$dialog(RenameFile, {
+                type: 'file',
+                name: fileName
+            })
         },
         editClick(fileName: string) {
             this.$router.push({

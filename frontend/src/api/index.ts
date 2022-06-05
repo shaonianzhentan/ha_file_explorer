@@ -8,8 +8,8 @@ class API {
         this.hassFullScreen()
     }
 
-    get service(): Service {
-        return service as any
+    get service() {
+        return service
     }
 
     async hassFullScreen() {

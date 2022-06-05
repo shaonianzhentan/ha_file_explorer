@@ -61,7 +61,7 @@ export default {
     position: fixed;
     width: 100%;
     left: 0px;
-    bottom: 10px;
+    bottom: 8px;
     height: 8px;
 }
 </style>

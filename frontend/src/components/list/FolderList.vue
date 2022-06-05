@@ -8,6 +8,7 @@
             文件夹
             <va-button-dropdown outline size="small">
                 <va-button-group size="small">
+                    <va-button @click="renameClick" v-if="pathList.length > 1">重命名</va-button>
                     <va-button @click="uploadClick">上传</va-button>
                     <va-button @click="deleteClick" v-if="pathList.length > 1">删除</va-button>
                     <va-button @click="addClick">新增</va-button>
@@ -54,6 +55,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CreateFile from '../dialogs/CreateFile.vue'
 import UploadFile from '../dialogs/UploadFile.vue'
+import RenameFile from '../dialogs/RenameFile.vue'
 export default {
     data() {
         return {
@@ -88,6 +90,12 @@ export default {
                     this.$toast(res.msg)
                 })
             }
+        },
+        renameClick() {
+            this.$dialog(RenameFile, {
+                type: 'dir',
+                name: ''
+            })
         },
         loadSrc(url: any) {
             if (this.brands.includes(url)) return 'https://brands.home-assistant.io/_/homeassistant/icon.png'
