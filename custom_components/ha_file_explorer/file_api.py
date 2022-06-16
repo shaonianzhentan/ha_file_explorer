@@ -55,7 +55,7 @@ def get_dir_size(dir):
 def format_byte(number):
     for (scale, label) in [(1024*1024*1024, "GB"), (1024*1024,"MB"), (1024,"KB")]:
         if number >= scale:
-            return "%.2f %s" %(number*1.0/scale,lable)
+            return "%.2f %s" %(number*1.0/scale, label)
         elif number == 1:
             return "1字节"
         else:  #小于1字节
@@ -134,7 +134,7 @@ def save_content(file_path, data):
     fp.close()
 
 # base64数据生成文件
-def base64_to_file(self, base64_data, file):
+def base64_to_file(base64_data, file):
     ori_image_data = base64.b64decode(base64_data)
     fout = open(file, 'wb')
     fout.write(ori_image_data)
