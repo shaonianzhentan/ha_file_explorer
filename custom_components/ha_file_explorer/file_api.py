@@ -9,26 +9,29 @@ def get_dir_list(dir):
     allcontent = os.listdir(dir)
     dirItem    = []
     for item in allcontent:
-        # 获取文件路径
-        path_name = os.path.join(dir,item)
-        # 判断当前路径是否存在
-        if os.path.exists(path_name) == False:
-            continue
-        hashInfo = {}
-        listInfo = os.stat(path_name)
-        hashInfo['name'] = item
-        hashInfo['path']  = item
-        hashInfo['time'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            # 获取文件路径
+            path_name = os.path.join(dir,item)
+            # 判断当前路径是否存在
+            if os.path.exists(path_name) == False:
+                continue
+            hashInfo = {}
+            listInfo = os.stat(path_name)
+            hashInfo['name'] = item
+            hashInfo['path']  = item
+            hashInfo['time'] = datetime.datetime.fromtimestamp(int(listInfo.st_mtime)).strftime('%Y-%m-%d %H:%M:%S')
 
-        if os.path.isfile(path_name):
-            hashInfo['type'] = 'file'
-            hashInfo['size'] = int(listInfo.st_size)
-        if os.path.isdir(path_name):
-            hashInfo['type'] = 'dir'
-            hashInfo['size'] = get_dir_size(path_name)
-        # 显示格式化文件大小
-        hashInfo['size_name'] = format_byte(hashInfo['size'])
-        dirItem.append(hashInfo)
+            if os.path.isfile(path_name):
+                hashInfo['type'] = 'file'
+                hashInfo['size'] = int(listInfo.st_size)
+            if os.path.isdir(path_name):
+                hashInfo['type'] = 'dir'
+                hashInfo['size'] = get_dir_size(path_name)
+            # 显示格式化文件大小
+            hashInfo['size_name'] = format_byte(hashInfo['size'])
+            dirItem.append(hashInfo)
+        except Exception as ex:
+            print(ex)
     # 以名称排序
     dirItem.sort(key=lambda x: x['name'], reverse=True)
     return dirItem
@@ -52,15 +55,19 @@ def get_dir_size(dir):
     return size
 
 # 格式化文件大小的函数
-def format_byte(number):
-    for (scale, label) in [(1024*1024*1024, "GB"), (1024*1024,"MB"), (1024,"KB")]:
-        if number >= scale:
-            return "%.2f %s" %(number*1.0/scale, label)
-        elif number == 1:
-            return "1字节"
-        else:  #小于1字节
-            byte = "%.2f" % (number or 0)
-            return ((byte[:-3]) if byte.endswith(".00") else byte) + "字节"
+def format_byte(res):
+    bu = 1024
+    if res < bu:
+        res = f'{bu}B'
+    elif bu <= res < bu**2:
+        res = f'{round(res / bu, 2)}KB'
+    elif bu**2 <= res < bu**3:
+        res = f'{round(res / bu**2, 2)}MB'
+    elif bu**3 <= res < bu**4:
+        res = f'{round(res / bu**3, 2)}GB'
+    elif bu**4 <= res < bu**5:
+        res = f'{round(res / bu**4, 2)}TB'
+    return res
 
 # 删除文件
 def delete_file(file_path):
