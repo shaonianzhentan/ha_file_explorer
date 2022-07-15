@@ -38,17 +38,24 @@ class API {
     }
 
     showQuickBar(key: string) {
-        const kb = new (parent as any).KeyboardEvent('keydown', { key });
-        kb.composedPath = () => {
-            return [{
-                tagName: '',
-                parentElement: {
-                    tagName: ''
-                }
-            }]
-        }
+        const event = new (parent as any).Event("hass-quick-bar-trigger", {
+            bubbles: true,
+            cancelable: false,
+            composed: true
+        });
+        event.detail = {
+            key,
+            composedPath() {
+                return [{
+                    tagName: '',
+                    parentElement: {
+                        tagName: ''
+                    }
+                }]
+            }
+        };
         // console.log(kb)
-        parent.window.dispatchEvent(kb);
+        parent.window.dispatchEvent(event);
     }
 }
 const api = new API()
