@@ -1,6 +1,6 @@
 import { createApp, DefineComponent } from 'vue'
 import App from './App.vue'
-import { VuesticPlugin } from 'vuestic-ui'
+import { VaListItemLabel, VuesticPlugin } from 'vuestic-ui'
 import 'vuestic-ui/dist/vuestic-ui.css'
 import '@mdi/font/css/materialdesignicons.min.css'
 import './style/index.scss'
@@ -16,6 +16,13 @@ const getParentColor = (cssVar: string) => {
     return getComputedStyle(parent.document.documentElement).getPropertyValue(cssVar).trim()
 }
 document.body.style.backgroundColor = getParentColor('--primary-background-color')
+const style = document.createElement('style')
+style.textContent = `
+:root{
+    --va-list-item-label-color: ${getParentColor('--primary-text-color')}
+}
+`
+document.head.appendChild(style)
 const vuesticConfig = {
     colors: {
         primary: getParentColor('--primary-color'),
@@ -30,10 +37,6 @@ const vuesticConfig = {
         VaCard: {
             color: getParentColor('--card-background-color')
         }
-        // VaCardContent: {
-        // },
-        // VaCardTitle: {
-        // }
     }
 }
 

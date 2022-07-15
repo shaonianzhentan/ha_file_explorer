@@ -8,7 +8,7 @@ import locales from '../locales/index'
 <template>
     <AppLayout class="views-index">
         <template #left>
-            <va-button color="#fff" flat :rounded="false" @click="versionClick">{{locales.name}}</va-button>
+            <va-button color="#fff" flat :rounded="false" @click="versionClick">{{ locales.name }}</va-button>
         </template>
         <template #right>
         </template>
@@ -62,6 +62,10 @@ export default {
 
 <style lang="scss">
 .views-index {
+    #va-app-bar-shadow {
+        padding: 5px 0 5px 5px;
+    }
+
     .va-card {
         margin: 5px;
     }

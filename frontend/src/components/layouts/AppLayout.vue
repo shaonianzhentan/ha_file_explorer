@@ -62,7 +62,7 @@ export default {
     position: fixed;
     width: 100%;
     left: 0px;
-    bottom: 8px;
+    bottom: 2px;
     height: 8px;
 }
 </style>
