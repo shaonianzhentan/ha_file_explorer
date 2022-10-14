@@ -1,9 +1,5 @@
 import os, shutil, uuid, yaml, logging, aiohttp, json, urllib, hashlib, datetime, asyncio, base64, re, zipfile, tempfile, time
 
-# 获取当前路径
-def get_current_path(file_path):
-    return os.path.abspath('./custom_components/ha_file_explorer/' + file_path)
-
 # 获取当前文件列表
 def get_dir_list(dir):
     allcontent = os.listdir(dir)
