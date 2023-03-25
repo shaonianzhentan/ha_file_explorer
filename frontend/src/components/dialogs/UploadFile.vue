@@ -11,6 +11,7 @@ const title = `${locales.upload} ${isFile ? locales.file : locales.folder}`
 const app = props.app()
 const input = ref<Array<File>>([])
 const visible = ref<boolean>(true)
+const loading = ref<boolean>(false)
 
 const folderChange = (event: any) => {
     const arr = []
@@ -25,6 +26,7 @@ const cancelClick = () => {
 }
 const okClick = async () => {
     if (input.value.length === 0) return;
+    loading.value = true
     Promise.all(input.value.map(file => {
         const path = store.getters.absolutePath(isFile ? file.name : file.webkitRelativePath)
         // console.log(path)
@@ -33,22 +35,23 @@ const okClick = async () => {
         app.$toast(`成功上传${res.length}文件`)
         store.dispatch('reloadFileList')
         props.ok({})
+        loading.value = false
     })
 } 
 </script>
 <template>
     <va-modal v-model="visible" :title="title" :hide-default-actions="true">
-        <va-progress-bar indeterminate v-if="store.state.loading" />
+        <va-progress-bar indeterminate v-if="loading" />
         <va-alert color="danger" class="mb-4">
             {{ locales.uploadTips }}
         </va-alert>
-        <va-file-upload v-if="isFile" :disabled="store.state.loading" v-model="input" />
+        <va-file-upload v-if="isFile" :disabled="loading" v-model="input" />
         <input v-else type="file" @change="folderChange" webkitdirectory />
         <template #footer>
-            <va-button :disabled="store.state.loading" outline @click="cancelClick" style="margin-right:20px;">
+            <va-button :disabled="loading" outline @click="cancelClick" style="margin-right:20px;">
                 {{ locales.cancel }}
             </va-button>
-            <va-button :disabled="store.state.loading" @click="okClick" style="margin-left:20px;">
+            <va-button :disabled="loading" @click="okClick" style="margin-left:20px;">
                 {{ locales.confirm }}
             </va-button>
         </template>
