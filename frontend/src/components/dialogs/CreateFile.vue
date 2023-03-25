@@ -27,7 +27,7 @@ const okClick = async () => {
 </script>
 <template>
     <va-modal v-model="visible" :title="title" :hide-default-actions="true">
-        <va-input v-model.trim="input" :placeholder="locales.newName(title)" />
+        <va-input v-model.trim="input" @keypress.enter="okClick" :placeholder="locales.newName(title)" />
         <template #footer>
             <va-button outline @click="cancelClick" style="margin-right:20px;">
                 {{ locales.cancel }}

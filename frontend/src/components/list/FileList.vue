@@ -26,7 +26,7 @@ import locales from '../../locales/index'
 
                     <va-list-item-section>
                         <va-list-item-label>
-                            {{ item.name }}
+                            <a href="javascript:;" @click="editClick(item.name)" class="link">{{ item.name }}</a>
                         </va-list-item-label>
 
                         <va-list-item-label caption>
@@ -40,6 +40,8 @@ import locales from '../../locales/index'
                     <va-list-item-section icon>
                         <va-button-dropdown size="small">
                             <va-button-group outline size="small">
+                                <va-button v-if="isLocalDir" @click="browseClick(item.name)">{{ locales.browse
+                                }}</va-button>
                                 <va-button @click="renameClick(item.name)">{{ locales.rename }}</va-button>
                                 <va-button @click="deleteClick(item.name)">{{ locales.delete }}</va-button>
                                 <va-button @click="editClick(item.name)">{{ locales.edit }}</va-button>
@@ -52,7 +54,6 @@ import locales from '../../locales/index'
 
         </va-card-content>
     </va-card>
-
 </template>
 <script lang="ts">
 import { mapState, mapGetters, mapActions } from 'vuex'
@@ -62,7 +63,10 @@ import RenameFile from '../dialogs/RenameFile.vue'
 export default {
     computed: {
         ...mapState(['fileList']),
-        ...mapGetters(['absolutePath'])
+        ...mapGetters(['absolutePath']),
+        isLocalDir() {
+            return (this as any).absolutePath('') === './www/'
+        }
     },
     methods: {
         ...mapActions(['reloadFileList']),
@@ -74,6 +78,9 @@ export default {
                 })
             }
         },
+        browseClick(fileName: string) {
+            window.open(`/local/${fileName}`)
+        },
         renameClick(fileName: string) {
             this.$dialog(RenameFile, {
                 type: 'file',
@@ -81,6 +88,14 @@ export default {
             })
         },
         editClick(fileName: string) {
+            let pos = fileName.lastIndexOf('.')
+            if (pos > 0) {
+                let ext = fileName.substring(pos + 1)
+                if (['db', 'db-shm', 'db-wal', 'pyc'].includes(ext)) {
+                    this.$toast('文件格式不支持编辑')
+                    return
+                }
+            }
             this.$router.push({
                 name: 'editor',
                 params: {
