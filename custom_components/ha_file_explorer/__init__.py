@@ -1,6 +1,7 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
+from homeassistant.components.frontend import async_register_built_in_panel
 
 from .http_api import HttpApi
 from .manifest import manifest
@@ -14,7 +15,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     url_path = f'/{entry_id}-local'
     hass.http.register_static_path(url_path, hass.config.path("custom_components/" + DOMAIN + "/www"))
 
-    hass.components.frontend.async_register_built_in_panel("iframe", 
+    async_register_built_in_panel(hass, "iframe", 
         NAME, "mdi:folder", entry_id, {"url": f'{url_path}/index.html?v={manifest.version}'},
         entry.data.get('require_admin')
     )

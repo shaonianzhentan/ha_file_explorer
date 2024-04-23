@@ -73,6 +73,8 @@ class HttpApi(HomeAssistantView):
         return self.json({ 'code': 0, 'msg': '创建成功'})
 
     async def post(self, request):
+        # 文件限制调整到100MB
+        request.app._client_max_size = 1024**2 * 100
         hass = request.app["hass"]
         # 上传文件
         query = request.query
