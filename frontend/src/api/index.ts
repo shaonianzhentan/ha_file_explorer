@@ -52,7 +52,8 @@ class API {
                         tagName: ''
                     }
                 }]
-            }
+            },
+            preventDefault(){}
         };
         // console.log(kb)
         parent.window.dispatchEvent(event);
