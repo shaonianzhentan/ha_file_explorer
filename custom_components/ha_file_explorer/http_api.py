@@ -28,10 +28,10 @@ class HttpApi(HomeAssistantView):
         config_path = self.get_config_path(query.get('path', ''))
         path = hass.config.path(config_path)
         if act == 'content':
-            data = load_content(path)
+            data = await hass.async_add_executor_job(load_content, path)
             return self.json({ 'code': 0, 'data': data})
 
-        data = get_dir_list(path)
+        data = await hass.async_add_executor_job(get_dir_list, path)
         return self.json(data) 
 
     # delete file or folder
@@ -40,7 +40,7 @@ class HttpApi(HomeAssistantView):
         query = request.query
         config_path = self.get_config_path(query.get('path', ''))
         path = hass.config.path(config_path)
-        delete_file(path)
+        await hass.async_add_executor_job(delete_file, path)
         return self.json({ 'code': 0, 'msg': '删除成功'})
 
     # add file or folder
@@ -66,9 +66,9 @@ class HttpApi(HomeAssistantView):
             return self.json({ 'code': 1, 'msg': '已存在相同名称'})
 
         if act == 'file':
-            save_content(path, '')
+            await hass.async_add_executor_job(save_content, path, '')
         elif act == 'folder':
-            mkdir(path)
+            await hass.async_add_executor_job(mkdir, path)
 
         return self.json({ 'code': 0, 'msg': '创建成功'})
 
@@ -85,7 +85,7 @@ class HttpApi(HomeAssistantView):
             reader = await request.multipart()
             file = await reader.next()
             # print(file.filename)
-            mkdir(dir_path)
+            await hass.async_add_executor_job(mkdir, dir_path)
             # create file
             size = 0
             with open(path, 'wb') as f:
@@ -100,5 +100,5 @@ class HttpApi(HomeAssistantView):
             body = await request.json()
             config_path = self.get_config_path(body.get('path'))
             path = hass.config.path(config_path)
-            save_content(path, body.get('data'))
+            await hass.async_add_executor_job(save_content, path, body.get('data'))
             return self.json({ 'code': 0, 'msg': '保存成功'})
