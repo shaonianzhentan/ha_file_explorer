@@ -1,17 +1,17 @@
 {
-    "title": "File Explorer",
-    "config": {
-        "step": {
-            "user": {
-                "description": "",
-                "data": {
-                    "require_admin": "Visible only to administrators"
-                }
-            }
-        },
-        "error": {},
-        "abort": {
-            "single_instance_allowed": "Single Instance Allowed."
+  "title": "File Explorer",
+  "config": {
+    "step": {
+      "user": {
+        "description": "",
+        "data": {
+          "require_admin": "Visible only to administrators"
         }
+      }
+    },
+    "error": {},
+    "abort": {
+      "single_instance_allowed": "Single Instance Allowed."
     }
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "title": "Файловый менеджер",
+  "config": {
+    "step": {
+      "user": {
+        "description": "",
+        "data": {
+          "require_admin": "Виден только администраторам"
+        }
+      }
+    },
+    "error": {},
+    "abort": {
+      "single_instance_allowed": "Разрешен единственный экземпляр."
+    }
+  }
+}
