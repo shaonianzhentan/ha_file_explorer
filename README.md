@@ -32,9 +32,9 @@ After installation, restart home assistant, refresh the page and search for `ha_
 ![pic](https://cdn.jsdelivr.net/gh/shaonianzhentan/image@main/ha_file_explorer/ha_file_explorer.png)
 
 ## If this project is helpful to you, please donate a cup of <del style="font-size: 14px;">coffee</del> milk tea 😘
-| |Alipay|WeChat|
-|---|---|---|
-Milk tea | <img src="https://github.com/shaonianzhentan/image/raw/main/ha_wechat/pay_alipay.png" align="left" height="160" width="160" alt="Alipay" title="alipay"> | <img src="https://github.com/shaonianzhentan/image/raw/main/ha_wechat/pay_wechat.png" height="160" width="160" alt="WeChat Pay" title="WeChat">
+| |Paypal|Alipay|WeChat|
+|---|---|---|---|
+Milk tea | <a href="https://paypal.me/shaonianzhentan"><img src="https://raw.githubusercontent.com/shaonianzhentan/image/main/picture/paypal.me.png" height="160" alt="https://paypal.me/shaonianzhentan" title="https://paypal.me/shaonianzhentan"></a> | <img src="https://github.com/shaonianzhentan/image/raw/main/ha_wechat/pay_alipay.png" align="left" height="160" width="160" alt="Alipay" title="alipay"> | <img src="https://github.com/shaonianzhentan/image/raw/main/ha_wechat/pay_wechat.png" height="160" width="160" alt="WeChat Pay" title="WeChat">
 
 ## Follow my wechat subscription number
 <img src="https://github.com/shaonianzhentan/image/raw/main/ha_wechat/wechat-channel.png" height="160" alt="HomeAssistant家庭助理" title="HomeAssistant家庭助理"> 
