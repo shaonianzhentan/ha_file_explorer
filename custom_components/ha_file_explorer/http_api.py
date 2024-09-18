@@ -87,7 +87,13 @@ class HttpApi(HomeAssistantView):
             # print(file.filename)
             await hass.async_add_executor_job(mkdir, dir_path)
             # create file
-            await hass.async_add_executor_job(self.write_file, path, file)
+            f = await hass.async_add_executor_job(open, path, 'wb')
+            while True:
+                chunk = await file.read_chunk()  # 默认是8192个字节。
+                if not chunk:
+                    break
+                await hass.async_add_executor_job(f.write, chunk)
+            f.close()
 
             return self.json({ 'code': 0, 'msg': '上传成功'})
         else:
@@ -96,14 +102,3 @@ class HttpApi(HomeAssistantView):
             path = hass.config.path(config_path)
             await hass.async_add_executor_job(save_content, path, body.get('data'))
             return self.json({ 'code': 0, 'msg': '保存成功'})
-
-    async def write_file(self, path, file):
-        size = 0
-        with open(path, 'wb') as f:
-            while True:
-                chunk = await file.read_chunk()  # 默认是8192个字节。
-                if not chunk:
-                    break
-                size += len(chunk)
-                f.write(chunk)
-        
