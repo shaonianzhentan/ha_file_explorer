@@ -142,20 +142,3 @@ def base64_to_file(base64_data, file):
     fout = open(file, 'wb')
     fout.write(ori_image_data)
     fout.close()
-
-def load_json(file_path):
-    # 不存在则返回空字典
-    if os.path.exists(file_path) == False:
-        return {}
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        return data
-
-async def download(url, file_path):
-    headers = {'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'}
-    connector = aiohttp.TCPConnector(verify_ssl=False)
-    async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
-        async with session.get(url) as response:
-            file = await response.read()
-            with open(file_path, 'wb') as f:
-                f.write(file)
