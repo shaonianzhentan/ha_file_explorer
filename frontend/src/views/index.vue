@@ -75,6 +75,7 @@ export default {
     }
 
     .md6 {
+        width: 100%;
         .va-card__title {
             justify-content: space-between;
             padding-right: 40px;
