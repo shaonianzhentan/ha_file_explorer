@@ -159,3 +159,50 @@ async def download(url, file_path):
             file = await response.read()
             with open(file_path, 'wb') as f:
                 f.write(file)
+
+# 创建文件夹的zip压缩包
+def create_folder_zip(folder_path, zip_path=None):
+    """
+    将指定文件夹压缩为zip文件
+    
+    Args:
+        folder_path: 要压缩的文件夹路径
+        zip_path: 压缩文件保存路径，如果为None则使用临时文件
+        
+    Returns:
+        zip文件的路径
+    """
+    if not os.path.isdir(folder_path):
+        raise ValueError(f"{folder_path} 不是一个有效的文件夹")
+    
+    # 如果没有指定zip_path，则创建临时文件
+    if zip_path is None:
+        fd, zip_path = tempfile.mkstemp(suffix='.zip')
+        os.close(fd)
+    
+    # 获取文件夹的基本名称
+    folder_name = os.path.basename(folder_path)
+    
+    # 创建zip文件
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        # 遍历文件夹中的所有文件和子文件夹
+        for root, dirs, files in os.walk(folder_path):
+            # 计算相对路径
+            rel_path = os.path.relpath(root, os.path.dirname(folder_path))
+            if rel_path == '.':
+                rel_path = folder_name
+            else:
+                rel_path = os.path.join(folder_name, rel_path)
+            
+            # 添加空文件夹
+            if not files and not dirs:
+                zipf.writestr(f"{rel_path}/", "")
+            
+            # 添加文件
+            for file in files:
+                file_path = os.path.join(root, file)
+                # 计算在zip中的路径
+                zip_path_in_archive = os.path.join(rel_path, file)
+                zipf.write(file_path, zip_path_in_archive)
+    
+    return zip_path

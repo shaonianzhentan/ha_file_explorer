@@ -1,11 +1,74 @@
 import os
+import mimetypes
+from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
-from .file_api import delete_file, get_dir_list, mkdir, load_content, save_content
+from .file_api import delete_file, get_dir_list, mkdir, load_content, save_content, create_folder_zip
 
 from .manifest import manifest
 
 DOMAIN = manifest.domain
 API_URL = f"/{DOMAIN}-api"
+DOWNLOAD_API_URL = f"/{DOMAIN}-download"
+
+class HttpDownloadApi(HomeAssistantView):
+    """Handle file and folder downloads without requiring authentication."""
+    url = DOWNLOAD_API_URL
+    name = f"{DOMAIN}_download"
+    requires_auth = False
+    
+    # format path
+    def get_config_path(self, path):
+        config_path = path.lstrip('/')
+        if config_path[:2] == './':
+                config_path = config_path[2:]
+        return config_path
+        
+    async def get(self, request):
+        hass = request.app["hass"]
+        query = request.query
+        act = query.get('act', '')
+        config_path = self.get_config_path(query.get('path', ''))
+        path = hass.config.path(config_path)
+        
+        # 下载文件夹
+        if act == 'download_folder':
+            if not os.path.isdir(path):
+                return web.Response(text='指定路径不是文件夹', status=400)
+            
+            # 创建临时zip文件
+            zip_path = await hass.async_add_executor_job(create_folder_zip, path)
+            folder_name = os.path.basename(path)
+            
+            # 设置响应头，指定下载的文件名
+            headers = {
+                'Content-Disposition': f'attachment; filename="{folder_name}.zip"',
+                'Content-Type': 'application/zip'
+            }
+            
+            # 创建文件响应
+            return web.FileResponse(path=zip_path, headers=headers)
+        
+        # 下载单个文件
+        elif act == 'download_file':
+            if not os.path.isfile(path):
+                return web.Response(text='指定路径不是文件', status=400)
+            
+            file_name = os.path.basename(path)
+            content_type, _ = mimetypes.guess_type(path)
+            if content_type is None:
+                content_type = 'application/octet-stream'
+            
+            # 设置响应头，指定下载的文件名
+            headers = {
+                'Content-Disposition': f'attachment; filename="{file_name}"',
+                'Content-Type': content_type
+            }
+            
+            # 创建文件响应
+            return web.FileResponse(path=path, headers=headers)
+            
+        return web.Response(text='无效的操作', status=400)
+
 
 class HttpApi(HomeAssistantView):
 
@@ -27,10 +90,50 @@ class HttpApi(HomeAssistantView):
         act = query.get('act', '')
         config_path = self.get_config_path(query.get('path', ''))
         path = hass.config.path(config_path)
-        if act == 'content':
+        
+        # 下载文件夹
+        if act == 'download_folder':
+            if not os.path.isdir(path):
+                return self.json({ 'code': 1, 'msg': '指定路径不是文件夹'})
+            
+            # 创建临时zip文件
+            zip_path = await hass.async_add_executor_job(create_folder_zip, path)
+            folder_name = os.path.basename(path)
+            
+            # 设置响应头，指定下载的文件名
+            headers = {
+                'Content-Disposition': f'attachment; filename="{folder_name}.zip"',
+                'Content-Type': 'application/zip'
+            }
+            
+            # 创建文件响应
+            return web.FileResponse(path=zip_path, headers=headers)
+        
+        # 下载单个文件
+        elif act == 'download_file':
+            if not os.path.isfile(path):
+                return self.json({ 'code': 1, 'msg': '指定路径不是文件'})
+            
+            file_name = os.path.basename(path)
+            content_type, _ = mimetypes.guess_type(path)
+            if content_type is None:
+                content_type = 'application/octet-stream'
+            
+            # 设置响应头，指定下载的文件名
+            headers = {
+                'Content-Disposition': f'attachment; filename="{file_name}"',
+                'Content-Type': content_type
+            }
+            
+            # 创建文件响应
+            return web.FileResponse(path=path, headers=headers)
+        
+        # 获取文件内容
+        elif act == 'content':
             data = await hass.async_add_executor_job(load_content, path)
             return self.json({ 'code': 0, 'data': data})
 
+        # 获取文件列表（默认行为）
         data = await hass.async_add_executor_job(get_dir_list, path)
         return self.json(data) 
 

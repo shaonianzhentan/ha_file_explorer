@@ -3,7 +3,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.frontend import async_register_built_in_panel
 from homeassistant.components.http import StaticPathConfig
-from .http_api import HttpApi
+from .http_api import HttpApi, HttpDownloadApi
 from .manifest import manifest
 
 DOMAIN = manifest.domain
@@ -23,6 +23,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     hass.http.register_view(HttpApi)
+    hass.http.register_view(HttpDownloadApi)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
