@@ -65,6 +65,9 @@ const service = new Proxy({
     },
     deleteHassFile(path: string) {
         return requestApi(null, { path }, 'delete')
+    },
+    downloadFile(path: string){
+        return requestApi(null, { act: 'download', path }, 'get')
     }
 }, {
     get(target: any, property: string) {

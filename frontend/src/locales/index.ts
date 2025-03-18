@@ -4,6 +4,7 @@ const language = {
     file: 'File',
     folder: 'Folder',
     upload: 'Upload',
+    download: 'Download',
     add: 'Add',
     delete: 'Delete',
     rename: 'Rename',
@@ -20,7 +21,7 @@ const language = {
       return `New ${type} Name`
     },
     deleteConfirm(name: string) {
-      return `OK to delete this file【${name}】？`
+      return `Confirm deletion【${name}】？`
     }
   },
   cn: {
@@ -28,6 +29,7 @@ const language = {
     file: '文件',
     folder: '文件夹',
     upload: '上传',
+    download: '下载',
     add: '新增',
     delete: '删除',
     rename: '重命名',
@@ -44,7 +46,7 @@ const language = {
       return `新${type}名称`
     },
     deleteConfirm(name: string) {
-      return `确定删除文件【${name}】？`
+      return `确定删除【${name}】？`
     }
   },
   ru: {
@@ -52,6 +54,7 @@ const language = {
     file: "файл",
     folder: "папка",
     upload: "загрузить",
+    download: 'скачать',
     add: "добавить",
     delete: "удалить",
     rename: "переименовать",
@@ -68,7 +71,7 @@ const language = {
       return `New ${type} Name`
     },
     deleteConfirm(name: string) {
-      return `Удалить файл【${name}】？`
+      return `Подтвердите удаление【${name}】？`
     }
   },
 }

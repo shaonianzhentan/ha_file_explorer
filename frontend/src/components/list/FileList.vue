@@ -45,6 +45,7 @@ import locales from '../../locales/index'
                                 <va-button @click="renameClick(item.name)">{{ locales.rename }}</va-button>
                                 <va-button @click="deleteClick(item.name)">{{ locales.delete }}</va-button>
                                 <va-button @click="editClick(item.name)">{{ locales.edit }}</va-button>
+                                <va-button @click="downloadClick(item.name)">{{ locales.download }}</va-button>
                             </va-button-group>
                         </va-button-dropdown>
                     </va-list-item-section>
@@ -112,6 +113,9 @@ export default {
             this.$dialog(UploadFile, {
                 type: 'file'
             })
+        },
+        downloadClick(fileName: string){
+            
         }
     }
 }

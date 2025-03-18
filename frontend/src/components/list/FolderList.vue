@@ -12,6 +12,7 @@ import locales from '../../locales/index'
                     <va-button @click="renameClick" v-if="pathList.length > 1">
                         {{ locales.rename }}</va-button>
                     <va-button @click="uploadClick">{{ locales.upload }}</va-button>
+                    <va-button @click="downloadClick">{{ locales.download }}</va-button>
                     <va-button @click="deleteClick" v-if="pathList.length > 1">{{ locales.delete }}</va-button>
                     <va-button @click="addClick">{{ locales.add }}</va-button>
                 </va-button-group>
@@ -86,7 +87,7 @@ export default {
         deleteClick() {
             const { pathList } = this
             const { name } = pathList[pathList.length - 1]
-            if (parent.confirm(`确定删除文件夹【${name}】？`)) {
+            if (parent.confirm(locales.deleteConfirm(name))) {
                 this.api.service.deleteHassFile(this.path).then((res: any) => {
                     this.getFileList(pathList.length - 2)
                     this.$toast(res.msg)
@@ -97,6 +98,12 @@ export default {
             this.$dialog(RenameFile, {
                 type: 'dir',
                 name: ''
+            })
+        },
+        downloadClick(){
+            // loading
+            this.api.service.deleteHassFile(this.path).then((res: any) => {                    
+                // this.$toast(res.msg)
             })
         },
         loadSrc(url: any) {
