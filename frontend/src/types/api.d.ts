@@ -11,5 +11,6 @@ declare interface Service {
     uploadFile(path: string, data: File): Promise<any>,
     createHassFile(act: string, path: string): Promise<any>,
     deleteHassFile(path: string): Promise<any>,
+    downloadFile(path: string): Promise<any>,
     rename(path: string, new_path: string): Promise<any>
 }

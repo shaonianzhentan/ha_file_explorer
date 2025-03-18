@@ -123,6 +123,12 @@ def save_json(file_path, data):
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
 
+def read_file(file_path):
+    ''' 读取文件 '''
+    with open(file_path, 'rb') as f:
+      content = f.read()
+      return content
+
 # 加载内容
 def load_content(file_path):
     fp = open(file_path, 'r', encoding='UTF-8')
@@ -147,7 +153,7 @@ def dir_to_zip(path):
     ''' 文件夹压缩成ZIP文件 '''
     if os.path.isdir(path):
         temp_dir = tempfile.gettempdir()
-        zip_path = os.path.join(temp_dir, f"{os.path.basename(path)}.zip")
+        zip_path = os.path.join(temp_dir, f"{os.path.basename(path) or 'ha'}.zip")
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             for root, dirs, files in os.walk(path):
                 for file in files:

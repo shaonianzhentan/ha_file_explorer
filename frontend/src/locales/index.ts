@@ -17,8 +17,14 @@ const language = {
     confirm: 'Confirm',
     currentName: 'Current Name',
     uploadTips: 'Note: files with the same name will be overwritten',
+    uploadSuccess(fileCount: number, uploadCount: number) {
+      return `Successfully uploaded ${uploadCount} files, failed ${fileCount - uploadCount} files`
+    },
     newName(type: string) {
       return `New ${type} Name`
+    },
+    downloadConfirm(name: string) {
+      return `Download【${name}】？`
     },
     deleteConfirm(name: string) {
       return `Confirm deletion【${name}】？`
@@ -42,8 +48,14 @@ const language = {
     confirm: '确定',
     currentName: '当前名称',
     uploadTips: '注意：相同名称文件会被覆盖',
+    uploadSuccess(fileCount: number, uploadCount: number) {
+      return `成功上传${uploadCount}文件，失败${fileCount - uploadCount}个`
+    },
     newName(type: string) {
       return `新${type}名称`
+    },
+    downloadConfirm(name: string) {
+      return `确定下载【${name}】？`
     },
     deleteConfirm(name: string) {
       return `确定删除【${name}】？`
@@ -67,8 +79,14 @@ const language = {
     confirm: "потвердить",
     currentName: "Текушее имя",
     uploadTips: "Примечание: файлы с таким же именем будут перезаписаны",
+    uploadSuccess(fileCount: number, uploadCount: number) {
+      return `Успешно загружено ${uploadCount} файлов, не удалось ${fileCount - uploadCount} файлов`
+    },
     newName(type: string) {
       return `New ${type} Name`
+    },
+    downloadConfirm(name: string) {
+      return `Скачать【${name}】？`
     },
     deleteConfirm(name: string) {
       return `Подтвердите удаление【${name}】？`
