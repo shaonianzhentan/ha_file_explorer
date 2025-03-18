@@ -142,3 +142,16 @@ def base64_to_file(base64_data, file):
     fout = open(file, 'wb')
     fout.write(ori_image_data)
     fout.close()
+
+def dir_to_zip(path):
+    ''' 文件夹压缩成ZIP文件 '''
+    if os.path.isdir(path):
+        temp_dir = tempfile.gettempdir()
+        zip_path = os.path.join(temp_dir, f"{os.path.basename(path)}.zip")
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    zipf.write(os.path.join(root, file),
+                               os.path.relpath(os.path.join(root, file),
+                                               os.path.join(path, '..')))
+        return zip_path

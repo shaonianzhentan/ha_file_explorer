@@ -1,6 +1,6 @@
 import os
 from homeassistant.components.http import HomeAssistantView
-from .file_api import delete_file, get_dir_list, mkdir, load_content, save_content
+from .file_api import delete_file, get_dir_list, mkdir, load_content, save_content, dir_to_zip
 
 from .manifest import manifest
 
@@ -30,6 +30,15 @@ class HttpApi(HomeAssistantView):
         if act == 'content':
             data = await hass.async_add_executor_job(load_content, path)
             return self.json({ 'code': 0, 'data': data})
+        else if act == 'download':
+            if os.path.isdir(path):
+                path = await hass.async_add_executor_job(dir_to_zip, path)
+            if os.path.isfile(path):
+                async with aiofiles.open(path, 'rb') as f:
+                    content = await f.read()
+                return web.Response(body=content, headers={
+                    'Content-Disposition': f'attachment; filename="{os.path.basename(path)}"'
+                })
 
         data = await hass.async_add_executor_job(get_dir_list, path)
         return self.json(data) 
