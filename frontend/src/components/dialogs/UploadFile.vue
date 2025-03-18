@@ -27,16 +27,27 @@ const cancelClick = () => {
 const okClick = async () => {
     if (input.value.length === 0) return;
     loading.value = true
-    Promise.all(input.value.map(file => {
-        const path = store.getters.absolutePath(isFile ? file.name : file.webkitRelativePath)
-        // console.log(path)
-        return api.service.uploadFile(path, file)
-    })).then(res => {
-        app.$toast(`成功上传${res.length}文件`)
-        store.dispatch('reloadFileList')
-        props.ok({})
-        loading.value = false
-    })
+    const uploadCount = 0
+
+    for (let i = 0; i < input.value.length; i++) {
+        try {
+            const file = input.value[i]
+            const path = store.getters.absolutePath(isFile ? file.name : file.webkitRelativePath)
+            const result = await api.service.uploadFile(path, file)
+
+            input.value.splice(i, 1);
+            i--;
+        } catch (error) {
+            console.error(`Failed to upload ${files[i].name}:`, error);
+        }
+        uploadCount++
+    }
+
+    app.$toast(`成功上传${uploadCount}文件`)
+    store.dispatch('reloadFileList')
+    props.ok({})
+    loading.value = false
+
 } 
 </script>
 <template>
@@ -47,6 +58,13 @@ const okClick = async () => {
         </va-alert>
         <va-file-upload v-if="isFile" :disabled="loading" v-model="input" />
         <input v-else type="file" @change="folderChange" webkitdirectory />
+        <va-list>
+            <va-list-item v-for="(item, index) in input" :key="index">
+                <va-list-item-section>
+                    <va-list-item-label>{{ item.name }}</va-list-item-label>
+                </va-list-item-section>
+            </va-list-item>
+        </va-list>
         <template #footer>
             <va-button :disabled="loading" outline @click="cancelClick" style="margin-right:20px;">
                 {{ locales.cancel }}
