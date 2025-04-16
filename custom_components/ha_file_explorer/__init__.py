@@ -18,7 +18,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     async_register_built_in_panel(hass, "iframe", 
-        NAME, "mdi:folder", entry_id, {"url": f'{url_path}/index.html?v={manifest.version}'},
+        NAME, "mdi:folder", DOMAIN, {"url": f'{url_path}/index.html?v={manifest.version}'},
         entry.data.get('require_admin')
     )
 
@@ -26,5 +26,5 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.components.frontend.async_remove_panel(entry.entry_id)
+    hass.components.frontend.async_remove_panel(DOMAIN)
     return True
