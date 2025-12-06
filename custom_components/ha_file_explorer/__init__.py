@@ -1,7 +1,7 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
-from homeassistant.components.frontend import async_register_built_in_panel
+from homeassistant.components.frontend import async_register_built_in_panel, async_remove_panel
 from homeassistant.components.http import StaticPathConfig
 from .http_api import HttpApi
 from .manifest import manifest
@@ -17,14 +17,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         [ StaticPathConfig(url_path, hass.config.path("custom_components/" + DOMAIN + "/www"), False) ]
     )
 
-    async_register_built_in_panel(hass, "iframe", 
-        NAME, "mdi:folder", DOMAIN, {"url": f'{url_path}/index.html?v={manifest.version}'},
-        entry.data.get('require_admin')
+    async_register_built_in_panel(
+        hass,
+        "iframe",
+        sidebar_title=NAME,
+        sidebar_icon="mdi:folder",
+        frontend_url_path=DOMAIN,
+        config={"url": f"{url_path}/index.html?v={manifest.version}"},
+        require_admin=entry.data.get("require_admin", False),
     )
 
     hass.http.register_view(HttpApi)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.components.frontend.async_remove_panel(DOMAIN)
+    async_remove_panel(DOMAIN)
     return True
