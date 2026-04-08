@@ -6,7 +6,7 @@ import locales from '../../locales/index'
         <va-app-bar shadow-on-scroll shadow-color="primary" target="#va-app-bar-shadow" style="z-index: 1;
         --va-app-bar-height: 56px;">
             <va-button :round="true" @click="menuClick" style="margin-left: 20px;">
-                <mdi-icon name="mdi-home-assistant" style="color:white; " />
+                <mdi-icon name="mdi-home-assistant" />
             </va-button>
             <slot name="left"></slot>
             <div class="spacer"></div>

@@ -6,14 +6,16 @@ import locales from '../locales/index'
 <template>
     <AppLayout class="views-editor">
         <template #left>
-            <va-chip flat color="#fff">
+            <va-chip flat>
                 {{ name }}
             </va-chip>
         </template>
         <template #right>
-            <va-button color="#fff" flat :rounded="false" v-shortkey="['ctrl', 's']" @shortkey="saveClick()"
-                @click="saveClick">{{ locales.save }}</va-button>
-            <va-button color="#fff" flat :rounded="false" @click="cancelClick">{{ locales.cancel }}</va-button>
+            <va-button flat :rounded="false" v-shortkey="['ctrl', 's']" @shortkey="saveClick()" @click="saveClick"
+                :title="locales.save">{{
+                    locales.save }}</va-button>
+            <va-button flat :rounded="false" @click="cancelClick" :title="locales.cancel">{{ locales.cancel
+                }}</va-button>
         </template>
         <div id="editor"></div>
     </AppLayout>
