@@ -8,7 +8,7 @@ import locales from '../locales/index'
 <template>
     <AppLayout class="views-index">
         <template #left>
-            <va-button flat :rounded="false" @click="versionClick">{{ locales.name }}</va-button>
+            <va-button flat class="header-text" :rounded="false" @click="versionClick">{{ locales.name }}</va-button>
         </template>
         <template #right>
         </template>

@@ -6,18 +6,18 @@ import locales from '../locales/index'
 <template>
     <AppLayout class="views-editor">
         <template #left>
-            <va-chip flat>
+            <va-chip flat class="header-text" :title="name">
                 {{ name }}
             </va-chip>
         </template>
         <template #right>
-            <va-button flat :rounded="false" v-shortkey="['ctrl', 's']" @shortkey="saveClick()" @click="saveClick"
-                :title="locales.save">{{
-                    locales.save }}</va-button>
-            <va-button flat :rounded="false" @click="cancelClick" :title="locales.cancel">{{ locales.cancel
-                }}</va-button>
+            <va-button flat :rounded="false" @click="saveClick" class="header-text" :title="locales.save">{{
+                locales.save }}</va-button>
+            <va-button flat :rounded="false" @click="cancelClick" class="header-text" :title="locales.cancel">{{
+                locales.cancel
+            }}</va-button>
         </template>
-        <div id="editor"></div>
+        <div id="editor" v-shortkey="['ctrl', 's']" @shortkey="saveClick"></div>
     </AppLayout>
 </template>
 
@@ -64,15 +64,25 @@ export default defineComponent({
                     theme: "ace/theme/chrome",
                     mode: editorMode(this.name),
                 });
+                window.editor.commands.addCommand({
+                    name: "customSave",
+                    bindKey: { win: "Ctrl-s", mac: "Command-s" },
+                    exec: () => {
+                        this.saveClick()
+                    }
+                });
+                window.editor.commands.removeCommand('save')
+
                 document.body.scrollIntoView();
             })
         },
         cancelClick() {
             this.$router.back()
         },
-        saveClick() {
+        saveClick(event?: Event) {
+            event?.preventDefault()
             const path = this.absolutePath(this.name)
-            let data = window.editor.getValue();
+            const data = window.editor.getValue();
             this.api.service.setHassFileContent(path, data).then(res => {
                 this.$toast(res.msg)
             })

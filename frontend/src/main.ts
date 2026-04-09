@@ -19,7 +19,9 @@ document.body.style.backgroundColor = getParentColor('--primary-background-color
 const style = document.createElement('style')
 style.textContent = `
 :root{
-    --va-list-item-label-color: ${getParentColor('--primary-text-color')}
+    --va-list-item-label-color: ${getParentColor('--primary-text-color')};
+    --app-header-background-color: ${getParentColor('--app-header-background-color')};
+    --app-header-text-color: ${getParentColor('--app-header-text-color')};
 }
 `
 document.head.appendChild(style)

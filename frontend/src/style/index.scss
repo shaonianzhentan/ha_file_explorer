@@ -17,6 +17,10 @@ body {
     }
 }
 
+.header-text{
+    color: var(--app-header-text-color) !important;
+}
+
 ::-webkit-scrollbar-track {
     background-color: transparent;
 }
