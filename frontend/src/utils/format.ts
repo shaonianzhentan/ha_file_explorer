@@ -40,8 +40,7 @@ export function formatFileIcon(path: any, fileName: string) {
             'groups.yaml',
             'customize.yaml',
             'configuration.yaml',
-            'automations.yaml',
-            'customize.yaml'
+            'automations.yaml'
         ].includes(fileName)) {
             return { icon: 'mdi-home-assistant' }
         }
@@ -71,12 +70,14 @@ export function formatFileIcon(path: any, fileName: string) {
         ext = 'video'
     } else if (['mp3', 'm4a'].includes(ext)) {
         ext = 'audio'
-    } else if (['gz', 'rar', 'tz'].includes(ext)) {
+    } else if (['gz', 'rar', 'tz', 'zip'].includes(ext)) {
         ext = 'zip'
     } else if (['html', 'htm'].includes(ext)) {
         ext = 'html'
     } else if (['db-shm', 'db-wal'].includes(ext)) {
         ext = 'db'
+    } else if (['woff', 'woff2', 'ttf', 'otf', 'eot'].includes(ext)) {
+        ext = 'font'
     }
     const mode = {
         code: 'mdi-code-braces',
@@ -94,7 +95,12 @@ export function formatFileIcon(path: any, fileName: string) {
         audio: 'mdi-file-music',
         zip: 'mdi-folder-zip',
         svg: 'mdi-svg',
-        css: 'mdi-language-css3'
+        css: 'mdi-language-css3',
+        pdf: 'mdi-file-pdf-box',
+        ts: 'mdi-language-typescript',
+        vue: 'mdi-vuejs',
+        txt: 'mdi-file-document-outline',
+        font: 'mdi-format-font'
     } as any;
     return { icon: mode[ext] || icon }
 }
@@ -164,6 +170,15 @@ export function editorMode(fileName: string) {
  */
 export function isEditable(fileName: string) {
     let ext = getFileExt(fileName)
-    return !['jpg', 'jpg', 'jpg',
-        'mp3', 'mp4', 'db', 'jpg'].includes(ext)
+    const nonEditableExts = [
+        'jpg', 'jpeg', 'png', 'gif', 'bmp', 'ico', 'svg',
+        'mp3', 'm4a', 'wav', 'ogg',
+        'mp4', 'webm', 'mov', 'avi', 'mkv', 'flv',
+        'db', 'db-shm', 'db-wal', 'sqlite',
+        'zip', 'rar', 'gz', '7z', 'tar', 'tz',
+        'pyc', 'dll', 'so', 'exe',
+        'woff', 'woff2', 'ttf', 'otf', 'eot',
+        'pdf'
+    ];
+    return !nonEditableExts.includes(ext)
 }
