@@ -93,7 +93,7 @@ export default {
       if (pos > 0) {
         let ext = fileName.substring(pos + 1)
         if (['db', 'db-shm', 'db-wal', 'pyc'].includes(ext)) {
-          this.$toast('文件格式不支持编辑')
+          this.$toast(locales.unsupportedEdit)
           return
         }
       }

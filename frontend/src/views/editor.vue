@@ -11,11 +11,12 @@ import locales from '../locales/index'
             </va-chip>
         </template>
         <template #right>
-            <va-button flat :rounded="false" @click="saveClick" class="header-text" :title="locales.save">{{
-                locales.save }}</va-button>
-            <va-button flat :rounded="false" @click="cancelClick" class="header-text" :title="locales.cancel">{{
-                locales.cancel
-            }}</va-button>
+            <va-button flat :rounded="false" @click="saveClick" class="header-text" :title="locales.save">
+                {{locales.save }}
+            </va-button>
+            <va-button flat :rounded="false" @click="cancelClick" class="header-text" :title="locales.cancel">
+                {{locales.cancel}}
+            </va-button>
         </template>
         <div id="editor" v-shortkey="['ctrl', 's']" @shortkey="saveClick"></div>
     </AppLayout>
@@ -25,6 +26,7 @@ import locales from '../locales/index'
 import { defineComponent } from 'vue'
 import { mapGetters } from 'vuex'
 import { editorMode } from '../utils/format'
+import locales from '../locales'
 
 export default defineComponent({
     data() {
@@ -40,7 +42,7 @@ export default defineComponent({
     },
     mounted() {
         this.loadData()
-        window.onbeforeunload = function () { return "确定离开当前页吗？" }
+        window.onbeforeunload = function () { return locales.leaveConfirm }
     },
     beforeRouteLeave() {
         window.onbeforeunload = null

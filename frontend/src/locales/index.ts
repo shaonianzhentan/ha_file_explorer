@@ -17,6 +17,7 @@ const language = {
     confirm: 'Confirm',
     currentName: 'Current Name',
     uploadTips: 'Note: files with the same name will be overwritten',
+    unsupportedEdit: 'File format not supported for editing',
     uploadSuccess(fileCount: number, uploadCount: number) {
       return `Successfully uploaded ${uploadCount} files, failed ${fileCount - uploadCount} files`
     },
@@ -28,7 +29,8 @@ const language = {
     },
     deleteConfirm(name: string) {
       return `Confirm deletion【${name}】？`
-    }
+    },
+    leaveConfirm: 'Are you sure you want to leave the current page?'
   },
   cn: {
     name: '文件管理',
@@ -48,6 +50,7 @@ const language = {
     confirm: '确定',
     currentName: '当前名称',
     uploadTips: '注意：相同名称文件会被覆盖',
+    unsupportedEdit: '文件格式不支持编辑',
     uploadSuccess(fileCount: number, uploadCount: number) {
       return `成功上传${uploadCount}文件，失败${fileCount - uploadCount}个`
     },
@@ -59,7 +62,8 @@ const language = {
     },
     deleteConfirm(name: string) {
       return `确定删除【${name}】？`
-    }
+    },
+    leaveConfirm: '确定离开当前页吗？'
   },
   ru: {
     name: "Файловый менеджер",
@@ -79,6 +83,7 @@ const language = {
     confirm: "потвердить",
     currentName: "Текушее имя",
     uploadTips: "Примечание: файлы с таким же именем будут перезаписаны",
+    unsupportedEdit: "Формат файла не поддерживается для редактирования",
     uploadSuccess(fileCount: number, uploadCount: number) {
       return `Успешно загружено ${uploadCount} файлов, не удалось ${fileCount - uploadCount} файлов`
     },
@@ -90,7 +95,8 @@ const language = {
     },
     deleteConfirm(name: string) {
       return `Подтвердите удаление【${name}】？`
-    }
+    },
+    leaveConfirm: 'Вы уверены, что хотите покинуть текущую страницу?'
   },
 }
 

@@ -56,17 +56,15 @@ const okClick = async () => {
 </script>
 <template>
     <va-modal v-model="visible" :title="title" :hide-default-actions="true">
-        <table class="va-table">
-            <tbody>
-                <tr v-for="item in infolist" :key="item.name">
-                    <td>{{ item.name }}</td>
-                    <td>
-                        <a v-if="item.type === 'link'" :href="item.value" target="_blank">{{ item.value }}</a>
-                        <span v-else>{{ item.value }}</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="version-info-list">
+            <div class="info-item" v-for="item in infolist" :key="item.name">
+                <div class="info-name">{{ item.name }}</div>
+                <div class="info-value">
+                    <a v-if="item.type === 'link'" :href="item.value" target="_blank">{{ item.value }}</a>
+                    <span v-else>{{ item.value }}</span>
+                </div>
+            </div>
+        </div>
         <template #footer>
             <va-button @click="okClick">
                 OK
@@ -74,3 +72,35 @@ const okClick = async () => {
         </template>
     </va-modal>
 </template>
+<style scoped>
+.version-info-list {
+  width: 100%;
+}
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--va-background-border);
+}
+.info-item:last-child {
+  border-bottom: none;
+}
+.info-name {
+  font-weight: bold;
+  margin-right: 1rem;
+}
+.info-value {
+  text-align: right;
+  word-break: break-all;
+}
+
+@media (max-width: 600px) {
+  .info-item {
+    flex-direction: column;
+  }
+  .info-value {
+    text-align: left;
+    margin-top: 0.25rem;
+  }
+}
+</style>
