@@ -1,19 +1,21 @@
-import os
-from homeassistant.util.json import load_json
+"""Expose the values of manifest.json to the integration."""
+from __future__ import annotations
 
-CURRENT_PATH = os.path.dirname(__file__)
+import json
+from pathlib import Path
 
-class Manifest():
 
-    def __init__(self):
-        self.manifest_path = f'{CURRENT_PATH}/manifest.json'
-        self.update()
+class Manifest:
+    """Read the integration manifest once, at import time."""
 
-    def update(self):
-        data = load_json(self.manifest_path, {})
-        self.domain = data.get('domain')
-        self.name = data.get('name')
-        self.version = data.get('version')
-        self.documentation = data.get('documentation')
+    def __init__(self) -> None:
+        data = json.loads(
+            Path(__file__).with_name("manifest.json").read_text(encoding="utf-8")
+        )
+        self.domain: str = data["domain"]
+        self.name: str = data["name"]
+        self.version: str = data["version"]
+        self.documentation: str = data.get("documentation", "")
+
 
 manifest = Manifest()

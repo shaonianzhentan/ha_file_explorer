@@ -1,6 +1,8 @@
+"""Config flow for File Explorer."""
 from __future__ import annotations
 
 from typing import Any
+
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow
@@ -9,11 +11,12 @@ from homeassistant.data_entry_flow import FlowResult
 from .manifest import manifest
 
 DOMAIN = manifest.domain
-DATA_SCHEMA = vol.Schema({
-    vol.Required("require_admin"): bool
-})
+
+DATA_SCHEMA = vol.Schema({vol.Required("require_admin", default=False): bool})
+
 
 class SimpleConfigFlow(ConfigFlow, domain=DOMAIN):
+    """Handle a single File Explorer config entry."""
 
     VERSION = 1
 
@@ -27,4 +30,4 @@ class SimpleConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is None:
             return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA)
 
-        return self.async_create_entry(title=DOMAIN, data=user_input)
+        return self.async_create_entry(title=manifest.name, data=user_input)
