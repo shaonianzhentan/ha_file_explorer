@@ -1,0 +1,2626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>文件管理 · 界面预览（HA 自定义面板）</title>
+<style>
+/* ==================================================================
+   预览页：模拟 HA 主题变量（浅色 / 深色 / 跟随系统）
+   在 HA 中这些变量由 hass 注入；这里重设同名变量即可切换外观。
+   ================================================================== */
+:root, :root[data-theme="light"] {
+  --primary-color: #03a9f4;
+  --primary-text-color: #212121;
+  --secondary-text-color: #727272;
+  --divider-color: rgba(0, 0, 0, .12);
+  --card-background-color: #ffffff;
+  --primary-background-color: #fafafa;
+  --secondary-background-color: rgba(127, 127, 127, .12);
+  --text-primary-color: #ffffff;
+  --error-color: #db4437;
+  --app-header-background-color: #ffffff;
+  --app-header-text-color: #212121;
+  --sidebar-background-color: #fafafa;
+  --sidebar-text-color: #212121;
+  --state-icon-color: #727272;
+  --sidebar-selected-icon-color: #03a9f4;
+  --rgb-primary-color: 3, 169, 244;
+  --pv-bg: #eef1f5;
+  --pv-surface: #ffffff;
+  --pv-text: #212121;
+  --pv-sub: #6b7280;
+  --pv-line: #e3e6ea;
+  --pv-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --primary-color: #4fc3f7;
+    --primary-text-color: #e1e1e1;
+    --secondary-text-color: #9b9b9b;
+    --divider-color: rgba(255, 255, 255, .14);
+    --card-background-color: #1c1c1c;
+    --primary-background-color: #111111;
+    --secondary-background-color: rgba(255, 255, 255, .08);
+    --error-color: #ef5350;
+    --app-header-background-color: #1c1c1c;
+    --app-header-text-color: #e1e1e1;
+    --sidebar-background-color: #16181c;
+    --sidebar-text-color: #e1e1e1;
+    --state-icon-color: #9b9b9b;
+    --sidebar-selected-icon-color: #4fc3f7;
+    --rgb-primary-color: 79, 195, 247;
+    --pv-bg: #0d0d0d;
+    --pv-surface: #1a1a1a;
+    --pv-text: #e1e1e1;
+    --pv-sub: #9b9b9b;
+    --pv-line: #2c2c2c;
+    --pv-shadow: 0 2px 10px rgba(0, 0, 0, .4);
+  }
+}
+:root[data-theme="dark"] {
+  --primary-color: #4fc3f7;
+  --primary-text-color: #e1e1e1;
+  --secondary-text-color: #9b9b9b;
+  --divider-color: rgba(255, 255, 255, .14);
+  --card-background-color: #1c1c1c;
+  --primary-background-color: #111111;
+  --secondary-background-color: rgba(255, 255, 255, .08);
+  --error-color: #ef5350;
+  --app-header-background-color: #1c1c1c;
+  --app-header-text-color: #e1e1e1;
+  --sidebar-background-color: #16181c;
+  --sidebar-text-color: #e1e1e1;
+  --state-icon-color: #9b9b9b;
+  --sidebar-selected-icon-color: #4fc3f7;
+  --rgb-primary-color: 79, 195, 247;
+  --pv-bg: #0d0d0d;
+  --pv-surface: #1a1a1a;
+  --pv-text: #e1e1e1;
+  --pv-sub: #9b9b9b;
+  --pv-line: #2c2c2c;
+  --pv-shadow: 0 2px 10px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--pv-bg); color: var(--pv-text);
+  font-family: "Roboto", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- 预览外壳 */
+.pv-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  padding: 14px 24px; background: var(--pv-surface);
+  border-bottom: 1px solid var(--pv-line);
+}
+.pv-title { display: flex; align-items: center; gap: 14px; }
+.pv-logo {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+  font-size: 24px; background: var(--primary-color); color: var(--text-primary-color);
+}
+.pv-title h1 { margin: 0; font-size: 18px; font-weight: 600; }
+.pv-title p { margin: 2px 0 0; font-size: 12px; color: var(--pv-sub); }
+.pv-badge {
+  display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 500; vertical-align: middle;
+  background: var(--secondary-background-color); color: var(--primary-color);
+}
+.pv-header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+.pv-switch { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--pv-sub); cursor: pointer; white-space: nowrap; }
+.pv-switch input { accent-color: var(--primary-color); }
+.pv-soft-btn {
+  border: 1px solid var(--pv-line); background: transparent; color: var(--pv-text);
+  border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer;
+}
+.pv-soft-btn:hover { background: var(--secondary-background-color); }
+
+.pv-wrap { max-width: 1320px; margin: 0 auto; padding: 16px 24px 32px; }
+.pv-steps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.pv-step {
+  border: 1px solid var(--pv-line); background: var(--pv-surface); color: var(--pv-text);
+  border-radius: 18px; padding: 6px 14px; font-size: 13px; cursor: pointer;
+}
+.pv-step:hover { border-color: var(--primary-color); }
+.pv-step.active { background: var(--primary-color); border-color: transparent; color: var(--text-primary-color); }
+.pv-note {
+  padding: 10px 14px; margin-bottom: 14px; border-radius: 8px; font-size: 13px;
+  background: var(--pv-surface); border-left: 3px solid var(--primary-color); color: var(--pv-sub);
+}
+.pv-browser {
+  position: relative; background: var(--pv-surface);
+  border: 1px solid var(--pv-line); border-radius: 12px;
+  box-shadow: var(--pv-shadow); overflow: hidden;
+}
+.pv-browser-bar {
+  display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 14px;
+  background: var(--pv-bg); border-bottom: 1px solid var(--pv-line);
+}
+.pv-dots { display: flex; gap: 6px; }
+.pv-dots span { width: 10px; height: 10px; border-radius: 50%; background: #d5d8dc; }
+.pv-dots span:first-child { background: #ff5f57; }
+.pv-dots span:nth-child(2) { background: #febc2e; }
+.pv-dots span:last-child { background: #28c840; }
+.pv-addr {
+  flex: 1; padding: 4px 12px; border-radius: 12px; font-size: 12px; color: var(--pv-sub);
+  background: var(--pv-surface); border: 1px solid var(--pv-line);
+}
+.pv-stage { position: relative; height: min(70vh, 680px); min-height: 460px; background: var(--primary-background-color); }
+.pv-status {
+  display: flex; align-items: center; gap: 10px; padding: 9px 14px;
+  border-top: 1px solid var(--pv-line); background: var(--pv-surface); font-size: 12px;
+}
+.pv-status-label { color: var(--pv-sub); white-space: nowrap; }
+.pv-status code { color: var(--primary-color); word-break: break-all; font-size: 12px; }
+.pv-ha-layer { position: absolute; inset: 0; display: none; z-index: 50; }
+.pv-ha-layer.show { display: block; }
+.pv-ha-mask { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); }
+.pv-ha-drawer {
+  position: absolute; inset: 0 auto 0 0; width: 236px; padding: 12px 0;
+  background: var(--sidebar-background-color); color: var(--sidebar-text-color);
+  border-right: 1px solid var(--divider-color); overflow: auto;
+}
+.pv-ha-drawer-head { padding: 8px 18px 14px; font-size: 11px; letter-spacing: .8px; opacity: .7; }
+.pv-ha-item { display: flex; align-items: center; gap: 14px; padding: 10px 18px; cursor: default; }
+.pv-ha-item i { font-style: normal; width: 20px; text-align: center; opacity: .8; }
+.pv-ha-item.active { color: var(--primary-color); background: var(--secondary-background-color); font-weight: 600; }
+.pv-footer { max-width: 1320px; margin: 0 auto; padding: 0 24px 40px; color: var(--pv-sub); font-size: 12px; }
+.pv-footer h3 { color: var(--pv-text); font-size: 14px; }
+.pv-footer p { margin: 6px 0; }
+.pv-footer code { color: var(--primary-color); }
+
+/* ==================================================================
+   面板样式：与 www/modules/styles.js 一致（此处 :host 改为 .fe-host）
+   ================================================================== */
+.fe-host {
+  --fe-f-text: #212121;
+  --fe-f-sub: #727272;
+  --fe-f-bg: #fafafa;
+  --fe-f-surface: #ffffff;
+  --fe-f-line: #e0e0e0;
+  --fe-f-primary: #03a9f4;
+  --fe-f-danger: #db4437;
+  --fe-f-hover: rgba(0, 0, 0, .06);
+  --fe-f-scrim: rgba(0, 0, 0, .32);
+  --fe-text: var(--primary-text-color, var(--fe-f-text));
+  --fe-sub: var(--secondary-text-color, var(--fe-f-sub));
+  --fe-bg: var(--primary-background-color, var(--fe-f-bg));
+  --fe-surface: var(--ha-card-background, var(--card-background-color, var(--fe-f-surface)));
+  --fe-line: var(--divider-color, var(--fe-f-line));
+  --fe-accent: var(--primary-color, var(--fe-f-primary));
+  --fe-on-accent: var(--text-primary-color, #ffffff);
+  --fe-danger: var(--error-color, var(--fe-f-danger));
+  --fe-icon: var(--state-icon-color, var(--sidebar-icon-color, var(--fe-sub)));
+  --fe-ha-dir: color-mix(in srgb, #41bdf5 74%, var(--fe-icon));
+  --fe-ha-file: color-mix(in srgb, #41bdf5 48%, var(--fe-icon));
+  --fe-selected-text: var(--sidebar-selected-icon-color, var(--fe-accent));
+  --fe-hover: var(--secondary-background-color, var(--fe-f-hover));
+  --fe-hover: color-mix(in srgb, var(--fe-text) 9%, transparent);
+  --fe-selected: rgba(var(--rgb-primary-color, 3, 169, 244), .14);
+  --fe-selected: color-mix(in srgb, var(--fe-accent) 14%, transparent);
+  --fe-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", var(--ha-font-family-body, "Roboto", "Microsoft YaHei", system-ui, sans-serif);
+  --fe-font-m: 14px; --fe-font-s: 13px; --fe-font-xs: 12px; --fe-font-xl: 20px;
+  --fe-radius-card: 8px; --fe-radius-control: 4px; --fe-radius-dialog: 8px;
+  --fe-card-border: 1px solid var(--fe-line);
+  --fe-card-shadow: none;
+  --fe-elevation: 0 8px 24px rgba(0, 0, 0, .18), 0 2px 6px rgba(0, 0, 0, .10);
+  --fe-chrome: color-mix(in srgb, var(--fe-surface) 72%, var(--fe-bg));
+  --fe-chrome-low: color-mix(in srgb, var(--fe-surface) 88%, var(--fe-bg));
+  --fe-scrollbar: var(--fe-line);
+  display: block; height: 100%; min-height: 0;
+  color: var(--fe-text); font-family: var(--fe-font); font-size: var(--fe-font-m);
+  line-height: 1.5; -webkit-font-smoothing: antialiased; accent-color: var(--fe-accent);
+}
+.fe-host .fe-app { height: 100%; min-height: 0; max-height: none; }
+
+.fe-host * { box-sizing: border-box; }
+.fe-host [hidden] { display: none !important; }
+.fe-host button, .fe-host input, .fe-host textarea { font: inherit; color: inherit; }
+.fe-host button { cursor: pointer; }
+.fe-ico { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; flex: none; }
+.fe-list { scrollbar-width: thin; scrollbar-color: var(--fe-scrollbar) transparent; overscroll-behavior: contain; }
+.fe-list::-webkit-scrollbar { width: 8px; height: 8px; }
+.fe-list::-webkit-scrollbar-thumb { background: var(--fe-scrollbar); border-radius: 4px; }
+
+.fe-app { position: relative; display: flex; flex-direction: column; background: var(--fe-bg); overflow: hidden; }
+/* Windows 11 header: 命令栏一行，下面地址栏一行（路径居中、搜索靠右）。 */
+.fe-topbar {
+  display: flex; flex-direction: column; flex: none;
+  background: var(--fe-chrome);
+  color: var(--fe-text);
+  border-bottom: 1px solid var(--fe-line); position: sticky; top: 0; z-index: 15;
+}
+/* 命令栏就是面板的 header：高度与 HA 头部一致（运行时量得 --fe-header-h），
+   底线作为分隔线，把 header 与下面的路径/搜索行分开。 */
+.fe-commandbar {
+  display: flex; align-items: center; gap: 4px;
+  height: var(--fe-header-h, var(--header-height, 56px));
+  padding: 0 12px; flex: none;
+  border-bottom: 1px solid var(--fe-line);
+}
+.fe-commandbar-editor { padding: 0 16px; border-bottom: 0; }
+/* Editor view: single row, exactly as tall as HA's chrome (measured at runtime). */
+
+/* The divider lives inside the bar, so it can't push the bar 1px past HA's header. */
+.fe-topbar-editor { border-bottom: 0; box-shadow: inset 0 -1px 0 var(--fe-line); }
+.fe-addressbar { display: flex; align-items: center; gap: 6px; padding: 0 12px; flex: none; }
+@supports (backdrop-filter: blur(1px)) { .fe-topbar { backdrop-filter: blur(24px) saturate(1.4); } }
+.fe-brand { display: flex; align-items: center; flex: none; }
+.fe-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 30px; padding: 0 10px; border: 1px solid transparent;
+  border-radius: var(--fe-radius-control); background: transparent; color: var(--fe-text);
+  font-size: var(--fe-font-s); font-weight: 400; white-space: nowrap;
+}
+.fe-btn:hover { background: var(--fe-hover); }
+.fe-btn:active { background: color-mix(in srgb, var(--fe-text) 14%, transparent); }
+.fe-btn.primary { background: var(--fe-accent); border-color: transparent; color: var(--fe-on-accent); }
+.fe-btn.primary:hover { filter: brightness(1.08); }
+.fe-btn.danger { background: var(--fe-danger); border-color: transparent; color: #fff; }
+.fe-btn .fe-ico { width: 16px; height: 16px; }
+.fe-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex: none; border: 0; border-radius: var(--fe-radius-control);
+  background: transparent; color: var(--fe-text);
+}
+.fe-icon-btn:hover, .fe-icon-btn:active { background: var(--fe-hover); }
+.fe-icon-btn .fe-ico { width: 20px; height: 20px; }
+.fe-spacer { flex: 1 1 auto; }
+/* 地址栏是一整条，靠发丝线切成三段：上一级 | 路径 | 搜索，不再各自画框。 */
+.fe-search {
+  position: relative; display: flex; align-items: center;
+  flex: 0 0 132px; min-width: 96px; max-width: 320px;
+  height: 34px; padding: 0 12px; gap: 8px; border: 0; border-radius: 0; background: transparent;
+  transition: flex-basis 200ms cubic-bezier(.2, .7, .3, 1), background-color 160ms ease;
+}
+.fe-search::before {
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 22px; background: var(--fe-line);
+}
+/* 平时收窄，聚焦时展开。 */
+.fe-search:focus-within { flex-basis: 280px; background: var(--fe-hover); border-radius: var(--fe-radius-control); }
+.fe-search:focus-within::before { opacity: 0; }
+.fe-search > .fe-ico { width: 15px; height: 15px; color: var(--fe-sub); opacity: .8; }
+.fe-search-input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: var(--fe-font-s); color: var(--fe-text); }
+.fe-search-input::placeholder { color: var(--fe-sub); }
+.fe-search-clear { border: 0; background: transparent; color: var(--fe-sub); font-size: 18px; line-height: 1; padding: 0 2px; }
+
+.fe-body { display: flex; flex: 1; min-height: 0; }
+/* 单栏：文件夹和文件在同一个列表里，不再有导航侧栏。 */
+.fe-main { display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0; container-type: inline-size; }
+.fe-crumbs {
+  position: relative;
+  display: flex; align-items: center; gap: 0; flex-wrap: nowrap; height: 34px;
+  flex: 1 1 auto; min-width: 0;
+  padding: 0 10px; overflow: hidden;
+  border: 0; border-radius: 0; background: transparent;
+  color: var(--fe-sub); font-size: var(--fe-font-xs);
+}
+.fe-crumbs::before {
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 22px; background: var(--fe-line);
+}
+.fe-crumb { border: 0; background: transparent; color: var(--fe-sub); padding: 4px 6px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-crumb:hover { background: var(--fe-hover); color: var(--fe-text); }
+.fe-crumb.current { color: var(--fe-text); font-weight: 600; }
+.fe-crumb-sep { color: var(--fe-sub); opacity: .55; font-size: 11px; flex: none; }
+/* 拖拽悬停时的投放提示。 */
+.fe-drop {
+  position: absolute; inset: 10px; z-index: 24; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  border: 2px dashed var(--fe-accent); border-radius: 12px;
+  background: color-mix(in srgb, var(--fe-surface) 84%, transparent);
+  color: var(--fe-text); font-size: var(--fe-font-m); font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+.fe-drop .fe-ico { font-size: 30px; line-height: 1; color: var(--fe-accent); }
+.fe-upload-list { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; padding: 6px 8px; max-height: 190px; overflow: auto; border: 1px solid var(--fe-border); border-radius: 6px; font-size: var(--fe-font-s); }
+.fe-upload-item { display: flex; align-items: center; gap: 8px; }
+.fe-upload-kind { flex: none; width: 16px; text-align: center; }
+.fe-upload-name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-upload-dir { color: var(--fe-sub); }
+.fe-upload-size { flex: none; color: var(--fe-sub); }
+.fe-upload-remove { flex: none; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--fe-sub); font-size: 15px; line-height: 1; cursor: pointer; }
+.fe-upload-remove:hover { color: var(--fe-danger); }
+.fe-upload-more { color: var(--fe-sub); }
+
+/* 当前文件夹名 + 项目数，放在命令栏左侧。 */
+.fe-page-title { display: flex; align-items: baseline; gap: 8px; min-width: 0; flex: 0 1 auto; }
+.fe-page-title h2 { margin: 0; font-size: var(--fe-font-m); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.fe-page-title span { color: var(--fe-sub); font-size: var(--fe-font-xs); white-space: nowrap; flex: none; }
+.fe-divider { width: 1px; height: 22px; flex: none; background: var(--fe-line); margin: 0 4px; }
+.fe-list-tools { display: flex; align-items: center; gap: 6px; flex: none; }
+.fe-view-switch { display: flex; align-items: center; flex: none; border: 1px solid var(--fe-line); border-radius: var(--fe-radius-control); overflow: hidden; }
+.fe-view-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 28px; border: 0; background: transparent; color: var(--fe-sub); }
+.fe-view-btn + .fe-view-btn { border-left: 1px solid var(--fe-line); }
+.fe-view-btn:hover { background: var(--fe-hover); color: var(--fe-text); }
+.fe-view-btn.active { background: color-mix(in srgb, var(--fe-accent) 14%, transparent); color: var(--fe-accent); }
+.fe-view-btn .fe-ico { width: 16px; height: 16px; }
+/* 铺满：列表本身就是内容区，不留外边距、不画卡片边框/圆角。 */
+.fe-list {
+  flex: 1; min-height: 0; overflow: auto; margin: 0; padding: 0;
+  background: var(--fe-surface); border: 0; border-radius: 0;
+}
+.fe-list.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 2px; align-content: start; }
+.fe-list.rows { display: block; }
+
+.fe-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 14px 8px 10px; min-height: 116px; min-width: 0;
+  border-radius: var(--fe-radius-control); user-select: none; text-align: center;
+}
+.fe-tile:hover { background: var(--fe-hover); }
+.fe-tile:active { background: color-mix(in srgb, var(--fe-text) 12%, transparent); }
+.fe-tile.menu-open { background: var(--fe-hover); }
+.fe-tile-ico { color: var(--fe-icon); flex: none; width: 46px; height: 46px; font-size: 40px; line-height: 46px; }
+.fe-tile-name { flex: none; font-size: var(--fe-font-s); line-height: 1.3; max-width: 100%; cursor: pointer; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.fe-tile-name:hover { color: var(--fe-accent); }
+.fe-tile-meta { flex: none; display: flex; flex-direction: column; align-items: center; gap: 0; font-size: var(--fe-font-xs); line-height: 1.35; max-width: 100%; min-width: 0; }
+.fe-tile-size { color: var(--fe-text); opacity: .62; font-variant-numeric: tabular-nums; }
+/* 隐藏的列不占轨道、不占位（与面板一致）。 */
+.fe-list:not(.show-size) .fe-row-size, .fe-list:not(.show-time) .fe-row-time { display: none; }
+.fe-list:not(.show-size) .fe-tile-size, .fe-list:not(.show-time) .fe-tile-time { display: none; }
+.fe-list:not(.show-size):not(.show-time) .fe-tile-meta { display: none; }
+.fe-tile-time { color: var(--fe-sub); opacity: .85; font-variant-numeric: tabular-nums; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-tile-menu { position: absolute; top: 3px; right: 3px; opacity: 0; transition: opacity .1s; }
+.fe-tile:hover .fe-tile-menu, .fe-tile.menu-open .fe-tile-menu { opacity: 1; }
+@media (hover: none) { .fe-tile-menu { opacity: 1; } }
+.fe-tile-menu .fe-row-menu-btn { width: 26px; height: 26px; }
+.fe-tile-menu .fe-row-menu-btn .fe-ico { width: 16px; height: 16px; }
+
+.fe-row {
+  display: grid; grid-template-columns: var(--fe-row-cols, 22px minmax(0, 1fr) 110px 32px);
+  align-items: center; gap: 10px; height: 40px; padding: 0 6px;
+  border-radius: var(--fe-radius-control); user-select: none;
+}
+.fe-row:hover { background: var(--fe-hover); }
+.fe-row:active { background: color-mix(in srgb, var(--fe-text) 12%, transparent); }
+.fe-row-ico { color: var(--fe-icon); flex: none; }
+
+/* HA 内置目录/文件（仅配置根目录）用 HA 品牌青色，和用户自己的内容区分 */
+.fe-row-ico.is-ha-dir, .fe-tile-ico.is-ha-dir { color: var(--fe-ha-dir); }
+.fe-row-ico.is-ha-file, .fe-tile-ico.is-ha-file { color: var(--fe-ha-file); }
+.fe-row-ico.is-ha-dir .fe-ico, .fe-tile-ico.is-ha-dir .fe-ico,
+.fe-row-ico.is-ha-file .fe-ico, .fe-tile-ico.is-ha-file .fe-ico { color: inherit; }
+.fe-row-name.is-ha-dir, .fe-tile-name.is-ha-dir,
+.fe-row-name.is-ha-file, .fe-tile-name.is-ha-file {
+  color: color-mix(in srgb, #41bdf5 52%, var(--fe-text));
+}
+/* 集成文件夹用品牌图，占位与文件夹图标一致 */
+.fe-brand-ico { object-fit: contain; border-radius: 4px; opacity: 0; transition: opacity 120ms ease; }
+/* 品牌图叠在同样尺寸的文件夹字形上：CDN 再慢，位置也不会是空的 */
+.fe-brand-slot { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; }
+.fe-tile-ico.fe-brand-slot { width: 46px; height: 46px; }
+.fe-brand-ghost { opacity: .55; }
+.fe-brand-ghost .fe-ico { width: 22px; height: 22px; }
+.fe-tile-ico .fe-brand-ghost .fe-ico { width: 46px; height: 46px; font-size: 40px; }
+.fe-brand-slot img.fe-brand-ico { display: block; width: 100%; height: 100%; }
+.fe-brand-slot[data-loaded="1"] .fe-brand-ico { opacity: 1; }
+.fe-brand-slot[data-loaded="1"] .fe-brand-ghost { display: none; }
+.fe-row-ico .fe-ico { width: 22px; height: 22px; }
+.fe-row-name { font-size: var(--fe-font-m); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.fe-row-name:hover { color: var(--fe-accent); }
+.fe-row-time, .fe-row-size { font-size: var(--fe-font-xs); color: var(--fe-sub); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-row-size { text-align: right; color: var(--fe-text); opacity: .72; }
+.fe-row-menu { position: relative; display: flex; align-items: center; justify-content: flex-end; }
+.fe-row-menu-btn { width: 28px; height: 28px; color: var(--fe-sub); }
+.fe-row-menu-btn .fe-ico { width: 16px; height: 16px; }
+.fe-row.menu-open { background: var(--fe-hover); }
+@container (max-width: 760px) {
+  .fe-row { gap: 10px; }
+}
+@container (max-width: 520px) {
+  .fe-row { gap: 8px; }
+}
+.fe-host.narrow .fe-row { grid-template-columns: 22px minmax(0, 1fr) 82px 30px; }
+.fe-host.narrow .fe-row-time { display: none; }
+.fe-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 240px; width: 100%; grid-column: 1 / -1; color: var(--fe-sub); text-align: center; font-size: var(--fe-font-s); }
+.fe-empty .fe-ico { width: 40px; height: 40px; opacity: .45; font-size: 32px; }
+
+.fe-editor { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.fe-editor-bar { display: flex; align-items: center; gap: 10px; flex: none; padding: 10px 24px; }
+.fe-editor-bar .name { font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-badge { font-size: var(--fe-font-xs); padding: 3px 10px; border-radius: 12px; background: var(--fe-hover); color: var(--fe-sub); }
+/* 非阻塞的校验结果小胶囊：只提示，不改内容、不拦保存 */
+.fe-lint {
+  display: inline-flex; align-items: center; max-width: 46%;
+  padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  font-size: var(--fe-font-xs); color: var(--fe-sub);
+  background: var(--fe-hover); border: 1px solid transparent;
+}
+.fe-lint.ok { color: color-mix(in srgb, #16a34a, var(--fe-text) 40%); }
+.fe-lint.warn {
+  color: color-mix(in srgb, #d97706, var(--fe-text) 35%);
+  border-color: color-mix(in srgb, #d97706 28%, transparent);
+}
+.fe-lint[hidden] { display: none; }
+.fe-editor-surface {
+  flex: 1; min-height: 0; display: flex; overflow: hidden;
+  margin: 0; border: 0; border-radius: 0;
+  background: var(--fe-surface);
+}
+.fe-gutter {
+  margin: 0; padding: 12px 8px; text-align: right; user-select: none;
+  font: 13px/20px ui-monospace, SFMono-Regular, Consolas, monospace;
+  color: var(--secondary-text-color); border-right: 1px solid var(--fe-line);
+  overflow: hidden; white-space: pre; min-width: 48px;
+}
+.fe-code-wrap { position: relative; flex: 1; min-width: 0; overflow: hidden; }
+.fe-hl, textarea.fe-code {
+  position: absolute; inset: 0; margin: 0; padding: 12px; border: 0;
+  font: 13px/20px ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre; tab-size: 2; overflow: hidden;
+}
+.fe-hl { color: var(--fe-text); pointer-events: none; }
+.fe-hl code { font: inherit; display: block; }
+textarea.fe-code {
+  background: transparent; color: transparent; caret-color: var(--fe-text);
+  resize: none; outline: 0; overflow: auto;
+}
+textarea.fe-code::selection { color: transparent; background: color-mix(in srgb, var(--fe-accent) 34%, transparent); }
+.fe-hl .token.comment, .fe-hl .token.prolog, .fe-hl .token.cdata { color: var(--fe-sub); font-style: italic; }
+.fe-hl .token.punctuation { color: var(--fe-sub); }
+.fe-hl .token.keyword, .fe-hl .token.atrule, .fe-hl .token.selector, .fe-hl .token.doctype { color: color-mix(in srgb, #8b5cf6 72%, var(--fe-text)); }
+.fe-hl .token.string, .fe-hl .token.char, .fe-hl .token.scalar, .fe-hl .token.attr-value { color: color-mix(in srgb, #16a34a 78%, var(--fe-text)); }
+.fe-hl .token.number, .fe-hl .token.boolean, .fe-hl .token.constant, .fe-hl .token.null, .fe-hl .token.important { color: color-mix(in srgb, #d97706 80%, var(--fe-text)); }
+.fe-hl .token.function, .fe-hl .token.function-name, .fe-hl .token.builtin { color: color-mix(in srgb, #2563eb 74%, var(--fe-text)); }
+.fe-hl .token.property, .fe-hl .token.key, .fe-hl .token.attr-name, .fe-hl .token.tag, .fe-hl .token.class-name { color: color-mix(in srgb, #0891b2 76%, var(--fe-text)); }
+.fe-hl .token.variable, .fe-hl .token.environment, .fe-hl .token.parameter, .fe-hl .token.symbol { color: color-mix(in srgb, #dc2626 68%, var(--fe-text)); }
+.fe-hl .token.operator { color: var(--fe-sub); }
+
+.fe-menu-layer, .fe-dialog-layer { position: absolute; inset: 0; pointer-events: none; display: none; }
+.fe-menu-layer.show, .fe-dialog-layer.show { display: block; }
+.fe-menu-layer { z-index: 20; }
+.fe-dialog-layer { z-index: 30; }
+.fe-menu {
+  position: absolute; min-width: 210px; padding: 5px; white-space: nowrap;
+  max-height: calc(100% - 16px); overflow: auto; overscroll-behavior: contain;
+  background: var(--fe-surface); color: var(--fe-text);
+  border: var(--fe-card-border); border-radius: var(--fe-radius-control);
+  box-shadow: var(--fe-elevation); pointer-events: auto;
+}
+.fe-menu-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 0 10px;
+  border: 0; border-radius: var(--fe-radius-control); background: transparent;
+  text-align: left; font-size: var(--fe-font-s);
+}
+.fe-menu-item:hover { background: var(--fe-hover); }
+.fe-menu-check { margin-left: auto; color: var(--fe-accent); }
+.fe-menu-item.danger { color: var(--fe-danger); }
+.fe-backdrop { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--fe-f-scrim); pointer-events: auto; }
+.fe-dialog {
+  width: min(480px, 100%); max-height: calc(100% - 32px); overflow: auto;
+  background: var(--fe-surface); color: var(--fe-text);
+  border: var(--fe-card-border); border-radius: var(--fe-radius-dialog); box-shadow: var(--fe-elevation);
+}
+.fe-dialog h3 { margin: 0; padding: 16px 20px; font-size: 18px; font-weight: 600; border-bottom: 1px solid var(--fe-line); }
+.fe-dialog-body { padding: 20px; }
+.fe-dialog-body p { margin: 0 0 16px; font-size: var(--fe-font-m); }
+.fe-dialog-body .hint { color: var(--fe-sub); font-size: var(--fe-font-s); }
+.fe-dialog-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--fe-line); }
+.fe-field { display: block; margin-bottom: 14px; }
+.fe-field > span { display: block; font-size: var(--fe-font-s); color: var(--fe-sub); margin-bottom: 6px; }
+.fe-field input[type="text"], .fe-field input[type="file"] {
+  width: 100%; padding: 10px 12px; border-radius: var(--fe-radius-control);
+  border: 1px solid var(--fe-line); background: var(--fe-bg); color: var(--fe-text); font-size: var(--fe-font-m);
+}
+.fe-field input[type="file"] { padding: 8px; }
+.fe-file-list { max-height: 120px; overflow: auto; font-size: var(--fe-font-xs); color: var(--fe-sub); border-top: 1px dashed var(--fe-line); padding-top: 10px; }
+.fe-info-list { display: flex; flex-direction: column; }
+.fe-info-item { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--fe-line); font-size: var(--fe-font-m); }
+.fe-info-item:last-child { border-bottom: 0; }
+.fe-info-item span:first-child { font-weight: 500; }
+.fe-info-item a { color: var(--fe-accent); word-break: break-all; }
+.fe-info-value { text-align: right; word-break: break-all; }
+.fe-toast-container { position: absolute; right: 24px; bottom: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 40; max-width: min(360px, calc(100vw - 48px)); }
+.fe-toast { padding: 11px 14px 11px 16px; border-radius: var(--fe-radius-control); background: var(--fe-surface); color: var(--fe-text); border: 1px solid var(--fe-line); border-left: 3px solid var(--fe-accent); box-shadow: var(--fe-elevation); font-size: var(--fe-font-s); word-break: break-word; }
+.fe-toast.error { border-left-color: var(--fe-danger); }
+.fe-progress { position: absolute; top: 0; left: 0; right: 0; height: 3px; overflow: hidden; background: var(--fe-line); z-index: 25; }
+/* 启动遮罩：元素挂载到首份目录返回之前，避免看起来“没加载出来” */
+.fe-boot { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: var(--fe-bg); color: var(--fe-sub); font-size: var(--fe-font-s); }
+.fe-spin { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--fe-line); border-top-color: var(--fe-accent); animation: fe-spin 0.9s linear infinite; }
+@keyframes fe-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .fe-spin { animation-duration: 2.4s; } }
+.fe-progress::after { content: ""; display: block; width: 35%; height: 100%; background: var(--fe-accent); animation: fe-indeterminate 1.1s infinite linear; }
+@keyframes fe-indeterminate { from { transform: translateX(-100%); } to { transform: translateX(320%); } }
+
+.fe-preview { position: absolute; inset: 0; pointer-events: auto; display: flex; flex-direction: column; background: rgba(12, 14, 18, 0.82); }
+.fe-preview-bar { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; padding: 8px 8px 8px 14px; color: #f2f4f8; background: rgba(0, 0, 0, 0.35); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+.fe-preview-name { font-size: 14px; font-weight: 600; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-preview-meta { font-size: 12px; opacity: 0.72; white-space: nowrap; }
+.fe-preview-bar .fe-spacer { flex: 1; }
+.fe-preview-bar .fe-icon-btn { color: #f2f4f8; }
+.fe-preview-bar .fe-icon-btn:hover, .fe-preview-bar .fe-icon-btn:active { background: rgba(255, 255, 255, 0.16); }
+.fe-preview-stage {
+  position: relative; flex: 1; min-height: 0; overflow: auto;
+  /* `safe` keeps the start edge reachable once the picture outgrows the stage */
+  display: flex; align-items: safe center; justify-content: safe center; padding: 16px;
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+}
+.fe-preview-img { display: block; flex: none; max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in; border-radius: 6px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); }
+.fe-preview-img.zoomed { max-width: none; max-height: none; cursor: zoom-out; }
+.fe-preview-video { display: block; flex: none; max-width: 100%; max-height: 100%; background: #000; border-radius: 6px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); }
+.fe-preview-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; border: 0; border-radius: 50%; cursor: pointer; display: grid; place-items: center; color: #fff; background: rgba(0, 0, 0, 0.55); font-size: 26px; transition: background 0.15s ease; }
+.fe-preview-play:hover { background: rgba(0, 0, 0, 0.78); }
+/* display 而不是 opacity 渐变：标签页没在画的时候 opacity 过渡可能停在起始值，按钮会一直糊在画面上 */
+.fe-preview-stage.playing .fe-preview-play { display: none; }
+.fe-preview-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 64px; display: grid; place-items: center; border: 0; border-radius: 8px; cursor: pointer; color: #fff; background: rgba(0, 0, 0, 0.42); font-size: 24px; }
+.fe-preview-nav.prev { left: 12px; }
+.fe-preview-nav.next { right: 12px; }
+.fe-preview-nav:hover { background: rgba(0, 0, 0, 0.66); }
+.fe-preview-nav:disabled { opacity: 0.28; cursor: default; }
+@media (max-width: 870px) {
+  .fe-commandbar { padding: 0 8px; gap: 2px; }
+  .fe-topbar .fe-cmd-create { display: none; }
+  .fe-addressbar { padding: 0 8px; gap: 4px; }
+  .fe-topbar .fe-btn .fe-btn-label { display: none; }
+  .fe-search { flex: 0 0 40%; max-width: 320px; }
+  .fe-search:focus-within { flex-basis: 64%; }
+  .fe-page-title h2 { max-width: 110px; }
+  .fe-divider { display: none; }
+  .fe-editor-bar { padding: 10px 12px; }
+  .pv-stage { height: 560px; }
+}
+</style>
+<script>window.Prism = { manual: true };</script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-yaml.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-json.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-python.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-bash.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-markdown.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-typescript.min.js"></script>
+<script src="custom_components/ha_file_explorer/www/modules/vendor/prism-jsx.min.js"></script>
+</head>
+<body>
+
+<header class="pv-header">
+  <div class="pv-title">
+    <div class="pv-logo">📁</div>
+    <div>
+      <h1>文件管理 · 界面预览<span class="pv-badge">静态演示</span></h1>
+      <p>数据仅存在于浏览器内存，不会读写 Home Assistant；点击上方步骤可自动演示对应流程。</p>
+    </div>
+  </div>
+  <div class="pv-header-actions">
+    <label class="pv-switch"><input type="checkbox" id="pvNarrow"> 手机视图</label>
+    <label class="pv-switch"><input type="checkbox" id="pvSidebarHidden" checked> HA 侧边栏隐藏</label>
+    <label class="pv-switch"><input type="checkbox" id="pvDark"> HA 深色主题</label>
+    <button class="pv-soft-btn" id="pvReset">重置演示数据</button>
+  </div>
+</header>
+
+<div class="pv-wrap">
+  <nav class="pv-steps" id="pvSteps" aria-label="操作流程"></nav>
+  <section class="pv-note" id="pvNote"></section>
+
+  <div class="pv-browser">
+    <div class="pv-browser-bar">
+      <div class="pv-dots"><span></span><span></span><span></span></div>
+      <div class="pv-addr">http://homeassistant.local:8123/ha_file_explorer</div>
+    </div>
+    <div class="pv-stage"><div class="fe-host" id="pvHost"></div></div>
+    <div class="pv-status">
+      <span class="pv-status-label">接口调用</span>
+      <code id="pvStatus">等待操作 · GET /api/ha_file_explorer/list 已由演示数据代替</code>
+    </div>
+    <div class="pv-ha-layer" id="pvHaLayer">
+      <div class="pv-ha-mask" id="pvHaMask"></div>
+      <nav class="pv-ha-drawer" aria-label="模拟 HA 侧边栏">
+        <div class="pv-ha-drawer-head">HOME ASSISTANT</div>
+        <div class="pv-ha-item"><i>▦</i>概览</div>
+        <div class="pv-ha-item"><i>◷</i>历史</div>
+        <div class="pv-ha-item"><i>⚡</i>能源</div>
+        <div class="pv-ha-item"><i>⚙️</i>设置</div>
+        <div class="pv-ha-item"><i>⌘</i>开发者工具</div>
+        <div class="pv-ha-item active"><i>📁</i>文件管理</div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<footer class="pv-footer">
+  <h3>说明</h3>
+  <p>本页内联了面板的 DOM 模板与样式，所见即 HA 中自定义面板的真实布局，按 Windows 11 文件管理器重做：48px 平铺/磨砂命令栏（搜索框带强调色下划线）、面包屑做成地址栏那样的圆角条、单栏内容面板（<strong>没有导航侧栏</strong>，文件夹和文件在同一个列表里，文件夹在前，点文件夹名字进入下一层）。两种视图：<strong>平铺</strong>（大图标 + 两行文件名 + 大小/日期，自动按宽度铺满）和<strong>列表</strong>（名称 / 修改日期 / 大小三列对齐），右上角分段开关可手动切换；<strong>默认跟随宽度</strong>——PC 端平铺、移动端列表。</p>
+  <p>面板不写死颜色，全部取 HA 主题变量（<code>--primary-color</code> / <code>--card-background-color</code> / <code>--primary-text-color</code> 等）再用 <code>color-mix()</code> 派生出 Win11 的磨砂层、行背景和强调色；字体优先用 Segoe UI Variable，取不到就回落到 HA 字体栈。勾选「HA 深色主题」等价于 HA 里切换主题：预览页只是重设这些同名变量，无需改动面板样式。</p>
+  <p>勾选「手机视图」模拟 HA 注入的 <code>narrow</code> 属性：默认切成列表视图，面板本身没有抽屉侧栏。面板使用自己的顶栏，不依赖 HA 的标题栏；只有侧边栏不可见时（手机视图，或 HA 里把侧边栏设为「始终隐藏」，即 <code>hass.dockedSidebar === "always_hidden"</code>）顶栏最左才出现 ☰，点击打开 HA 侧边栏。「HA 侧边栏隐藏」开关就模拟这种状态。</p>
+  <p>真实运行时：列表走 <code>GET /api/ha_file_explorer/list</code>，读文件走 <code>GET /api/ha_file_explorer/content</code>，图片/视频预览走 <code>GET /api/ha_file_explorer/preview</code>（后端代理：图片回 <code>image/*</code> 原始字节、视频用 <code>FileResponse</code> 流式回 <code>video/*</code>，都带 <code>inline</code>；前端用 <code>fetchWithAuth</code> 取成 blob URL 塞进弹窗，所以不会 401），文件夹/文件的<strong>信息</strong>走 <code>GET /api/ha_file_explorer/info</code>（返回修改时间、创建时间、递归占用空间、文件/文件夹数量、权限位），下载走 <code>GET /api/ha_file_explorer/download</code>，编辑保存走 <code>POST /api/ha_file_explorer/save</code>，上传走 <code>POST /api/ha_file_explorer/upload</code>，新建走 <code>PUT /api/ha_file_explorer/create</code>，重命名走 <code>PUT /api/ha_file_explorer/rename</code>，删除走 <code>DELETE /api/ha_file_explorer/delete</code>，全部由 <code>hass.fetchWithAuth</code> 携带认证。预览里的上传/下载/打开链接只做可视反馈，不产生真实文件；图片是内联 SVG data URI，视频是页面启动后由 <code>canvas.captureStream()</code> + <code>MediaRecorder</code> 现录的 blob（不往仓库里塞二进制）；信息弹窗里的时间/大小是演示数据，真实环境由后端按 <code>os.stat</code> 计算。</p>
+</footer>
+
+<script>
+/* ==================================================================
+   预览专用逻辑：内存演示数据 + 面板交互 + 流程导览
+   ================================================================== */
+const ICON = {
+  menu: "☰", folder: "📁", folderOpen: "📂", search: "🔍", file: "📄",
+  upload: "⬆️", more: "···", moreVertical: "⋮", chevron: "›", refresh: "🔄", info: "ℹ️",
+  download: "⬇️", rename: "🏷️", remove: "🗑️", open: "📂", edit: "📝",
+  browse: "↗️", back: "↩️", save: "💾", clear: "✕", plusFile: "📄",
+  plusFolder: "📁", plusUpload: "⬆️", empty: "📂", expand: "›",
+  image: "🖼️", video: "🎬", zoomIn: "🔍", zoomFit: "↔️", info: "ℹ️",
+  viewGrid: "▦", viewList: "☰", up: "↑", eye: "⚙︎", check: "✓", clock: "🕒", size: "↕️",
+  format: "🪄",
+};
+const ic = (key) => `<span class="fe-ico">${ICON[key] || "•"}</span>`;
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const $ = (id) => document.getElementById(id);
+
+/* ---------------- 面板 DOM（与真实面板一致） ---------------- */
+const TEMPLATE = `
+<div class="fe-app" id="feApp">
+  <header class="fe-topbar" id="feTopbar"></header>
+  <div class="fe-body">
+    <main class="fe-main">
+      <div class="fe-list" id="list"></div>
+      <div class="fe-editor" id="editorPane" hidden></div>
+    </main>
+  </div>
+  <div class="fe-boot" id="boot"><span class="fe-spin" aria-hidden="true"></span><span class="fe-boot-text">加载中…</span></div>
+  <div class="fe-menu-layer" id="menuLayer" data-action="close-menu"></div>
+  <div class="fe-dialog-layer" id="dialogLayer"></div>
+  <div class="fe-toast-container" id="toastRoot"></div>
+  <div class="fe-progress" id="loading" hidden></div>
+</div>`;
+$("pvHost").innerHTML = TEMPLATE;
+
+/* ---------------- mock 文件树 ---------------- */
+function f(name, content, size) {
+  return { type: "file", name, content: content ?? "", size: size ?? (content ? content.length : 0) };
+}
+function d(name, children = {}) { return { type: "dir", name, children }; }
+/** 把一段 SVG 包成 data URI，作为演示图片的内容（预览页不读真实文件）。 */
+const svgImg = (w, h, inner) =>
+  "data:image/svg+xml;charset=utf-8," +
+  encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${inner}</svg>`);
+let FS;
+function resetFS() {
+  FS = d("", {
+    "www": d("www", {
+      "community": d("community"),
+      "images": d("images", {
+        "logo.png": f("logo.png", svgImg(320, 200, `
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#03a9f4"/><stop offset="1" stop-color="#41cd52"/>
+          </linearGradient></defs>
+          <rect width="320" height="200" fill="#0f1720"/>
+          <rect x="24" y="24" width="272" height="152" rx="16" fill="url(#g1)"/>
+          <text x="160" y="118" font-family="system-ui, sans-serif" font-size="46" font-weight="700"
+            fill="#fff" text-anchor="middle">HA</text>`), 8192),
+        "bg.jpg": f("bg.jpg", svgImg(480, 270, `
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1d2b64"/><stop offset="1" stop-color="#f8cdda"/>
+          </linearGradient></defs>
+          <rect width="480" height="270" fill="url(#g2)"/>
+          <circle cx="90" cy="70" r="46" fill="#ffffff" opacity="0.35"/>
+          <circle cx="380" cy="200" r="72" fill="#ffffff" opacity="0.22"/>`), 24576),
+        "screenshot.png": f("screenshot.png", svgImg(400, 300, `
+          <rect width="400" height="300" fill="#f4f6fa"/>
+          <rect x="0" y="0" width="400" height="36" fill="#03a9f4"/>
+          <text x="14" y="25" font-family="system-ui, sans-serif" font-size="15" fill="#fff">文件管理</text>
+          <rect x="16" y="56" width="120" height="228" rx="8" fill="#fff" stroke="#d8dee8"/>
+          <rect x="152" y="56" width="232" height="228" rx="8" fill="#fff" stroke="#d8dee8"/>
+          <rect x="30" y="76" width="92" height="12" rx="6" fill="#e2e8f2"/>
+          <rect x="30" y="100" width="76" height="12" rx="6" fill="#e2e8f2"/>
+          <rect x="168" y="76" width="150" height="14" rx="7" fill="#cfd8e6"/>
+          <rect x="168" y="106" width="200" height="10" rx="5" fill="#e6ecf5"/>
+          <rect x="168" y="136" width="200" height="10" rx="5" fill="#e6ecf5"/>`), 32768),
+        "favicon.ico": f("favicon.ico", svgImg(64, 64, `
+          <rect width="64" height="64" rx="12" fill="#41cd52"/>
+          <path d="M32 18 L50 34 H44 V48 H36 V39 H28 V48 H20 V34 H14 Z" fill="#fff"/>`), 4096),
+        // 内容在第一次点开预览时用 canvas + MediaRecorder 现录，不往仓库里塞二进制
+        "clip.webm": f("clip.webm", "", 122880),
+      }),
+      "themes": d("themes"),
+    }),
+    "config": d("config"),
+    "blueprints": d("blueprints"),
+    // 演示：HA 自己建的目录/文件（青色）与用户自建内容（中性色）对比
+    ".storage": d(".storage", {
+      "core.config_entries": f("core.config_entries", "{}\n", 3),
+      "core.restore_state": f("core.restore_state", "{}\n", 3),
+    }),
+    ".cloud": d(".cloud"),
+    "deps": d("deps"),
+    "tts": d("tts"),
+    "backups": d("backups", {
+      "2026-11-12_backup.tar": f("2026-11-12_backup.tar", "", 1048576),
+    }),
+    ".HA_VERSION": f(".HA_VERSION", "2026.11.1\n"),
+    "home-assistant.log": f("home-assistant.log", "starting...\n", 4096),
+    "home-assistant_v2.db": f("home-assistant_v2.db", "", 2097152),
+    "my_scripts": d("my_scripts", { "hello.py": f("hello.py", "print('hi')\n") }),
+    "notes.md": f("notes.md", "# 我自己的笔记\n", 64),
+    // 演示：集成目录下按域名取品牌图（与真实面板同一套逻辑）
+    "custom_components": d("custom_components", {
+      "hacs": d("hacs", { "hacs.json": f("hacs.json", "{}\n", 3) }),
+      "node_red": d("node_red"),
+      "esphome": d("esphome"),
+      "not_a_real_integration": d("not_a_real_integration"),
+    }),
+    "automations.yaml": f("automations.yaml",
+`automation:
+  - alias: 回家开灯
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door
+        to: "on"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.living_room`, 320),
+    "configuration.yaml": f("configuration.yaml",
+`default_config:
+
+homeassistant:
+  name: My Home
+  latitude: 31.23
+  longitude: 121.47
+
+logger:
+  default: info
+
+frontend:
+  themes: !include_dir_merge_named themes`, 210),
+    "secrets.yaml": f("secrets.yaml", `wifi_password: "your_password"\nlonghorn_token: "abc123"`),
+    "ui-lovelace.yaml": f("ui-lovelace.yaml",
+`title: My Dashboard
+views:
+  - title: 首页
+    cards:
+      - type: entities
+        entities:
+          - light.living_room`),
+    "README.md": f("README.md", "# File Explorer\n\n在 Home Assistant 里使用的文件管理器。"),
+  });
+}
+
+const NOW = "2026-11-12 09:30:00";
+const CREATED = "2025-03-08 10:24:11";
+function sizeName(n) {
+  if (n < 1024) return n + " B";
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+  return (n / 1024 / 1024).toFixed(1) + " MB";
+}
+function joinPath(base, name) { return base ? base + "/" + name : name; }
+function parentPath(path) { return path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : ""; }
+function resolveDir(path) {
+  let node = FS;
+  if (path) for (const part of path.split("/")) node = node.children[part];
+  return node;
+}
+function sizeText(it) { return it.size_name || (it.size ? sizeName(it.size) : ""); }
+function dirSize(node) {
+  let total = 0;
+  for (const name in node.children || {}) {
+    const child = node.children[name];
+    total += child.type === "dir" ? dirSize(child) : child.size ?? 0;
+  }
+  return total;
+}
+function listDir(path) {
+  const node = resolveDir(path);
+  const folders = [], files = [];
+  for (const name in node.children) {
+    const item = node.children[name];
+    const size = item.type === "dir" ? dirSize(item) : item.size ?? 0;
+    (item.type === "dir" ? folders : files).push({
+      name, type: item.type, time: NOW, size, size_name: size ? sizeName(size) : "",
+    });
+  }
+  folders.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  files.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  return [...folders, ...files];
+}
+
+/* ---------------- 状态 ---------------- */
+const state = {
+  path: "", view: "list", filter: "", items: [], dialog: null, menu: false, rowMenu: null, bgMenu: null,
+  // 拖拽只入队；点「全部上传」才逐个写入。
+  queue: [],
+  sidebarHidden: true,
+  preview: null,
+  // null = 跟随宽度：PC 平铺、移动端列表；手动点视图开关会覆盖它。
+  viewMode: null,
+  // 显示选项：日期默认不显示，用户可在「查看方式」里打开。
+  showSize: readPref("showSize", true),
+  showTime: readPref("showTime", false),
+  viewMenu: null,
+  editor: { name: "", value: "", dirty: false },
+};
+/** 与面板一致：偏好存 localStorage，读写失败就用默认值。 */
+function readPref(name, fallback) {
+  try {
+    const value = window.localStorage.getItem(`ha-file-explorer:${name}`);
+    return value === null ? fallback : value === "1";
+  } catch (e) { return fallback; }
+}
+function writePref(name, value) {
+  try { window.localStorage.setItem(`ha-file-explorer:${name}`, value ? "1" : "0"); } catch (e) {}
+}
+/** 面板宽度 < 480 或窄屏模式时退化成列表（与 HA 面板 _autoView 一致）。 */
+function autoView() {
+  if ($("pvHost").classList.contains("narrow")) return "list";
+  const app = $("feApp");
+  const width = app ? app.getBoundingClientRect().width : 0;
+  return width && width < 480 ? "list" : "grid";
+}
+function currentView() { return state.viewMode || autoView(); }
+/** 能进预览弹窗的图片扩展名（与 format.js 的 IMAGE_MIME 保持一致）。 */
+const IMAGE_EXT = ["png", "jpg", "jpeg", "jfif", "pjpeg", "gif", "webp", "avif", "bmp", "ico", "svg", "tif", "tiff", "heic", "heif", "apng"];
+/** 能进预览弹窗的视频扩展名（与 format.js 的 VIDEO_MIME 保持一致）。 */
+const VIDEO_EXT = ["mp4", "m4v", "webm", "mov", "ogv", "mkv", "avi", "flv", "mpg", "mpeg", "wmv", "3gp"];
+/** 不能当文本编辑的扩展名：图片和视频全部在内，跟 format.js 的 isEditable 一份口径。 */
+const NON_EDITABLE_EXT = [
+  ...IMAGE_EXT, ...VIDEO_EXT,
+  // 音频（面板没有播放器，但同样是二进制）
+  "mp3", "m4a", "m4b", "aac", "flac", "wav", "wave", "ogg", "oga", "opus",
+  "wma", "aiff", "aif", "amr", "mid", "midi", "ape", "mka",
+  // 压缩包
+  "zip", "rar", "7z", "gz", "tgz", "tar", "tz", "bz2", "xz", "zst", "lz", "lz4", "cab",
+  // 数据库 / 字节码 / 可执行 / 镜像
+  "db", "db-shm", "db-wal", "sqlite", "sqlite3", "pyc", "pyo", "pkl", "pyd",
+  "so", "dylib", "dll", "exe", "msi", "bin", "dat", "class", "jar", "war",
+  "apk", "ipa", "deb", "rpm", "dmg", "iso", "img", "wasm", "ttc",
+  // 办公文档 / 电子书
+  "doc", "docx", "odt", "rtf", "pages", "xls", "xlsx", "xlsm", "ods", "numbers",
+  "ppt", "pptx", "odp", "key", "epub", "mobi", "azw3",
+  // 字体 / PDF
+  "woff", "woff2", "ttf", "otf", "eot", "pdf",
+];
+const extOf = (name) => (String(name).split(".").pop() || "").toLowerCase();
+const isImage = (name) => IMAGE_EXT.includes(extOf(name));
+const isVideo = (name) => VIDEO_EXT.includes(extOf(name));
+const isMedia = (name) => isImage(name) || isVideo(name);
+const isEditable = (name) => !NON_EDITABLE_EXT.includes(extOf(name));
+/** HA 侧边栏只有在「始终隐藏」或窄屏（抽屉）时才不可见，这时面板头部才给汉堡按钮。 */
+function sidebarHidden() {
+  return state.sidebarHidden || $("pvHost").classList.contains("narrow");
+}
+function status(text) { $("pvStatus").textContent = text; }
+function note(text) { $("pvNote").textContent = text; }
+function toast(msg, error = false) {
+  const el = document.createElement("div");
+  el.className = "fe-toast" + (error ? " error" : "");
+  el.textContent = msg;
+  $("toastRoot").appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+function setLoading(on) { $("loading").hidden = !on; }
+
+/* ---------------- 渲染 ---------------- */
+function renderAll() {
+  renderTopbar();
+  const isEditor = state.view === "editor";
+  // 地址栏在编辑器视图下整个不存在（header 只渲染命令栏那一行）。
+  $("list").hidden = isEditor;
+  $("editorPane").hidden = !isEditor;
+  if (isEditor) renderEditor();
+  else { renderCrumbs(); renderList(); }
+  renderDialog();
+  bindBrandIcons($("list"));
+}
+function iconBtn(action, key, title, extra = "", danger = false) {
+  return `<button class="fe-icon-btn${danger ? " danger" : ""}" data-action="${esc(action)}" ${extra} title="${esc(title)}" aria-label="${esc(title)}">${ic(key)}</button>`;
+}
+function isCompact() {
+  return window.matchMedia("(max-width: 870px)").matches;
+}
+function topBtn(action, key, label, cls = "") {
+  return `<button class="fe-btn${cls ? ` ${cls}` : ""}" data-action="${esc(action)}" title="${esc(label)}">${ic(key)}<span class="fe-btn-label">${esc(label)}</span></button>`;
+}
+/* The demo has no HA chrome; inside HA the panel measures app-header instead. */
+function haHeaderHeight() {
+  try {
+    const header = document.querySelector("app-header");
+    const rect = header && header.getBoundingClientRect();
+    if (rect && rect.height) return Math.round(rect.height);
+    const parsed = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-height"));
+    if (parsed) return Math.round(parsed);
+  } catch (error) { /* not inside HA */ }
+  return 56;
+}
+function renderTopbar() {
+  $("feApp").style.setProperty("--fe-header-h", `${haHeaderHeight()}px`);
+  $("feTopbar").classList.toggle("fe-topbar-editor", state.view === "editor");
+  if (state.view === "editor") {
+    $("feTopbar").innerHTML = `
+      <div class="fe-commandbar fe-commandbar-editor">
+      ${sidebarHidden() ? iconBtn("ha-menu", "menu", "打开 Home Assistant 侧边栏") : ""}
+      ${iconBtn("back", "back", "返回")}
+      <div class="fe-brand"><strong id="editorTitle">${esc(state.editor.name)}${state.editor.dirty ? " •" : ""}</strong></div>
+      <span class="fe-badge">YAML</span>
+      <span class="fe-lint" id="lint" hidden></span>
+      <span class="fe-spacer"></span>
+      ${lintKind(state.editor.name) ? topBtn("format", "format", "格式化") : ""}
+      <button class="fe-btn primary" data-action="save" title="保存">${ic("save")}<span class="fe-btn-label">保存 (Ctrl+S)</span></button>
+      </div>`;
+    return;
+  }
+  $("feTopbar").innerHTML = `
+    <div class="fe-commandbar">
+      ${sidebarHidden() ? iconBtn("ha-menu", "menu", "打开 Home Assistant 侧边栏") : ""}
+      <div class="fe-page-title" id="pageTitle"></div>
+      <span class="fe-divider"></span>
+      ${topBtn("new-file", "plusFile", "新建文件", "fe-cmd-create")}
+      ${topBtn("new-folder", "plusFolder", "新建文件夹", "fe-cmd-create")}
+      <span class="fe-spacer"></span>
+      ${iconBtn("view-options", "eye", "查看方式")}
+      ${viewSwitch()}
+      ${iconBtn("refresh", "refresh", "刷新")}
+      ${iconBtn("more", "more", "更多选项")}
+    </div>
+    <div class="fe-addressbar" id="addressbar">
+      ${iconBtn("up", "up", "上一级", state.path ? "" : "disabled")}
+      <div class="fe-crumbs" id="crumbs"></div>
+      <div class="fe-search">
+        ${ic("search")}
+        <input class="fe-search-input" type="search" data-role="search" placeholder="搜索文件" value="${esc(state.filter)}" spellcheck="false">
+        <button class="fe-search-clear" data-action="clear-search" title="清除搜索"${state.filter ? "" : " hidden"}>✕</button>
+      </div>
+    </div>`;
+  renderCrumbs();
+  renderPageTitle();
+}
+/** 当前文件夹名 + 项目数量，放在命令栏左侧。 */
+function renderPageTitle() {
+  const el = $("pageTitle");
+  if (!el) return;
+  const parts = state.path ? state.path.split("/") : [];
+  el.innerHTML = `<h2>${esc(parts.length ? parts[parts.length - 1] : "HA")}</h2><span>${visibleItems().length} 个项目</span>`;
+}
+function viewSwitch() {
+  const mode = currentView();
+  const viewBtn = (m, icon, label) =>
+    `<button class="fe-view-btn${mode === m ? " active" : ""}" data-action="set-view" data-mode="${m}" title="${label}" aria-label="${label}" aria-pressed="${mode === m}">${ic(icon)}</button>`;
+  return `<div class="fe-view-switch">${viewBtn("grid", "viewGrid", "平铺")}${viewBtn("list", "viewList", "列表")}</div>`;
+}
+function renderCrumbs() {
+  const parts = state.path ? state.path.split("/") : [];
+  let acc = "";
+  let html = `<button class="fe-crumb ${parts.length ? "" : "current"}" data-action="crumb" data-path="">HA</button>`;
+  parts.forEach((p, i) => {
+    acc = joinPath(acc, p);
+    html += `<span class="fe-crumb-sep">›</span><button class="fe-crumb ${i === parts.length - 1 ? "current" : ""}" data-action="crumb" data-path="${esc(acc)}">${esc(p)}</button>`;
+  });
+
+  $("crumbs").innerHTML = html;
+}
+function visibleItems() {
+  const q = state.filter.trim().toLowerCase();
+  // 文件夹和文件同在一个列表里：listDir 已经保证文件夹在前。
+  return state.items.filter((it) => !q || it.name.toLowerCase().includes(q));
+}
+function renderList() {
+  if (state.rowMenu && state.filter && !visibleItems().some((it) => it.name === state.rowMenu.name)) {
+    state.rowMenu = null;
+    syncMenuLayer();
+  }
+  const items = visibleItems();
+  const mode = currentView();
+  renderPageTitle();
+  const list = $("list");
+  list.classList.toggle("grid", mode === "grid");
+  list.classList.toggle("rows", mode === "list");
+  list.classList.toggle("show-size", state.showSize);
+  list.classList.toggle("show-time", state.showTime);
+  list.style.setProperty("--fe-row-cols", rowColumns());
+  list.innerHTML = items.length
+    ? items.map((it) => (mode === "grid" ? tileFile(it) : rowFile(it))).join("")
+    : state.filter.trim()
+      ? `<div class="fe-empty">${ic("file")}<div>没有匹配的项目</div><div class="fe-empty-actions">${topBtn("clear-search", "clear", "清除搜索")}</div></div>`
+      : `<div class="fe-empty">${ic("folderOpen")}<div>当前目录下暂无内容，可直接新建或上传。</div><div class="fe-empty-actions">${topBtn("new-file", "plusFile", "新建文件")}${topBtn("new-folder", "plusFolder", "新建文件夹")}${topBtn("upload-files", "plusUpload", "上传文件")}</div></div>`;
+}
+/** 列宽跟着显示选项走，隐藏的列不会留下空轨道。 */
+function rowColumns() {
+  const w = (document.querySelector("#feApp") || {}).clientWidth || 0;
+  const cols = ["22px", "minmax(0, 1fr)"];
+  if (state.showTime) cols.push(w < 760 ? "112px" : "148px");
+  if (state.showSize) cols.push(w < 520 ? "70px" : w < 760 ? "84px" : "110px");
+  cols.push(w < 520 ? "28px" : w < 760 ? "30px" : "32px");
+  return cols.join(" ");
+}
+/* ---------------- 集成文件夹的品牌图标（brands.home-assistant.io） ---------------- */
+function brandDomain(name) {
+  const parts = state.path ? state.path.split("/") : [];
+  if (parts[parts.length - 1] !== "custom_components") return "";
+  return /^[a-z0-9_]+$/.test(name) ? name : "";
+}
+/* 演示：模拟后端 /api/ha_file_explorer/brand（读 custom_components/<domain>/brand/） */
+const LOCAL_BRAND = {
+  not_a_real_integration: svgImg(64, 64, `
+    <rect width="64" height="64" rx="12" fill="#7c4dff"/>
+    <path d="M24 18h10l4 5h12v24H24z" fill="#fff" opacity="0.9"/>`),
+};
+function localBrand(domain) {
+  return LOCAL_BRAND[domain] || null;
+}
+function brandUrl(domain, dark) {
+  return "https://brands.home-assistant.io/" + domain + "/" + (dark ? "dark_icon" : "icon") + ".png";
+}
+/* 与面板一致：只在配置根目录判定 HA 内置的目录/文件 */
+const HA_DIRS = [".storage", ".cloud", ".cache", "custom_components", "www", "themes",
+  "deps", "tts", "backups", "blueprints", "media"];
+const HA_FILES = ["configuration.yaml", "automations.yaml", "scripts.yaml", "scenes.yaml",
+  "secrets.yaml", "customize.yaml", "groups.yaml", "ui-lovelace.yaml", "ip_bans.yaml",
+  "known_devices.yaml", ".HA_VERSION", ".uuid"];
+function haKind(path, name, isDir) {
+  if (String(path || "").split(/[\\/]/).filter(Boolean).length) return "";
+  if (isDir) return HA_DIRS.includes(name) ? "dir" : "";
+  if (HA_FILES.includes(name)) return "file";
+  return /^home-assistant\.log(\.\d+)?$/.test(name) || /^home-assistant_v2\.db(-wal|-shm)?$/.test(name) ? "file" : "";
+}
+function haClass(it) {
+  const kind = haKind(state.path, it.name, it.type === "dir");
+  return kind ? " is-ha-" + kind : "";
+}
+function iconCls(it, cls) {
+  const kind = haKind(state.path, it.name, it.type === "dir");
+  return kind ? cls + " is-ha-" + kind : cls;
+}
+function rowIcon(it, cls) {
+  const isDir = it.type === "dir";
+  const domain = isDir ? brandDomain(it.name) : "";
+  if (!domain) {
+    const kind = isDir ? "folder" : isVideo(it.name) ? "video" : isImage(it.name) ? "image" : "file";
+    return `<span class="${cls}">${ic(kind)}</span>`;
+  }
+  const dark = document.documentElement.dataset.theme === "dark" ? "1" : "0";
+  return `<span class="${cls} fe-brand-slot">
+    <span class="fe-brand-ghost">${ic("folder")}</span>
+    <img class="fe-brand-ico" data-brand="${esc(domain)}" data-dark="${dark}" src="${esc(brandUrl(domain, dark === "1"))}" alt="" draggable="false" decoding="async">
+  </span>`;
+}
+/* 404 / 离线都别留破图：先换浅色版，再退回文件夹图标 */
+function bindBrandIcons(root) {
+  root.querySelectorAll("img.fe-brand-ico").forEach((img) => {
+    const slot = img.parentElement;
+    const fail = () => {
+      if (img.dataset.dark === "1") {
+        img.dataset.dark = "0";
+        img.src = brandUrl(img.dataset.brand, false);
+        return;
+      }
+      if (img.dataset.local !== "1") {
+        img.dataset.local = "1";
+        const local = localBrand(img.dataset.brand);
+        if (local) { img.src = local; return; }
+      }
+      img.remove();
+    };
+    img.addEventListener("load", () => { if (slot) slot.dataset.loaded = "1"; });
+    img.addEventListener("error", fail);
+    if (img.complete && img.naturalWidth > 0) { if (slot) slot.dataset.loaded = "1"; }
+    else if (img.complete && img.naturalWidth === 0) fail();
+  });
+}
+function rowFile(it) {
+  const attr = `data-name="${esc(it.name)}"`;
+  const open = state.rowMenu && state.rowMenu.name === it.name;
+  const isDir = it.type === "dir";
+  const video = isVideo(it.name);
+  const image = isImage(it.name);
+  const openAction = isDir ? "open-dir" : image || video ? "preview-item" : "edit-item";
+  return `<div class="fe-row${isDir ? " is-dir" : ""}${open ? " menu-open" : ""}" ${attr}${isDir ? ` data-action="open-dir"` : ""}>
+    ${rowIcon(it, iconCls(it, "fe-row-ico"))}
+    <div class="fe-row-name${haClass(it)}" data-action="${openAction}" ${attr}>${esc(it.name)}</div>
+    <div class="fe-row-time">${esc(it.time)}</div>
+    <div class="fe-row-size">${esc(sizeText(it))}</div>
+    <div class="fe-row-menu"><button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="更多操作" aria-label="更多操作">${ic("moreVertical")}</button></div>
+  </div>`;
+}
+/** 平铺卡片：大图标 + 两行文件名 + 大小/时间（对应面板的 _fileTile）。 */
+function tileFile(it) {
+  const attr = `data-name="${esc(it.name)}"`;
+  const open = state.rowMenu && state.rowMenu.name === it.name;
+  const isDir = it.type === "dir";
+  const video = isVideo(it.name);
+  const image = isImage(it.name);
+  const openAction = isDir ? "open-dir" : image || video ? "preview-item" : "edit-item";
+  return `<div class="fe-tile${isDir ? " is-dir" : ""}${open ? " menu-open" : ""}" ${attr}${isDir ? ` data-action="open-dir"` : ""}>
+    ${rowIcon(it, iconCls(it, "fe-tile-ico"))}
+    <div class="fe-tile-name${haClass(it)}" data-action="${openAction}" ${attr} title="${esc(it.name)}">${esc(it.name)}</div>
+    <div class="fe-tile-meta"><span class="fe-tile-size">${esc(sizeText(it))}</span><span class="fe-tile-time">${esc(it.time)}</span></div>
+    <div class="fe-tile-menu"><button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="更多操作" aria-label="更多操作">${ic("moreVertical")}</button></div>
+  </div>`;
+}
+function renderEditor() {
+  $("editorPane").innerHTML = `
+    <div class="fe-editor-surface">
+      <pre class="fe-gutter" id="gutter">1</pre>
+      <div class="fe-code-wrap">
+        <pre class="fe-hl" id="hl" aria-hidden="true"><code id="hlCode"></code></pre>
+        <textarea class="fe-code" data-role="code" id="code" spellcheck="false" wrap="off">${esc(state.editor.value)}</textarea>
+      </div>
+    </div>`;
+  const code = $("code");
+  updateGutter(code);
+  paintHighlight();
+  lintNow();
+  code.addEventListener("input", () => { state.editor.value = code.value; state.editor.dirty = true; updateEditorTitle(); updateGutter(code); paintHighlight(); scheduleLint(); });
+  code.addEventListener("scroll", () => { $("gutter").scrollTop = code.scrollTop; syncHighlightScroll(); });
+  code.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") { e.preventDefault(); code.setRangeText("  ", code.selectionStart, code.selectionEnd, "end"); }
+    if ((e.ctrlKey || e.metaKey) && (e.key || "").toLowerCase() === "s") { e.preventDefault(); saveEditor(); }
+  });
+  code.focus();
+}
+function updateGutter(code) {
+  $("gutter").textContent = Array.from({ length: code.value.split("\n").length }, (_, i) => i + 1).join("\n");
+}
+const HL_LANGS = { js: "javascript", mjs: "javascript", cjs: "javascript", ts: "typescript", jsx: "jsx", py: "python",
+  md: "markdown", markdown: "markdown", yml: "yaml", yaml: "yaml", json: "json", html: "markup", htm: "markup",
+  xml: "markup", svg: "markup", css: "css", sh: "bash", bash: "bash", zsh: "bash" };
+function hlLanguage(name) {
+  const ext = ((name || "").match(/\.([^.]+)$/) || [])[1] || "";
+  return HL_LANGS[ext.toLowerCase()] || "";
+}
+function paintHighlight() {
+  const target = $("hlCode");
+  if (!target) return;
+  const text = state.editor.value || "";
+  const lang = text.length > 200000 ? "" : hlLanguage(state.editor.name);
+  const grammar = lang && window.Prism && window.Prism.languages[lang];
+  target.innerHTML = grammar ? window.Prism.highlight(text, grammar, lang) : esc(text);
+  syncHighlightScroll();
+}
+function syncHighlightScroll() {
+  const code = $("code"); const hl = $("hl");
+  if (!code || !hl) return;
+  hl.scrollTop = code.scrollTop; hl.scrollLeft = code.scrollLeft;
+}
+function updateEditorTitle() {
+  const el = $("editorTitle");
+  if (el) el.textContent = state.editor.name + (state.editor.dirty ? " •" : "");
+}
+
+/* ---------------- 格式化 / 校验（规则与面板 modules/lint.js 一致） ---------------- */
+const LINT_KINDS = { json: "json", yml: "yaml", yaml: "yaml", py: "python" };
+const LINT_BLOCK_SCALAR = /(?:^|\s)[|>][-+]?\d*\s*(?:#.*)?$/;
+function lintKind(name) {
+  const ext = ((name || "").match(/\.([^.]+)$/) || [])[1] || "";
+  return LINT_KINDS[ext.toLowerCase()] || "";
+}
+function stripBom(text) { return String(text || "").replace(/^\uFEFF/, ""); }
+function lintIndentOf(line) { return line.length - line.replace(/^[ \t]*/, "").length; }
+function lintQuote(body) {
+  let doubles = 0;
+  for (let i = 0; i < body.length; i += 1) {
+    if (body[i] === "\\") i += 1;
+    else if (body[i] === '"') doubles += 1;
+  }
+  const singles = body.replace(/\\'/g, "").match(/'/g);
+  return doubles % 2 === 1 || ((singles ? singles.length : 0) % 2 === 1);
+}
+function lintMessage(issue) {
+  return issue.line ? `第 ${issue.line} 行：${issue.text}` : issue.text;
+}
+function jsonProblemLine(text) {
+  const source = stripBom(text);
+  const stack = [];
+  let line = 1;
+  for (let i = 0; i < source.length; i += 1) {
+    const ch = source[i];
+    if (ch === "\n") { line += 1; continue; }
+    if (ch === '"') {
+      let j = i + 1;
+      let closed = false;
+      while (j < source.length) {
+        if (source[j] === "\\") { j += 2; continue; }
+        if (source[j] === '"') { closed = true; break; }
+        if (source[j] === "\n") return line;
+        j += 1;
+      }
+      if (!closed) return line;
+      i = j;
+      continue;
+    }
+    if (ch === "{" || ch === "[") stack.push(ch === "{" ? "}" : "]");
+    else if (ch === "}" || ch === "]") { if (stack.pop() !== ch) return line; }
+    else if (ch === "'") return line;
+    else if (ch === ",") {
+      const next = source.slice(i + 1).replace(/^[\s]+/, "")[0];
+      if (stack.length && next === stack[stack.length - 1]) return line;
+    }
+  }
+  return 0;
+}
+function checkJson(text) {
+  try { JSON.parse(stripBom(text)); return []; }
+  catch (error) {
+    const message = String((error && error.message) || error);
+    let line = 0;
+    const atLine = /line (\d+) column (\d+)/.exec(message);
+    const at = /position (\d+)/.exec(message);
+    const excerpt = /...([\s\S]*?).../.exec(message);
+    if (atLine) line = Number(atLine[1]);
+    else if (at) line = stripBom(text).slice(0, Number(at[1])).split("\n").length;
+    if (!line) line = jsonProblemLine(text);
+    if (!line && excerpt && excerpt[1]) {
+      const idx = stripBom(text).indexOf(excerpt[1]);
+      if (idx >= 0) line = stripBom(text).slice(0, idx).split("\n").length;
+    }
+    return [{ line: line || 1, text: `格式有问题（${message}）` }];
+  }
+}
+function formatJsonText(text) {
+  return `${JSON.stringify(JSON.parse(stripBom(text)), null, 2)}\n`;
+}
+function checkYaml(text) {
+  const issues = [];
+  const lines = stripBom(text).split("\n");
+  const topKeys = new Map();
+  lines.forEach((line, index) => {
+    const number = index + 1;
+    if (!line.trim()) return;
+    const body = line.indexOf("#") < 0 ? line : line.slice(0, line.indexOf("#"));
+    const trimmed = body.trim();
+    if (/^[ \t]*\t/.test(line)) { issues.push({ line: number, text: "缩进里用了 tab" }); return; }
+    if (/\s$/.test(line)) issues.push({ line: number, text: "行尾有多余空格" });
+    if (lintQuote(trimmed)) issues.push({ line: number, text: "引号没有成对闭合" });
+    const indent = lintIndentOf(body);
+    if (indent > 0 && indent % 2 !== 0) issues.push({ line: number, text: `缩进 ${indent} 空格不是 2 的倍数` });
+    const key = /^([^\s:#-][^:#]*?):(?!\/\/)(?:\s|$)/.exec(trimmed);
+    if (key && indent === 0) {
+      const name = key[1].trim();
+      if (topKeys.has(name)) issues.push({ line: number, text: `键 “${name}” 重复（首次在第 ${topKeys.get(name)} 行）` });
+      else topKeys.set(name, number);
+    }
+    const noSpace = /^([A-Za-z0-9_.-]+):([^\s/].*)$/.exec(trimmed);
+    if (noSpace) issues.push({ line: number, text: `“${noSpace[1]}:” 后面少了空格` });
+  });
+  if (!text.endsWith("\n")) issues.push({ line: lines.length, text: "文件末尾缺少换行" });
+  return issues;
+}
+function formatYamlText(text) {
+  const lines = stripBom(text).replace(/\r\n/g, "\n").split("\n");
+  const out = [];
+  const levels = [0];
+  let blockIndent = -1;
+  for (const line of lines) {
+    if (!line.trim()) { out.push(""); continue; }
+    const indent = lintIndentOf(line);
+    const body = line.slice(indent);
+    if (blockIndent >= 0) {
+      if (indent > blockIndent || (indent === blockIndent && !blockIndent)) {
+        out.push(" ".repeat(blockIndent) + line.slice(blockIndent));
+        continue;
+      }
+      blockIndent = -1;
+    }
+    while (levels.length > 1 && indent < levels[levels.length - 1]) levels.pop();
+    if (indent > levels[levels.length - 1]) levels.push(indent);
+    out.push(" ".repeat((levels.length - 1) * 2) + body.replace(/\s+$/, ""));
+    if (LINT_BLOCK_SCALAR.test(body)) blockIndent = indent;
+  }
+  const joined = out.join("\n").replace(/\n{3,}/g, "\n\n").replace(/\n+$/, "");
+  return `${joined}\n`;
+}
+function checkPython(text) {
+  const issues = [];
+  const lines = stripBom(text).split("\n");
+  let sawTab = false;
+  let sawSpace = false;
+  lines.forEach((line, index) => {
+    if (!line.trim()) return;
+    const indent = line.slice(0, lintIndentOf(line));
+    if (indent.includes("\t")) sawTab = true;
+    if (/ /.test(indent)) sawSpace = true;
+    if (/\s$/.test(line)) issues.push({ line: index + 1, text: "行尾有多余空格" });
+  });
+  if (sawTab && sawSpace) issues.push({ line: 1, text: "缩进里 tab 和空格混用（格式化不会动缩进）" });
+  if (sawTab && !sawSpace) issues.push({ line: 1, text: "缩进里用了 tab（格式化会换成空格）" });
+  if (!text.endsWith("\n")) issues.push({ line: lines.length, text: "文件末尾缺少换行" });
+  return issues;
+}
+function formatPythonText(text) {
+  const source = stripBom(text).replace(/\r\n/g, "\n");
+  const indents = source.split("\n").filter((line) => line.trim()).map((line) => line.slice(0, lintIndentOf(line)));
+  const hasTab = indents.some((indent) => indent.includes("\t"));
+  const hasSpace = indents.some((indent) => indent.includes(" "));
+  const expandTabs = hasTab && !hasSpace;
+  const body = source
+    .split("\n")
+    .map((line) => {
+      const indent = line.slice(0, lintIndentOf(line));
+      const rest = line.slice(indent.length).replace(/\s+$/, "");
+      const prefix = expandTabs ? indent.replace(/\t/g, "    ") : indent;
+      return prefix + rest;
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\n+$/, "");
+  return `${body}\n`;
+}
+function lintIssues(name, text) {
+  const kind = lintKind(name);
+  const source = String(text || "");
+  if (!source.trim()) return [];
+  if (kind === "json") return checkJson(source);
+  if (kind === "yaml") return checkYaml(source);
+  if (kind === "python") return checkPython(source);
+  return [];
+}
+function lintNow() {
+  const chip = $("lint");
+  if (!chip) return;
+  const kind = lintKind(state.editor.name);
+  if (!kind) { chip.hidden = true; return; }
+  const issues = lintIssues(state.editor.name, state.editor.value || "");
+  chip.hidden = false;
+  chip.classList.toggle("warn", issues.length > 0);
+  chip.classList.toggle("ok", issues.length === 0);
+  chip.textContent = issues.length ? `${issues.length} 处提示` : (kind === "python" ? "空白正常" : "格式正常");
+  chip.title = issues.length ? issues.slice(0, 8).map(lintMessage).join("\n") : "";
+}
+let lintTimer = null;
+function scheduleLint() { clearTimeout(lintTimer); lintTimer = setTimeout(lintNow, 350); }
+function formatDoc() {
+  const name = state.editor.name;
+  const kind = lintKind(name);
+  if (!kind) { toast("这种文件类型不支持格式化"); return; }
+  const source = state.editor.value || "";
+  let text = "";
+  try {
+    if (kind === "json") text = formatJsonText(source);
+    else if (kind === "yaml") text = formatYamlText(source);
+    else text = formatPythonText(source);
+  } catch (error) {
+    toast(`第 1 行：格式有问题（${(error && error.message) || error}）`, true);
+    lintNow();
+    return;
+  }
+  if (text === stripBom(source).replace(/\r\n/g, "\n")) { toast("格式已经是规范的"); lintNow(); return; }
+  state.editor.value = text;
+  state.editor.dirty = true;
+  const code = $("code");
+  if (code) code.value = text;
+  updateEditorTitle();
+  updateGutter(code);
+  paintHighlight();
+  lintNow();
+  toast("已格式化");
+}
+
+/* ---------------- 对话框 / 菜单 ---------------- */
+function showDialog(html) { $("dialogLayer").innerHTML = html; $("dialogLayer").classList.add("show"); }
+function closeDialog() { state.dialog = null; $("dialogLayer").classList.remove("show"); $("dialogLayer").innerHTML = ""; }
+function openCreate(kind) {
+  state.dialog = { kind, value: "" };
+  const isDir = kind === "folder";
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>${isDir ? "新建文件夹" : "新建文件"}</h3>
+    <div class="fe-dialog-body"><label class="fe-field"><span>${isDir ? "文件夹名称" : "文件名称"}</span>
+      <input type="text" data-role="dialog-input" placeholder="${isDir ? "例如：scripts" : "例如：test.yaml"}"></label></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">确定</button></div>
+  </div></div>`);
+  const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+  input.focus();
+}
+function openRename(type, name) {
+  state.dialog = { kind: "rename", type, old: name, value: name };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>重命名</h3>
+    <div class="fe-dialog-body"><p class="hint">当前名称：${esc(name)}</p>
+      <label class="fe-field"><span>${type === "dir" ? "文件夹" : "文件"}名称</span>
+        <input type="text" data-role="dialog-input" value="${esc(name)}"></label></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">确定</button></div>
+  </div></div>`);
+  const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+  input.focus(); input.select();
+}
+function openDelete(name, type) {
+  state.dialog = { kind: "delete", name, type };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>删除确认</h3>
+    <div class="fe-dialog-body"><p>确定要删除${type === "dir" ? "文件夹" : "文件"} <b>${esc(name)}</b> 吗？</p><p class="hint">此操作不可恢复。</p></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn danger" data-action="dialog-confirm">删除</button></div>
+  </div></div>`);
+}
+/* ---------------- 拖拽上传 ---------------- */
+/**
+ * Flatten a drop into `{ file, relative, folder }` tasks.
+ *
+ * Everything is read from the DataTransfer synchronously, before the first
+ * `await`: Chrome puts the item list into protected mode as soon as the drop
+ * handler yields, and an entry read after that point comes back empty.
+ * `webkitGetAsEntry` is the usual way to see the folder structure; the File
+ * System Access handle (`getAsFileSystemHandle`) is the fallback for engines
+ * that never expose entries. Plain `files` come last.
+ */
+async function collectTransfer(transfer) {
+  const out = [];
+  const items = Array.from((transfer && transfer.items) || []);
+  const files = Array.from((transfer && transfer.files) || []);
+  const entries = [];
+  const handles = [];
+  const loose = [];
+  const seen = new Set();
+
+  for (const item of items) {
+    if (item.kind !== "file") continue;
+    let entry = null;
+    try {
+      entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
+    } catch (_err) {
+      entry = null;
+    }
+    if (entry) {
+      entries.push(entry);
+      continue;
+    }
+    // Ask for a handle now, while the transfer is still alive; the promise is
+    // awaited further down, but the request itself has to happen synchronously.
+    let handle = null;
+    try {
+      handle = item.getAsFileSystemHandle ? item.getAsFileSystemHandle() : null;
+    } catch (_err) {
+      handle = null;
+    }
+    if (handle && typeof handle.then === "function") handles.push(handle);
+    let file = null;
+    try {
+      file = item.getAsFile ? item.getAsFile() : null;
+    } catch (_err) {
+      file = null;
+    }
+    if (file) loose.push({ file, relative: file.webkitRelativePath || file.name, folder: null });
+  }
+
+  const push = (task) => {
+    if (!task || !task.file || seen.has(task.relative)) return;
+    seen.add(task.relative);
+    out.push(task);
+  };
+
+  /** `folder` is the top-level dropped folder, or null for a loose file. */
+  const walk = (entry, prefix, folder) =>
+    new Promise((resolve) => {
+      if (!entry) {
+        resolve();
+        return;
+      }
+      if (entry.isFile) {
+        entry.file(
+          (file) => {
+            push({ file, relative: prefix + file.name, folder });
+            resolve();
+          },
+          () => resolve()
+        );
+        return;
+      }
+      const reader = entry.createReader();
+      const next = () => {
+        reader.readEntries(
+          (batch) => {
+            if (!batch.length) {
+              resolve();
+              return;
+            }
+            Promise.all(
+              batch.map((child) => walk(child, `${prefix}${entry.name}/`, folder || entry.name))
+            ).then(next);
+          },
+          () => resolve()
+        );
+      };
+      next();
+    });
+
+  const walkHandle = async (handle, prefix, folder) => {
+    if (!handle || typeof handle.values !== "function" || handle.kind === "file") return;
+    try {
+      for await (const child of handle.values()) {
+        if (child.kind === "file") {
+          try {
+            const file = await child.getFile();
+            push({ file, relative: `${prefix}${handle.name}/${file.name}`, folder });
+          } catch (_err) {
+            /* skip an unreadable entry */
+          }
+        } else {
+          await walkHandle(child, `${prefix}${handle.name}/`, folder);
+        }
+      }
+    } catch (_err) {
+      /* a directory that refuses to enumerate simply contributes nothing */
+    }
+  };
+
+  if (entries.length) {
+    await Promise.all(
+      entries.map((entry) =>
+        walk(entry, entry.isDirectory ? "" : "", entry.isDirectory ? entry.name : null)
+      )
+    );
+  }
+
+  for (const pending of handles) {
+    let handle = null;
+    try {
+      handle = await pending;
+    } catch (_err) {
+      handle = null;
+    }
+    if (!handle) continue;
+    if (handle.kind === "file") {
+      try {
+        const file = await handle.getFile();
+        push({ file, relative: file.webkitRelativePath || file.name, folder: null });
+      } catch (_err) {
+        /* ignore */
+      }
+      continue;
+    }
+    await walkHandle(handle, "", handle.name);
+  }
+
+  for (const task of loose) push(task);
+  if (!out.length) {
+    for (const file of files) {
+      push({ file, relative: file.webkitRelativePath || file.name, folder: null });
+    }
+  }
+
+  // A folder an engine refuses to expand arrives as a zero-byte, type-less
+  // "file" carrying nothing but the folder name — flag it so the UI can say so
+  // instead of queueing a bogus row.
+  for (const task of out) {
+    if (task.folder) continue;
+    const size = task.file ? task.file.size : 0;
+    if (size === 0 && !(task.file && task.file.type) && !/\.\w{1,8}$/.test(task.relative)) {
+      task.folderLike = true;
+    }
+  }
+  return out;
+}
+/** 按相对路径在当前目录下建出嵌套目录，返回父节点。 */
+function ensureDir(relative) {
+  let node = resolveDir(state.path);
+  const parts = relative.split("/");
+  for (const part of parts.slice(0, -1)) {
+    if (!part) continue;
+    if (!node.children[part] || node.children[part].type !== "dir") node.children[part] = d(part, {});
+    node = node.children[part];
+  }
+  return node;
+}
+function showDropHint(on) {
+  const app = $("feApp");
+  let hint = document.getElementById("dropHint");
+  if (!on) { if (hint) hint.remove(); return; }
+  if (hint) return;
+  hint = document.createElement("div");
+  hint.id = "dropHint";
+  hint.className = "fe-drop";
+  hint.style.top = (($("feTopbar").offsetHeight || 0) + 8) + "px";
+  hint.innerHTML = `<span class="fe-ico">${ICON.upload}</span><div>松手即可上传到当前文件夹</div>`;
+  app.appendChild(hint);
+}
+/** 每个文件一行，文件夹拖入时用完整相对路径（folder/sub/file.png）显示。 */
+function queueItems(tasks) {
+  return tasks.map((task) => ({
+    name: task.relative,
+    folder: task.folder || null,
+    size: task.file ? task.file.size : 0,
+    entries: [task],
+  }));
+}
+function queueTasks() { return state.queue.reduce((all, row) => all.concat(row.entries), []); }
+function queueTotalText() {
+  const size = state.queue.reduce((sum, row) => sum + row.size, 0);
+  return `共 ${state.queue.length} 项 · ${sizeName(size)}`;
+}
+/** 队列窗：拖一次只入队，多次拖拽累积到同一队列，点「全部上传」才逐个写入。 */
+function renderQueue() {
+  const rows = state.queue.map((row, index) => `<div class="fe-upload-item">
+    <span class="fe-upload-kind">📄</span>
+    <span class="fe-upload-name" title="${esc(row.name)}"><span class="fe-upload-dir">${esc(row.name.slice(0, row.name.lastIndexOf("/") + 1))}</span>${esc(row.name.slice(row.name.lastIndexOf("/") + 1))}</span>
+    <span class="fe-upload-size">${sizeName(row.size)}</span>
+    <button class="fe-upload-remove" data-action="queue-remove" data-index="${index}" title="移除">&times;</button>
+  </div>`).join("");
+  state.dialog = { kind: "queue" };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>上传队列（${state.queue.length}）</h3>
+    <div class="fe-dialog-body">
+      <p class="hint">上传到 <code>${esc(state.path || "HA")}</code></p>
+      <p class="hint">注意：相同名称的文件会被覆盖。</p>
+      <div class="fe-upload-list">${rows}</div>
+      <p class="hint">${queueTotalText()}</p>
+      ${state.queue.length > 1 ? `<button class="fe-btn" data-action="queue-clear">清空队列</button>` : ""}
+    </div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="queue-upload">全部上传</button></div>
+  </div></div>`);
+}
+async function runQueue() {
+  const tasks = queueTasks();
+  state.queue = [];
+  if (!tasks.length) { closeDialog(); return; }
+  status(`正在逐个上传 ${tasks.length} 个文件…`);
+  let done = 0;
+  for (const task of tasks) {
+    await uploadOne(task);
+    done += 1;
+    status(`POST /api/ha_file_explorer/upload  已上传 ${done}/${tasks.length}`);
+    await new Promise((r) => setTimeout(r, 60));
+  }
+  closeDialog();
+  load(state.path);
+  status(`POST /api/ha_file_explorer/upload  共 ${tasks.length} 个文件（逐个上传完成）`);
+  toast(`已模拟上传 ${tasks.length} 个文件`);
+}
+async function uploadOne(task) {
+  const parts = task.relative.split("/");
+  ensureDir(task.relative).children[parts[parts.length - 1]] = f(parts[parts.length - 1], "", task.file ? task.file.size : 0);
+}
+/** 拖拽只入队，不做任何写入。 */
+async function uploadTransfer(transfer) {
+  const all = await collectTransfer(transfer);
+  // 浏览器没能展开的文件夹：直接说明，而不是排一行「只有文件夹名」的任务。
+  const blocked = all.filter((t) => t.folderLike).length;
+  const tasks = all.filter((t) => !t.folderLike);
+  if (!tasks.length) {
+    const items = Array.from((transfer && transfer.items) || []);
+    console.warn("[drag] 没有读取到文件", {types: transfer ? Array.from(transfer.types || []) : [], kinds: items.map(i => i.kind), files: transfer && transfer.files ? transfer.files.length : 0, folderLike: blocked});
+    toast(blocked
+      ? "这个浏览器没有把拖入的文件夹展开。请改用 ⋯ → 上传文件夹 选择该文件夹。"
+      : `没有读取到文件（条目 ${items.length}，files ${transfer && transfer.files ? transfer.files.length : 0}）`, true);
+    return;
+  }
+  if (blocked) toast(`已跳过 ${blocked} 个无法读取的文件夹，请用 ⋯ → 上传文件夹`, true);
+  const added = queueItems(tasks);
+  // 按完整路径去重：同一文件夹再次拖入时替换旧行，不会重复上传。
+  for (const row of added) {
+    const same = state.queue.findIndex((item) => item.name === row.name);
+    if (same >= 0) state.queue[same] = row; else state.queue.push(row);
+  }
+  renderQueue();
+  toast(`已加入 ${added.length} 项，队列共 ${state.queue.length} 项`);
+}
+function canDrop() {
+  const queueOpen = Boolean(state.dialog && state.dialog.kind === "queue");
+  return state.view !== "editor" && !state.preview && (!state.dialog || queueOpen);
+}
+(function bindDropZone() {
+  const app = $("feApp");
+  const hasFiles = (e) => Boolean(e.dataTransfer) && Array.from(e.dataTransfer.types || []).includes("Files");
+  let depth = 0;
+  app.addEventListener("dragenter", (e) => { if (!hasFiles(e)) return; e.preventDefault(); depth += 1; if (canDrop()) showDropHint(true); });
+  app.addEventListener("dragover", (e) => { if (!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = canDrop() ? "copy" : "none"; });
+  // 离开元素时 Chrome 的 types 会是空数组，这里不能再过滤，否则提示会卡住。
+  app.addEventListener("dragleave", () => { depth = Math.max(0, depth - 1); if (!depth) showDropHint(false); });
+  window.addEventListener("drop", () => { depth = 0; showDropHint(false); });
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") { depth = 0; showDropHint(false); } });
+  app.addEventListener("drop", async (e) => { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; showDropHint(false); if (!canDrop()) return; await uploadTransfer(e.dataTransfer); });
+})();
+function openUpload(directory) {
+  state.dialog = { kind: "upload", directory, files: [] };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>${directory ? "上传文件夹" : "上传文件"}</h3>
+    <div class="fe-dialog-body">
+      <p class="hint">注意：相同名称的文件会被覆盖。</p>
+      <label class="fe-field"><span>${directory ? "选择文件夹" : "选择文件"}</span>
+        <input type="file" data-role="dialog-files" ${directory ? "webkitdirectory" : "multiple"}></label>
+      <div class="fe-file-list" id="selectedFiles">请先选择文件</div>
+    </div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">上传</button></div>
+  </div></div>`);
+  const input = $("dialogLayer").querySelector('[data-role="dialog-files"]');
+  input.addEventListener("change", () => {
+    state.dialog.files = Array.from(input.files || []);
+    $("selectedFiles").textContent = state.dialog.files.map((x) => x.webkitRelativePath || x.name).join("\n") || "请先选择文件";
+  });
+}
+
+function confirmDialog() {
+  const dlg = state.dialog; if (!dlg) return;
+  if (dlg.kind === "file" || dlg.kind === "folder") {
+    const name = (dlg.value || "").trim();
+    if (!name) { toast("名称不能为空", true); return; }
+    resolveDir(state.path).children[name] = dlg.kind === "folder" ? d("") : f(name, "");
+    closeDialog(); toast("已创建 " + name);
+    status(`PUT /api/ha_file_explorer/create  { act: "${dlg.kind}", path: "${joinPath(state.path, name)}" }`);
+    load();
+  } else if (dlg.kind === "rename") {
+    const name = (dlg.value || "").trim();
+    if (!name || name === dlg.old) { closeDialog(); return; }
+    const dir = resolveDir(state.path); const node = dir.children[dlg.old];
+    delete dir.children[dlg.old]; dir.children[name] = node; node.name = name;
+    closeDialog(); toast("已重命名为 " + name);
+    status(`PUT /api/ha_file_explorer/rename  { path: "${joinPath(state.path, dlg.old)}", new_path: "${joinPath(state.path, name)}" }`);
+    load();
+  } else if (dlg.kind === "delete") {
+    delete resolveDir(state.path).children[dlg.name];
+    closeDialog(); toast("已删除 " + dlg.name);
+    status(`DELETE /api/ha_file_explorer/delete?path=${joinPath(state.path, dlg.name)}`);
+    load();
+  } else if (dlg.kind === "upload") {
+    if (!dlg.files.length) { toast("请先选择文件", true); return; }
+    const dir = resolveDir(state.path);
+    dlg.files.forEach((file) => {
+      const rel = file.webkitRelativePath || file.name;
+      const name = rel.split("/").pop();
+      dir.children[name] = f(name, "(上传内容预览不可见)");
+    });
+    closeDialog(); toast(`已上传 ${dlg.files.length} 个文件`);
+    status(`POST /api/ha_file_explorer/upload?path=${state.path}  (multipart, ${dlg.files.length} files)`);
+    load();
+  } else if (dlg.kind === "rename-folder") {
+    const name = (dlg.value || "").trim();
+    if (!name || name === dlg.old) { closeDialog(); return; }
+    const parent = parentPath(dlg.path);
+    const dir = resolveDir(parent); const node = dir.children[dlg.old];
+    delete dir.children[dlg.old]; dir.children[name] = node; node.name = name;
+    const renamed = joinPath(parent, name);
+    const nextPath = dlg.path === state.path
+      ? renamed
+      : state.path.startsWith(dlg.path + "/")
+        ? renamed + state.path.slice(dlg.path.length)
+        : state.path;
+    closeDialog(); toast("已重命名文件夹为 " + name);
+    status(`PUT /api/ha_file_explorer/rename  { path: "${dlg.path}", new_path: "${renamed}" }`);
+    navigate(nextPath);
+  } else if (dlg.kind === "delete-folder") {
+    const parent = parentPath(dlg.path);
+    delete resolveDir(parent).children[dlg.name];
+    const inside = state.path === dlg.path || state.path.startsWith(dlg.path + "/");
+    closeDialog(); toast("已删除文件夹 " + dlg.name);
+    status(`DELETE /api/ha_file_explorer/delete?path=${dlg.path}`);
+    navigate(inside ? parent : state.path);
+  } else if (dlg.kind === "delete-current") {
+    const parent = parentPath(state.path);
+    delete resolveDir(parent).children[dlg.name];
+    closeDialog(); toast("已删除当前目录 " + dlg.name);
+    status(`DELETE /api/ha_file_explorer/delete?path=${state.path}`);
+    navigate(parent);
+  } else if (dlg.kind === "rename-current") {
+    const name = (dlg.value || "").trim();
+    if (!name || name === dlg.old) { closeDialog(); return; }
+    const parent = parentPath(state.path);
+    const dir = resolveDir(parent); const node = dir.children[dlg.old];
+    delete dir.children[dlg.old]; dir.children[name] = node; node.name = name;
+    closeDialog(); toast("已重命名当前文件夹为 " + name);
+    status(`PUT /api/ha_file_explorer/rename  { path: "${state.path}", new_path: "${joinPath(parent, name)}" }`);
+    navigate(joinPath(parent, name));
+  } else {
+    closeDialog();
+  }
+}
+function renderDialog() { /* 对话框由 showDialog/closeDialog 直接维护 */ }
+function menuItem(action, key, label, danger = false, disabled = false, name = "") {
+  const nameAttr = name ? ` data-name="${esc(name)}"` : "";
+  return `<button class="fe-menu-item${danger ? " danger" : ""}" data-action="${esc(action)}"${nameAttr}${disabled ? " disabled" : ""}>${ic(key)}<span>${esc(label)}</span></button>`;
+}
+function pathMenuItem(action, key, label, danger, path) {
+  return `<button class="fe-menu-item${danger ? " danger" : ""}" data-action="${esc(action)}" data-path="${esc(path)}">${ic(key)}<span>${esc(label)}</span></button>`;
+}
+function openMenu() {
+  closeRowMenu();
+  const hasPath = Boolean(state.path);
+  $("menuLayer").innerHTML = `<div class="fe-menu" style="top:52px;right:16px">
+    ${state.queue.length ? menuItem("queue-open", "upload", `上传队列（${state.queue.length}）`) : ""}
+    ${isCompact() ? menuItem("new-file", "plusFile", "新建文件") + menuItem("new-folder", "plusFolder", "新建文件夹") : ""}
+    ${menuItem("upload-files", "plusUpload", "上传文件")}
+    ${menuItem("upload-folder", "upload", "上传文件夹")}
+    ${menuItem("refresh", "refresh", "刷新")}
+    ${menuItem("download-current", "download", "下载当前文件夹", false, !hasPath)}
+    ${menuItem("rename-current", "rename", "重命名当前文件夹", false, !hasPath)}
+    ${menuItem("delete-current", "remove", "删除当前文件夹", true, !hasPath)}
+  </div>`;
+  $("menuLayer").classList.add("show");
+  state.menu = true;
+}
+function closeMenu() {
+  state.menu = false;
+  syncMenuLayer();
+}
+/** 三个弹出菜单共用一层，只有全部关闭时才清空。 */
+function syncMenuLayer() {
+  if (state.menu || state.rowMenu || state.bgMenu || state.viewMenu) return;
+  const layer = $("menuLayer");
+  layer.classList.remove("show");
+  layer.innerHTML = "";
+}
+/* ---------- 查看方式（显示选项） ---------- */
+function openViewMenu(anchor) {
+  closeMenu();
+  closeRowMenu();
+  closeBgMenu();
+  state.viewMenu = { anchor };
+  renderViewMenu();
+}
+function renderViewMenu() {
+  const layer = $("menuLayer");
+  if (!state.viewMenu) { syncMenuLayer(); return; }
+  const row = (action, key, label, on) =>
+    `<button class="fe-menu-item" data-action="${action}">${ic(key)}<span>${esc(label)}</span>${on ? `<span class="fe-ico fe-menu-check">${ICON.check}</span>` : ""}</button>`;
+  layer.classList.add("show");
+  layer.innerHTML = `<div class="fe-menu" style="visibility:hidden;top:0px;left:0px;min-width:200px">
+    ${row("toggle-size", "size", "显示文件大小", state.showSize)}
+    ${row("toggle-time", "clock", "显示修改时间", state.showTime)}
+  </div>`;
+  const menu = layer.firstElementChild;
+  placeMenu(menu, state.viewMenu.anchor);
+  menu.style.visibility = "";
+}
+function closeViewMenu() {
+  if (!state.viewMenu) return;
+  state.viewMenu = null;
+  syncMenuLayer();
+}
+function openRowMenu(name, rect, point = null) {
+  closeMenu();
+  closeViewMenu();
+  closeBgMenu();
+  // 右键时按光标定位（和 Windows 一致），不再贴 ⋮ 按钮。
+  state.rowMenu = { name, rect, point };
+  renderList();
+  renderRowMenu();
+}
+function rowMenuAnchor(name) {
+  const buttons = $("list").querySelectorAll('[data-action="row-menu"]');
+  for (const button of buttons) {
+    if (button.dataset.name === name) return button;
+  }
+  return null;
+}
+/** 以光标为角点弹出（Windows 语义）：右下展开，越界则向上/向左翻。 */
+function placeMenuAt(menu, clientX, clientY) {
+  const app = $("feApp");
+  const bounds = app.getBoundingClientRect();
+  const pad = 8;
+  const gap = 2;
+  const width = menu.offsetWidth;
+  const height = menu.offsetHeight;
+  // 同时夹在面板盒与可见视口内（演示页外层可滚动，面板可能超出屏幕）。
+  const visibleTop = Math.max(bounds.top, 0);
+  const visibleBottom = Math.min(bounds.bottom, window.innerHeight);
+  const visibleLeft = Math.max(bounds.left, 0);
+  const visibleRight = Math.min(bounds.right, window.innerWidth);
+  const minLeft = pad;
+  const maxLeft = Math.max(minLeft, visibleRight - bounds.left - width - pad);
+  const minTop = Math.max(pad, visibleTop - bounds.top + pad);
+  const maxTop = Math.max(minTop, visibleBottom - bounds.top - height - pad);
+
+  let left = clientX - bounds.left;
+  if (left + width > visibleRight - bounds.left - pad) left = clientX - bounds.left - width;
+  left = Math.min(Math.max(left, minLeft), maxLeft);
+
+  let top = clientY - bounds.top + gap;
+  if (top > maxTop) top = clientY - bounds.top - height - gap;
+  top = Math.min(Math.max(top, minTop), maxTop);
+
+  menu.style.top = `${Math.round(top)}px`;
+  menu.style.left = `${Math.round(left)}px`;
+}
+
+/** 把弹出菜单贴到触发按钮上，必要时向上/向内翻转，避免被面板裁掉。 */
+function placeMenu(menu, anchor) {
+  const app = $("feApp");
+  const bounds = app.getBoundingClientRect();
+  const gap = 4;
+  const pad = 8;
+  const width = menu.offsetWidth;
+  const height = menu.offsetHeight;
+
+  const minLeft = pad;
+  const maxLeft = Math.max(minLeft, bounds.width - width - pad);
+  let left = anchor.right - bounds.left - width;
+  left = Math.min(Math.max(left, minLeft), maxLeft);
+
+  const minTop = pad;
+  const maxTop = Math.max(minTop, bounds.height - height - pad);
+  let top = anchor.bottom - bounds.top + gap;
+  if (top > maxTop) top = anchor.top - bounds.top - height - gap;
+  top = Math.min(Math.max(top, minTop), maxTop);
+
+  menu.style.top = `${Math.round(top)}px`;
+  menu.style.left = `${Math.round(left)}px`;
+}
+function renderRowMenu() {
+  const layer = $("menuLayer");
+  if (!state.rowMenu) {
+    syncMenuLayer();
+    return;
+  }
+  const name = state.rowMenu.name;
+  const item = state.items.find((it) => it.name === name);
+  const isDir = Boolean(item && item.type === "dir");
+  const path = joinPath(state.path, name);
+  if (isDir) {
+    // 文件夹复用同一套动作，只是参数换成完整路径。
+    const folderItems = [
+      pathMenuItem("download-folder", "download", "下载", false, path),
+      pathMenuItem("rename-folder", "rename", "重命名", false, path),
+      pathMenuItem("info-folder", "info", "信息", false, path),
+      pathMenuItem("delete-folder", "remove", "删除", true, path),
+    ];
+    layer.classList.add("show");
+    layer.innerHTML = `<div class="fe-menu" style="visibility:hidden;top:0px;left:0px;min-width:176px">${folderItems.join("")}</div>`;
+    const folderMenu = layer.firstElementChild;
+    const folderButton = rowMenuAnchor(name);
+    if (state.rowMenu.point) placeMenuAt(folderMenu, state.rowMenu.point.x, state.rowMenu.point.y);
+    else placeMenu(folderMenu, folderButton ? folderButton.getBoundingClientRect() : state.rowMenu.rect);
+    folderMenu.style.visibility = "";
+    return;
+  }
+  const video = isVideo(name);
+  const image = isImage(name);
+  const items = [
+    ...(image || video
+      ? [menuItem("preview-item", video ? "video" : "image", "预览", false, false, name)]
+      : isEditable(state.rowMenu.name)
+        ? [menuItem("edit-item", "edit", "编辑", false, false, name)]
+        : []),
+    menuItem("download-item", "download", "下载", false, false, name),
+    menuItem("rename-item", "rename", "重命名", false, false, name) +
+    menuItem("info-item", "info", "信息", false, false, name),
+    menuItem("delete-item", "remove", "删除", true, false, name),
+  ];
+  layer.classList.add("show");
+  layer.innerHTML = `<div class="fe-menu" style="visibility:hidden;top:0px;left:0px;min-width:176px">${items.join("")}</div>`;
+  const menu = layer.firstElementChild;
+  const button = rowMenuAnchor(name);
+  if (state.rowMenu.point) placeMenuAt(menu, state.rowMenu.point.x, state.rowMenu.point.y);
+  else placeMenu(menu, button ? button.getBoundingClientRect() : state.rowMenu.rect);
+  menu.style.visibility = "";
+}
+function closeRowMenu() {
+  if (!state.rowMenu) return;
+  state.rowMenu = null;
+  renderList();
+  syncMenuLayer();
+}
+/** 列表空白处右键：新建/上传/刷新。 */
+function openBgMenu(x, y) {
+  closeMenu();
+  closeRowMenu();
+  state.bgMenu = { x, y };
+  renderBgMenu();
+}
+function renderBgMenu() {
+  if (!state.bgMenu) {
+    syncMenuLayer();
+    return;
+  }
+  const hasPath = Boolean(state.path);
+  const layer = $("menuLayer");
+  layer.classList.add("show");
+  layer.innerHTML = `<div class="fe-menu" style="visibility:hidden;top:0px;left:0px;min-width:190px">
+    ${menuItem("new-file", "plusFile", "新建文件")}
+    ${menuItem("new-folder", "plusFolder", "新建文件夹")}
+    ${menuItem("upload-files", "plusUpload", "上传文件")}
+    ${menuItem("upload-folder", "upload", "上传文件夹")}
+    ${menuItem("refresh", "refresh", "刷新")}
+    ${menuItem("download-current", "download", "下载当前文件夹", false, !hasPath)}
+  </div>`;
+  const menu = layer.firstElementChild;
+  placeMenuAt(menu, state.bgMenu.x, state.bgMenu.y);
+  menu.style.visibility = "";
+}
+function closeBgMenu() {
+  if (!state.bgMenu) return;
+  state.bgMenu = null;
+  syncMenuLayer();
+}
+
+let booted = false;
+function hideBoot() { const b = $("boot"); if (b) b.remove(); booted = true; }
+/* 演示用：手动把启动遮罩放回来，方便看冷启动时的样子 */
+function showBoot() {
+  if (!$("boot")) {
+    const el = document.createElement("div");
+    el.id = "boot";
+    el.className = "fe-boot";
+    el.innerHTML = '<span class="fe-spin" aria-hidden="true"></span><span class="fe-boot-text">加载中…</span>';
+    const app = $("feApp");
+    const anchor = app.children[1];
+    app.insertBefore(el, anchor || null);
+  }
+}
+function load(path = state.path) {
+  setLoading(true);
+  state.path = path;
+  state.items = listDir(path);
+  state.view = "list";
+  renderAll();
+  setLoading(false);
+  if (!booted) hideBoot();
+  status(`GET /api/ha_file_explorer/list?path=${path || ""}  →  ${visibleItems().length} 个项目`);
+}
+function navigate(path) { state.filter = ""; if (state.preview) closePreview(); load(path); }
+function openEditor(name) {
+  const node = resolveDir(state.path).children[name];
+  if (!node || node.type !== "file" || !isEditable(name)) { toast("该文件格式不支持文本编辑", true); return; }
+  state.view = "editor";
+  state.editor = { name, value: node.content, dirty: false };
+  renderAll();
+  status(`GET /api/ha_file_explorer/content?path=${joinPath(state.path, name)}`);
+}
+function saveEditor() {
+  const code = $("code");
+  if (!code) return;
+  const node = resolveDir(state.path).children[state.editor.name];
+  if (node) node.content = code.value;
+  state.editor.value = code.value;
+  state.editor.dirty = false;
+  renderTopbar();
+  toast("保存成功");
+  status(`POST /api/ha_file_explorer/save  { path: "${joinPath(state.path, state.editor.name)}", data: "…" }`);
+}
+function closeEditor() {
+  if (state.editor.dirty && !confirm("有未保存的修改，确定放弃吗？")) return;
+  state.view = "list"; renderAll();
+}
+
+/* ---------------- 图片 / 视频预览（真实面板走 preview 代理接口） ---------------- */
+function mediaSiblings() { return visibleItems().filter((it) => isMedia(it.name)); }
+async function openPreview(name) {
+  const node = resolveDir(state.path).children[name];
+  // 演示视频是页面里用 canvas + MediaRecorder 现录的，第一次点开时等它录完。
+  if (node && isVideo(name) && !node.content) node.content = await recordDemoVideo();
+  const siblings = mediaSiblings();
+  const index = siblings.findIndex((it) => it.name === name);
+  showPreviewAt(siblings, Math.max(index, 0));
+}
+function showPreviewAt(siblings, index) {
+  const item = siblings[index];
+  if (!item) return;
+  if (state.rowMenu) closeRowMenu();
+  const node = resolveDir(state.path).children[item.name];
+  const url = (node && node.content) || "";
+  const video = isVideo(item.name);
+  state.preview = {
+    name: item.name, size: item.size, index, total: siblings.length, url, video,
+    scale: 1, base: null,
+  };
+  renderPreview();
+  const type = video ? "video/*" : "image/*";
+  status(`GET /api/ha_file_explorer/preview?path=${joinPath(state.path, item.name)}  →  ${type} (inline)`);
+}
+/* ---------------- 预览图滚轮缩放：1 = 适应窗口 ---------------- */
+function applyPreviewScale(scale, point) {
+  const p = state.preview;
+  const image = $("dialogLayer").querySelector(".fe-preview-img");
+  const stage = $("dialogLayer").querySelector(".fe-preview-stage");
+  if (!p || !image || !stage) return;
+  if (!p.base || !p.base.width) {
+    const fitted = image.getBoundingClientRect();
+    if (!fitted.width) return;
+    p.base = { width: fitted.width };
+  }
+  const before = image.getBoundingClientRect();
+  const next = Math.min(8, Math.max(1, scale));
+  p.scale = next;
+  if (next === 1) {
+    image.classList.remove("zoomed");
+    image.style.width = "";
+    image.style.height = "";
+  } else {
+    image.classList.add("zoomed");
+    image.style.width = Math.round(p.base.width * next) + "px";
+    image.style.height = "auto";
+  }
+  const zoomed = next !== 1;
+  const btn = $("dialogLayer").querySelector('[data-action="preview-zoom"]');
+  if (btn) {
+    btn.title = zoomed ? "适应窗口" : "原始大小";
+    btn.innerHTML = ic(zoomed ? "zoomFit" : "zoomIn");
+  }
+  if (!point || next === 1) return;
+  const after = image.getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+  const fx = (point.x - before.left) / (before.width || 1);
+  const fy = (point.y - before.top) / (before.height || 1);
+  stage.scrollLeft =
+    (after.left - stageRect.left + stage.scrollLeft) + after.width * fx - (point.x - stageRect.left);
+  stage.scrollTop =
+    (after.top - stageRect.top + stage.scrollTop) + after.height * fy - (point.y - stageRect.top);
+}
+function onPreviewWheel(e) {
+  const p = state.preview;
+  if (!p || p.video || !e.deltaY) return;
+  e.preventDefault();
+  applyPreviewScale((p.scale || 1) * Math.exp(-e.deltaY * 0.0022), { x: e.clientX, y: e.clientY });
+}
+function togglePreviewZoom() {
+  const p = state.preview;
+  if (!p || p.video) return;
+  if (p.scale !== 1) { applyPreviewScale(1); return; }
+  const image = $("dialogLayer").querySelector(".fe-preview-img");
+  if (!image) return;
+  if (!p.base || !p.base.width) {
+    const fitted = image.getBoundingClientRect();
+    if (!fitted.width) return;
+    p.base = { width: fitted.width };
+  }
+  const natural = image.naturalWidth / p.base.width;
+  applyPreviewScale(natural > 1.02 ? natural : 2);
+}
+
+function previewStep(delta) {
+  const p = state.preview;
+  if (!p || p.total < 2) return;
+  const next = p.index + delta;
+  if (next < 0 || next >= p.total) return;
+  showPreviewAt(mediaSiblings(), next);
+}
+function closePreview() { state.preview = null; renderPreview(); }
+function renderPreview() {
+  const p = state.preview;
+  const layer = $("dialogLayer");
+  if (!p) {
+    layer.classList.remove("show");
+    layer.innerHTML = "";
+    return;
+  }
+  const hasNav = p.total > 1;
+  const nav = hasNav
+    ? `<button class="fe-preview-nav prev" data-action="preview-prev" title="上一张"${p.index === 0 ? " disabled" : ""}>‹</button>
+       <button class="fe-preview-nav next" data-action="preview-next" title="下一张"${p.index === p.total - 1 ? " disabled" : ""}>›</button>`
+    : "";
+  layer.innerHTML = `<div class="fe-preview" data-action="close-preview" role="dialog" aria-modal="true" aria-label="${esc(p.name)}">
+    <div class="fe-preview-bar">
+      ${ic(p.video ? "video" : "image")}
+      <strong class="fe-preview-name">${esc(p.name)}</strong>
+      <span class="fe-preview-meta">${esc(sizeName(p.size))}${hasNav ? " · " + (p.index + 1) + "/" + p.total : ""}</span>
+      <span class="fe-spacer"></span>
+      ${p.video
+        ? ""
+        : `<button class="fe-icon-btn" data-action="preview-zoom" title="${p.scale !== 1 ? "适应窗口" : "原始大小"}">${ic(p.scale !== 1 ? "zoomFit" : "zoomIn")}</button>`}
+      <button class="fe-icon-btn" data-action="preview-open" title="新窗口打开">${ic("browse")}</button>
+      <button class="fe-icon-btn" data-action="preview-download" title="下载">${ic("download")}</button>
+      <button class="fe-icon-btn" data-action="close-preview" title="关闭">${ic("clear")}</button>
+    </div>
+    <div class="fe-preview-stage${p.video ? " is-video" : ""}">
+      ${p.video
+        ? `<video class="fe-preview-video" src="${esc(p.url)}" controls playsinline preload="auto"></video>
+           <button class="fe-preview-play" data-action="preview-play" title="播放">▶</button>`
+        : `<img class="fe-preview-img${p.scale !== 1 ? " zoomed" : ""}" data-action="preview-zoom" src="${esc(p.url)}" alt="${esc(p.name)}">`}
+    </div>
+    ${nav}
+  </div>`;
+  layer.classList.add("show");
+  // Mouse wheel zooms around the cursor, like Windows Photos.
+  const stageEl = layer.querySelector(".fe-preview-stage");
+  if (stageEl && layer.querySelector(".fe-preview-img")) {
+    stageEl.addEventListener("wheel", onPreviewWheel, { passive: false });
+  }
+  const video = layer.querySelector(".fe-preview-video");
+  if (video) {
+    const stage = layer.querySelector(".fe-preview-stage");
+    const sync = () => stage.classList.toggle("playing", !video.paused);
+    ["play", "pause", "ended", "seeking"].forEach((n) => video.addEventListener(n, sync));
+    sync();
+  }
+}
+
+/* ---------------- 信息弹窗（镜像后端 get_item_info 的口径） ---------------- */
+function dirStats(node) {
+  let size = 0, files = 0, folders = 0;
+  for (const name in node.children || {}) {
+    const child = node.children[name];
+    if (child.type === "dir") {
+      folders += 1;
+      const inner = dirStats(child);
+      size += inner.size; files += inner.files; folders += inner.folders;
+    } else {
+      files += 1; size += child.size ?? 0;
+    }
+  }
+  return { size, files, folders };
+}
+function showInfo(path) {
+  const node = path ? resolveDir(path) : FS;
+  if (!node) return;
+  const label = path ? path.split("/").pop() : "HA";
+  const isDir = node.type === "dir" || !path;
+  const stats = isDir ? dirStats(node) : { size: node.size ?? 0, files: 1, folders: 0 };
+  const rows = [
+    ["类型", isDir ? "文件夹" : "文件"],
+    ["占用空间", sizeName(stats.size)],
+    ...(isDir ? [["内容", `${stats.files} 个文件 · ${stats.folders} 个文件夹`]] : []),
+    ["创建时间", CREATED],
+    ["修改时间", NOW],
+    ["访问时间", NOW],
+    ["权限", (isDir ? "drwxr-xr-x" : "-rw-r--r--") + " · 可读可写"],
+    ["位置", path || "HA"],
+  ];
+  state.dialog = { kind: "info" };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>文件信息 · ${esc(label)}</h3>
+    <div class="fe-dialog-body"><div class="fe-info-list">${rows
+      .map(([k, v]) => `<div class="fe-info-item"><span>${esc(k)}</span><span class="fe-info-value">${esc(v)}</span></div>`)
+      .join("")}</div></div>
+    <div class="fe-dialog-footer"><button class="fe-btn primary" data-action="dialog-cancel">关闭</button></div>
+  </div></div>`);
+  status(`GET /api/ha_file_explorer/info?path=${path || ""}  →  ${sizeName(stats.size)}`);
+}
+/* 演示视频：canvas + MediaRecorder 现录 3 秒，不把二进制内联进本文件。 */
+let demoVideoPromise = null;
+function recordDemoVideo() {
+  if (demoVideoPromise) return demoVideoPromise;
+  demoVideoPromise = new Promise((resolve) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 480; canvas.height = 270;
+    const ctx = canvas.getContext("2d");
+    let stream, recorder, chunks = [];
+    try {
+      stream = canvas.captureStream(25);
+      recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    } catch (err) {
+      resolve("");
+      return;
+    }
+    recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+    recorder.onstop = () => {
+      const url = chunks.length ? URL.createObjectURL(new Blob(chunks, { type: "video/webm" })) : "";
+      const node = resolveDir("www/images").children["clip.webm"];
+      if (node && url) node.content = url;
+      resolve(url);
+    };
+    const t0 = performance.now();
+    const draw = (t) => {
+      const grad = ctx.createLinearGradient(0, 0, 480, 270);
+      grad.addColorStop(0, "#0b1220");
+      grad.addColorStop(1, "#1d3b6f");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 480, 270);
+      // 一个绕圈的小球，证明是动的
+      const cx = 240 + Math.cos(t * 1.6) * 150, cy = 135 + Math.sin(t * 1.6) * 80;
+      ctx.beginPath(); ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+      ctx.fillStyle = "#41cd52"; ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.font = "600 20px system-ui, sans-serif";
+      ctx.fillText("demo clip.webm", 16, 34);
+      ctx.font = "16px system-ui, sans-serif";
+      ctx.fillText("t = " + t.toFixed(1) + "s", 16, 256);
+    };
+    let stopped = false;
+    const finish = () => {
+      if (stopped) return;
+      stopped = true;
+      try { recorder.stop(); } catch (err) { resolve(""); }
+    };
+    recorder.start();
+    draw(0);
+    // setTimeout 而不是 rAF：页面不在前台时 rAF 会被节流到暂停，录制就永远停不下来
+    const timer = setInterval(() => {
+      const t = (performance.now() - t0) / 1000;
+      draw(t);
+      if (t >= 3) { clearInterval(timer); finish(); }
+    }, 40);
+    setTimeout(finish, 6000); // 兜底：6 秒还没停就强制收尾
+  });
+  return demoVideoPromise;
+}
+function download(name, type) {
+  toast(type === "dir" ? `已将 ${name} 打包为 zip（演示）` : `已开始下载 ${name}（演示）`);
+  status(`GET /api/ha_file_explorer/download?path=${joinPath(state.path, name)}`);
+}
+function downloadFolderAt(path) {
+  if (!path) return;
+  toast(`已将 ${path} 打包为 zip（演示）`);
+  status(`GET /api/ha_file_explorer/download?path=${path}`);
+}
+function renameFolderAt(path) {
+  if (!path) return;
+  const name = path.split("/").pop();
+  state.dialog = { kind: "rename-folder", path, old: name, value: name };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>重命名文件夹</h3>
+    <div class="fe-dialog-body"><p class="hint">当前名称：${esc(name)}</p>
+      <label class="fe-field"><span>文件夹名称</span>
+        <input type="text" data-role="dialog-input" value="${esc(name)}"></label></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">确定</button></div>
+  </div></div>`);
+  const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+  input.focus(); input.select();
+}
+function deleteFolderAt(path) {
+  if (!path) return;
+  const name = path.split("/").pop();
+  state.dialog = { kind: "delete-folder", path, name };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>删除文件夹</h3>
+    <div class="fe-dialog-body"><p>确定删除文件夹 <b>${esc(name)}</b> 及其全部内容吗？</p><p class="hint">此操作不可恢复。</p></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn danger" data-action="dialog-confirm">删除</button></div>
+  </div></div>`);
+}
+function deleteCurrent() {
+  if (!state.path) { toast("已在根目录，无法删除", true); return; }
+  const name = state.path.split("/").pop();
+  state.dialog = { kind: "delete-current", name };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>删除当前目录</h3>
+    <div class="fe-dialog-body"><p>确定删除整个目录 <b>${esc(state.path)}</b> 吗？此操作不可恢复。</p></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn danger" data-action="dialog-confirm">删除</button></div>
+  </div></div>`);
+}
+function renameCurrent() {
+  if (!state.path) return;
+  const name = state.path.split("/").pop();
+  state.dialog = { kind: "rename-current", old: name, value: name };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>重命名当前文件夹</h3>
+    <div class="fe-dialog-body"><label class="fe-field"><span>文件夹名称</span>
+      <input type="text" data-role="dialog-input" value="${esc(name)}"></label></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">确定</button></div>
+  </div></div>`);
+  const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+  input.focus(); input.select();
+}
+
+/* ---------------- 事件委托 ---------------- */
+function onAction(action, node, e) {
+  const name = node.dataset.name;
+  const parts = state.path ? state.path.split("/") : [];
+  switch (action) {
+    case "close-menu": closeMenu(); closeRowMenu(); closeBgMenu(); return;
+    case "backdrop": if (e.target === node) closeDialog(); break;
+    case "dialog-cancel": closeDialog(); break;
+    case "dialog-confirm": confirmDialog(); break;
+    case "queue-upload": runQueue(); break;
+    case "queue-clear": state.queue = []; closeDialog(); break;
+    case "queue-open": closeMenu(); renderQueue(); break;
+    case "queue-remove": {
+      const index = Number(node.dataset.index);
+      if (Number.isInteger(index) && index >= 0 && index < state.queue.length) {
+        state.queue.splice(index, 1);
+        if (state.queue.length) renderQueue(); else closeDialog();
+      }
+      break;
+    }
+    case "ha-menu": openHaDrawer(); break;
+    case "clear-search":
+      state.filter = "";
+      $("feTopbar").querySelector('[data-role="search"]').value = "";
+      $("feTopbar").querySelector('[data-action="clear-search"]').hidden = true;
+      renderList();
+      break;
+    case "row-menu":
+      if (state.rowMenu && state.rowMenu.name === name) closeRowMenu();
+      else openRowMenu(name, node.getBoundingClientRect());
+      return;
+    case "more": if (state.menu) closeMenu(); else { closeRowMenu(); openMenu(); } return;
+    case "view-options": if (state.viewMenu) closeViewMenu(); else openViewMenu(node.getBoundingClientRect()); return;
+    case "toggle-size": state.showSize = !state.showSize; writePref("showSize", state.showSize); renderList(); renderViewMenu(); return;
+    case "toggle-time": state.showTime = !state.showTime; writePref("showTime", state.showTime); renderList(); renderViewMenu(); return;
+    case "refresh": load(); break;
+    case "set-view": state.viewMode = node.dataset.mode || "grid"; if (state.rowMenu) closeRowMenu(); renderList(); break;
+    case "up": navigate(parentPath(state.path)); break;
+    case "crumb": navigate(node.dataset.path || ""); break;
+    case "download-folder": downloadFolderAt(node.dataset.path || ""); break;
+    case "rename-folder": renameFolderAt(node.dataset.path || ""); break;
+    case "info-folder": showInfo(node.dataset.path || ""); break;
+    case "delete-folder": deleteFolderAt(node.dataset.path || ""); break;
+    case "open-dir": navigate(joinPath(state.path, name)); break;
+    case "edit-item": openEditor(name); break;
+    case "preview-item": openPreview(name); break;
+    case "close-preview": {
+      // ✕ 按钮直接关；点背景也关，但点在图片/视频/顶栏/翻页/播放按钮上不关。
+      if (!node.classList.contains("fe-preview")) { closePreview(); break; }
+      const protectedArea = e.composedPath().some((el) => el.nodeType === 1 && (
+        el.classList.contains("fe-preview-bar") || el.classList.contains("fe-preview-img") ||
+        el.classList.contains("fe-preview-video") || el.classList.contains("fe-preview-nav") ||
+        el.classList.contains("fe-preview-play")
+      ));
+      if (!protectedArea) closePreview();
+      break;
+    }
+    case "preview-play": {
+      const video = $("dialogLayer").querySelector(".fe-preview-video");
+      if (video) video.play().catch(() => {});
+      break;
+    }
+    case "preview-zoom": togglePreviewZoom(); break;
+    case "preview-prev": previewStep(-1); break;
+    case "preview-next": previewStep(1); break;
+    case "preview-open": toast(`在新窗口打开 ${state.preview ? state.preview.name : ""}（演示）`); break;
+    case "preview-download":
+      if (state.preview) {
+        toast(`已开始下载 ${state.preview.name}（演示）`);
+        status(`GET /api/ha_file_explorer/download?path=${joinPath(state.path, state.preview.name)}`);
+      }
+      break;
+    case "new-file": openCreate("file"); break;
+    case "new-folder": openCreate("folder"); break;
+    case "upload-files": openUpload(false); break;
+    case "upload-folder": openUpload(true); break;
+    case "download-current": download(state.path.split("/").pop(), "dir"); break;
+    case "rename-current": renameCurrent(); break;
+    case "delete-current": deleteCurrent(); break;
+    case "download-item": download(name, node.dataset.type); break;
+    case "info-item": showInfo(joinPath(state.path, name)); break;
+    case "rename-item": openRename(node.dataset.type, name); break;
+    case "delete-item": openDelete(name, node.dataset.type); break;
+      case "back": closeEditor(); break;
+    case "save": saveEditor(); break;
+    case "format": formatDoc(); break;
+    default: break;
+  }
+  if (state.menu && action !== "more") closeMenu();
+  if (
+    state.rowMenu &&
+    [
+      "edit-item", "preview-item", "download-item", "rename-item", "delete-item",
+      "info-item", "download-folder", "rename-folder", "info-folder", "delete-folder",
+    ].includes(action)
+  ) {
+    closeRowMenu();
+  }
+  if (state.bgMenu && ["more", "row-menu", "close-menu"].indexOf(action) === -1) closeBgMenu();
+}
+/** 右键：条目弹条目菜单（光标定位），空白处弹背景菜单。 */
+$("pvHost").addEventListener("contextmenu", (e) => {
+  if (state.dialog || state.preview) return;
+  const row = e.target.closest(".fe-row, .fe-tile");
+  const list = $("list");
+  const inList = e.target === list || list.contains(e.target);
+  const inCrumbs = Boolean(e.target.closest("#crumbs"));
+  if (!row && !inList && !inCrumbs) return;
+  e.preventDefault();
+  if (state.menu) closeMenu();
+  if (row) openRowMenu(row.dataset.name, row.getBoundingClientRect(), { x: e.clientX, y: e.clientY });
+  else openBgMenu(e.clientX, e.clientY);
+});
+$("pvHost").addEventListener("click", (e) => {
+  const node = e.target.closest("[data-action]");
+  if (!node) {
+    if (state.menu) closeMenu();
+    if (state.rowMenu) closeRowMenu();
+    if (state.bgMenu) closeBgMenu();
+    if (state.viewMenu) closeViewMenu();
+    return;
+  }
+  if (node.hasAttribute("disabled")) return;
+  onAction(node.dataset.action, node, e);
+});
+$("pvHost").addEventListener("input", (e) => {
+  if (e.target.matches('[data-role="search"]')) {
+    state.filter = e.target.value;
+    const clear = $("feTopbar").querySelector('[data-action="clear-search"]');
+    if (clear) clear.hidden = !state.filter;
+    renderList();
+    return;
+  }
+  if (e.target.matches('[data-role="dialog-input"]') && state.dialog) {
+    state.dialog.value = e.target.value;
+  }
+});
+$("pvHost").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.matches('[data-role="dialog-input"]')) { e.preventDefault(); confirmDialog(); }
+  if (state.preview && (e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.target.matches('[data-role="code"]')) {
+    e.preventDefault(); previewStep(e.key === "ArrowLeft" ? -1 : 1); return;
+  }
+  if (e.key === "Escape") { if (state.dialog) closeDialog(); else if (state.preview) closePreview(); else if (state.menu) closeMenu(); else if (state.rowMenu) closeRowMenu(); else if (state.bgMenu) closeBgMenu(); else if (state.viewMenu) closeViewMenu(); }
+});
+// 演示页面里焦点常常还在 body 上，补一个文档级 Escape，保证菜单一定能关掉。
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (state.bgMenu) closeBgMenu();
+  else if (state.rowMenu) closeRowMenu();
+  else if (state.menu) closeMenu();
+  else if (state.viewMenu) closeViewMenu();
+});
+let lastAuto = autoView();
+// 行内菜单锚定在具体的一行上，列表滚动或窗口尺寸变化后就无法对齐，直接关掉。
+$("list").addEventListener("scroll", () => { if (state.rowMenu) closeRowMenu(); if (state.bgMenu) closeBgMenu(); if (state.viewMenu) closeViewMenu(); }, { passive: true });
+window.addEventListener("resize", () => {
+  if (state.rowMenu) closeRowMenu();
+  if (state.viewMenu) closeViewMenu();
+  // 默认布局跟随宽度，宽度跨过阈值时重画列表（与面板 resize 处理一致）。
+  if (!state.viewMode && state.view !== "editor" && currentView() !== lastAuto) {
+    lastAuto = currentView(); renderList();
+  }
+});
+
+/* ---------------- 预览外壳控制 ---------------- */
+function openHaDrawer() { $("pvHaLayer").classList.add("show"); }
+$("pvHaMask").addEventListener("click", () => $("pvHaLayer").classList.remove("show"));
+$("pvSidebarHidden").addEventListener("change", (e) => {
+  state.sidebarHidden = e.target.checked;
+  $("pvHaLayer").classList.remove("show");
+  renderTopbar();
+});
+$("pvNarrow").addEventListener("change", (e) => {
+  $("pvHost").classList.toggle("narrow", e.target.checked);
+  $("pvHaLayer").classList.remove("show");
+  renderTopbar();
+  // 窄屏默认给列表视图，宽屏默认给平铺（手动选过视图就不再被覆盖）。
+  lastAuto = currentView();
+  if (state.view !== "editor") renderList();
+});
+$("pvDark").addEventListener("change", (e) => { document.documentElement.dataset.theme = e.target.checked ? "dark" : "light"; });
+$("pvReset").addEventListener("click", () => {
+  resetFS();
+  state.path = ""; state.view = "list"; state.filter = "";
+  state.dialog = null; state.menu = false; state.rowMenu = null; state.bgMenu = null;
+  state.preview = null;
+  state.sidebarHidden = true;
+  state.viewMode = null;
+  state.editor = { name: "", value: "", dirty: false };
+  closeDialog(); closeMenu();
+  load("");
+  note("演示数据已重置，可以重新体验各个步骤。");
+  setActiveStep(-1);
+});
+
+/* ---------------- 流程导览 ---------------- */
+const STEPS = [
+  { label: "浏览文件夹", note: "文件夹和文件在同一个列表里（文件夹排在前面）：点文件夹名字进入下一层，点面包屑或「上级」回到外面。", run() { navigate("www"); } },
+  { label: "平铺/列表切换", note: "列表右上角是分段开关：PC 端默认平铺（大图标），移动端默认列表（名称/修改日期/大小三列）。手动选过之后就不再跟随宽度。", run() {
+    navigate(""); state.viewMode = null;
+    state.viewMode = currentView() === "grid" ? "list" : "grid";
+    renderList();
+    status("视图：" + (state.viewMode === "grid" ? "平铺" : "列表") + "（本地切换，无接口调用）");
+  } },
+  { label: "按名称筛选", note: "顶栏搜索框输入关键字，右侧列表即时过滤当前目录（演示输入 yaml）。", run() { navigate(""); state.filter = "yaml"; renderTopbar(); renderList(); status("前端本地筛选，无接口调用"); } },
+  { label: "新建文件", note: "点顶栏「新建文件」，输入名称后确定；对应 PUT act=file。", run() {
+    navigate(""); openCreate("file");
+    const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+    input.value = "scripts.yaml"; state.dialog.value = "scripts.yaml"; confirmDialog();
+  } },
+  { label: "重命名", note: "点文件行右侧「···」菜单里的「重命名」；对应 PUT /api/ha_file_explorer/rename。", run() {
+    navigate(""); if (!resolveDir("").children["README.md"]) resetFS();
+    openRename("file", "README.md");
+    const input = $("dialogLayer").querySelector('[data-role="dialog-input"]');
+    input.value = "README-renamed.md"; state.dialog.value = "README-renamed.md"; confirmDialog();
+  } },
+  { label: "编辑并保存", note: "点文件名打开编辑器，可修改内容、Tab 缩进、Ctrl+S 保存；对应 GET act=content + POST。", run() {
+    navigate(""); openEditor("configuration.yaml");
+    const code = $("code"); code.value = code.value + "\n# 预览中新增的一行";
+    state.editor.dirty = true; updateEditorTitle(); updateGutter(code); saveEditor();
+  } },
+  { label: "文件夹信息", note: "点文件夹行右侧「···」菜单里的「信息」：显示类型、递归占用空间、文件/文件夹数量、创建/修改/访问时间和权限；对应 GET /api/ha_file_explorer/info。", run() {
+    navigate("www");
+    showInfo("www");
+  } },
+  { label: "上传文件", note: "点顶栏「上传文件」选择文件；对应 POST multipart。", run() {
+    navigate("");
+    openUpload(false);
+    const input = $("dialogLayer").querySelector('[data-role="dialog-files"]');
+    state.dialog.files = [{ name: "uploaded.txt", webkitRelativePath: "" }];
+    confirmDialog();
+  } },
+  { label: "图片/视频预览", note: "进入 www/images 点图片名称：弹窗里可缩放、上下张切换（←/→）、下载；点 clip.webm 则换成视频播放器（这段演示视频是页面用 canvas 现录的，真实环境读的是 config 里的文件）。对应 GET /api/ha_file_explorer/preview（图片回 image/*、视频回 video/*，均 inline）。", run() {
+    navigate("www/images"); if (state.preview) closePreview();
+    openPreview("screenshot.png");
+  } },
+  { label: "删除文件", note: "点文件行右侧「···」菜单里的「删除」并确认；对应 DELETE /api/ha_file_explorer/delete。", run() {
+    navigate(""); const name = "secrets.yaml";
+    if (!resolveDir("").children[name]) resolveDir("").children[name] = f(name, "");
+    openDelete(name, "file"); confirmDialog();
+  } },
+  { label: "更多菜单", note: "点顶栏「···」打开菜单，包含上传文件/上传文件夹、刷新、下载/重命名/删除当前目录。", run() { navigate(""); openMenu(); } },
+];
+function setActiveStep(i) {
+  Array.from($("pvSteps").children).forEach((btn, idx) => btn.classList.toggle("active", idx === i));
+}
+$("pvSteps").innerHTML = STEPS.map((s, i) => `<button class="pv-step" data-step="${i}">${esc(s.label)}</button>`).join("");
+$("pvSteps").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-step]");
+  if (!btn) return;
+  const i = Number(btn.dataset.step);
+  closeDialog(); closeMenu();
+  setActiveStep(i);
+  note(STEPS[i].note);
+  STEPS[i].run();
+});
+
+/* ---------------- 初始化 ---------------- */
+resetFS();
+load("");
+note("点击上方步骤自动演示对应流程，也可以直接在面板里自由操作。");
+</script>
+</body>
+</html>
