@@ -1096,10 +1096,18 @@ function bindBrandIcons(root) {
       }
       img.remove();
     };
-    img.addEventListener("load", () => { if (slot) slot.dataset.loaded = "1"; });
+    let hedge = 0;
+    img.addEventListener("load", () => { clearTimeout(hedge); if (slot) slot.dataset.loaded = "1"; });
     img.addEventListener("error", fail);
-    if (img.complete && img.naturalWidth > 0) { if (slot) slot.dataset.loaded = "1"; }
+    if (img.complete && img.naturalWidth > 0) { clearTimeout(hedge); if (slot) slot.dataset.loaded = "1"; }
     else if (img.complete && img.naturalWidth === 0) fail();
+    /* CDN 卡住时 1.2s 后并行试本地图（与面板同一个阈值） */
+    hedge = setTimeout(() => {
+      if (!img.isConnected || slot.dataset.loaded === "1" || img.dataset.local) return;
+      img.dataset.local = "2";
+      const local = localBrand(img.dataset.brand);
+      if (local) img.src = local;
+    }, 1200);
   });
 }
 function rowFile(it) {

@@ -191,6 +191,11 @@ async function collectTransfer(transfer) {
   return out;
 }
 
+// Brand art lives on a public CDN that can be slow (or blocked) on some
+// networks; after this delay the panel also asks the backend for the art the
+// integration ships locally, instead of waiting for the CDN alone.
+const BRAND_LOCAL_AFTER_MS = 1200;
+
 class HaFileExplorerPanel extends HTMLElement {
   constructor() {
     super();
@@ -869,26 +874,17 @@ class HaFileExplorerPanel extends HTMLElement {
     this._releaseBrandUrls();
     list.querySelectorAll("img.fe-brand-ico").forEach((img) => {
       const slot = img.parentElement;
+      const domain = img.dataset.brand;
+      const darkNow = () => img.dataset.dark === "1";
+      const cdn = () => this._brandUrl(domain, darkNow());
       const drop = () => img.remove();
-      /**
-       * Fallback ladder: dark CDN art -> light CDN art -> the integration's own
-       * `brand/` folder served by the backend (works with no internet) -> plain
-       * folder glyph.
-       */
-      const fail = () => {
-        if (img.dataset.dark === "1") {
-          img.dataset.dark = "0";
-          img.src = this._brandUrl(img.dataset.brand, false);
-          return;
-        }
-        if (img.dataset.local === "1") {
-          drop();
-          return;
-        }
-        img.dataset.local = "1";
+      let hedge = 0;
+      /** Ask the backend for the integration's own `brand/` art (works offline). */
+      const askLocal = (keepCdn) => {
         this._api
-          .brand(img.dataset.brand, this._hass && this._hass.themes && this._hass.themes.darkMode)
+          .brand(domain, darkNow())
           .then((local) => {
+            clearTimeout(hedge);
             if (!img.isConnected) {
               local.revoke();
               return;
@@ -896,21 +892,51 @@ class HaFileExplorerPanel extends HTMLElement {
             this._brandUrls.push(local);
             img.src = local.url;
           })
-          .catch(drop);
+          .catch(() => {
+            // No local art: if this was only a hedge, let the CDN answer after all.
+            if (keepCdn) img.src = cdn();
+            else drop();
+          });
       };
-      // Hidden until the picture is really there, so a failed request never
-      // flashes the browser's broken-image glyph.
+      /**
+       * Fallback ladder: dark CDN art -> light CDN art -> the integration's own
+       * `brand/` folder served by the backend -> the folder glyph underneath.
+       * `dataset.local`: "" untouched, "1" real 404 (nothing left to try),
+       * "2" hedged past a slow CDN.
+       */
+      const fail = () => {
+        if (darkNow()) {
+          img.dataset.dark = "0";
+          img.src = cdn();
+          return;
+        }
+        if (img.dataset.local) {
+          drop();
+          return;
+        }
+        img.dataset.local = "1";
+        askLocal(false);
+      };
       img.addEventListener("load", () => {
+        clearTimeout(hedge);
         if (slot) slot.dataset.loaded = "1";
       });
       img.addEventListener("error", fail);
+      // A CDN that hangs (or is blocked) must not hold the icon hostage: after
+      // BRAND_LOCAL_AFTER_MS the LAN side is asked in parallel, and whichever
+      // answers first wins.
+      hedge = setTimeout(() => {
+        if (!img.isConnected || slot.dataset.loaded === "1" || img.dataset.local) return;
+        img.dataset.local = "2";
+        askLocal(true);
+      }, BRAND_LOCAL_AFTER_MS);
       // Cached results fire before these listeners exist.
       if (img.complete && img.naturalWidth > 0) {
+        clearTimeout(hedge);
         if (slot) slot.dataset.loaded = "1";
       } else if (img.complete && img.naturalWidth === 0) fail();
     });
   }
-
   _fileRow(item) {
     const name = esc(item.name);
     const attr = `data-name="${name}"`;
