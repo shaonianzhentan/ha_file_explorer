@@ -19,50 +19,32 @@ After installation, restart home assistant, refresh the page and search for `ha_
 
 ## Features
 
-- [x] create new file or new folder
-- [x] delete file or folder
-- [x] upload files or folder
+**File management**
+
+- [x] create new file or folder
 - [x] rename file or folder
-- [x] modify file content
-- [x] download files or folders (as a zip)
-- [x] filter by name, browse `/local` files
-- [x] native HA custom panel: ES module, no iframe
-- [x] follows the active Home Assistant theme (light/dark) and language (en / zh / ru)
+- [x] delete file or folder
+- [x] upload files or whole folders (also via drag-and-drop, with a confirmable upload queue)
+- [x] download files or folders (folders are packed into a zip automatically)
 
-## How it works
+**View & edit**
 
-The integration registers a native HA `custom` panel with
-`async_register_built_in_panel(..., component_name="custom")`. Home Assistant
-loads `www/ha-file-explorer.js` as an ES module and mounts the
-`<ha-file-explorer-panel>` web component, passing `hass`, `panel`, `narrow`
-and `route`. Because the panel runs inside the main HA document instead of an
-iframe, all colors come from HA theme CSS variables and API calls are
-authenticated with `hass.fetchWithAuth`.
+- [x] edit text file content in a built-in editor
+- [x] syntax highlighting and code formatting / lint hints for common formats
+- [x] preview images and videos
 
-Module files are served from a versioned URL
-(`/ha_file_explorer-assets/<version>/...`), so an upgrade never leaves a stale
-cached panel behind.
+**Browse & navigate**
 
-## Development
+- [x] breadcrumb path navigation
+- [x] filter and search by file name
+- [x] switch between list and tile views, with options to show size and modified date
 
-No build step, no npm dependencies and no external CDN:
+**Integration**
 
-```text
-custom_components/ha_file_explorer/
-├── __init__.py          # panel registration
-├── config_flow.py
-├── file_api.py          # filesystem helpers
-├── http_api.py          # REST API
-├── manifest.py
-├── manifest.json
-└── www/
-    ├── ha-file-explorer.js   # custom element (entry ES module)
-    └── modules/              # api / i18n / format / styles modules
-```
-
-Edit the JS files directly and hard-refresh HA. When publishing a change, bump
-`version` in `manifest.json` so the module URL changes and browser caches are
-invalidated.
+- [x] native Home Assistant custom panel (ES module, no iframe)
+- [x] follows the active HA theme (light / dark)
+- [x] follows the Home Assistant language (English / 简体中文 / Русский)
+- [x] can toggle the HA sidebar, and shows item details (size, dates, permissions, path)
 
 ## Screenshot
 
