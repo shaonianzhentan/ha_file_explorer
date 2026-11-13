@@ -44,14 +44,23 @@ export function createApi(hass) {
   };
 
   return {
-    /** List the contents of a config-relative directory. */
-    list(path) {
-      return json("list", { path, t: Date.now() }, { method: "GET" });
+    /**
+     * List the contents of a config-relative directory. Folder sizes are left
+     * out unless `sizes` is set, because they need a full tree walk each.
+     */
+    list(path, { sizes = false } = {}) {
+      const params = sizes ? { path, sizes: "1", t: Date.now() } : { path, t: Date.now() };
+      return json("list", params, { method: "GET" });
     },
 
     /** Read a UTF-8 text file. */
     content(path) {
       return json("content", { path, t: Date.now() }, { method: "GET" });
+    },
+
+    /** Recursive size of one folder, measured on demand (walks the subtree). */
+    size(path) {
+      return json("size", { path, t: Date.now() }, { method: "GET" });
     },
 
     /** Size, timestamps and permissions of one file or folder. */

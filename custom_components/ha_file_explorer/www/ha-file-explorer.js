@@ -195,6 +195,9 @@ async function collectTransfer(transfer) {
 // networks; after this delay the panel also asks the backend for the art the
 // integration ships locally, instead of waiting for the CDN alone.
 const BRAND_LOCAL_AFTER_MS = 1200;
+// A measured folder size stays good for this long: it only changes when someone
+// writes into the folder, and re-walking on every visit would be waste.
+const FOLDER_SIZE_TTL_MS = 30000;
 
 class HaFileExplorerPanel extends HTMLElement {
   constructor() {
@@ -221,8 +224,9 @@ class HaFileExplorerPanel extends HTMLElement {
     this._rowMenu = null;
     this._bgMenu = null;
     this._viewMenu = null;
-    // Display options: the date column is noise by default, so it is opt-in.
-    this._showSize = this._pref("showSize", true);
+    // Display options: the name is the only thing a file list must show, so
+    // both the size and the date columns are opt-in.
+    this._showSize = this._pref("showSize", false);
     this._showTime = this._pref("showTime", false);
     this._loading = false;
     this._loadStarted = false;
@@ -232,6 +236,13 @@ class HaFileExplorerPanel extends HTMLElement {
     this._loadError = null;
     // Blob URLs for locally served brand art, revoked on the next render.
     this._brandUrls = [];
+    // Folder sizes need a tree walk each, so they are measured lazily for the
+    // rows in view and cached until the next listing.
+    this._sizes = new Map();
+    this._sizeObserver = null;
+    this._sizeQueue = [];
+    this._sizePending = new Set();
+    this._sizeActive = 0;
     this._ready = false;
   }
 
@@ -761,6 +772,13 @@ class HaFileExplorerPanel extends HTMLElement {
   }
 
   _renderList() {
+    // A new listing invalidates the lazy size pass of the previous one.
+    if (this._sizeObserver) {
+      this._sizeObserver.disconnect();
+      this._sizeObserver = null;
+    }
+    this._sizeQueue.length = 0;
+    this._sizePending.clear();
     if (
       this._rowMenu &&
       this._filter &&
@@ -806,6 +824,7 @@ class HaFileExplorerPanel extends HTMLElement {
             </div>
           </div>`;
     this._bindBrandIcons(list);
+    this._watchFolderSizes(list);
   }
 
   /**
@@ -951,7 +970,7 @@ class HaFileExplorerPanel extends HTMLElement {
         ${this._rowIcon(item, `fe-row-ico${ha}`)}
         <div class="fe-row-name${ha}" data-action="${openAction}" ${attr}>${name}</div>
         <div class="fe-row-time">${esc(item.time)}</div>
-        <div class="fe-row-size">${esc(this._sizeText(item))}</div>
+        <div class="fe-row-size"${this._sizeSlot(item)}>${esc(this._sizeText(item))}</div>
         <div class="fe-row-menu">
           <button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="${esc(this._t("moreOptions"))}" aria-label="${esc(this._t("moreOptions"))}"><ha-icon class="fe-ico" icon="mdi:dots-vertical"></ha-icon></button>
         </div>
@@ -970,7 +989,7 @@ class HaFileExplorerPanel extends HTMLElement {
       <div class="fe-tile${isDir ? " is-dir" : ""}${open ? " menu-open" : ""}" ${attr}${isDir ? ` data-action="open-dir"` : ""}>
         ${this._rowIcon(item, `fe-tile-ico${ha}`)}
         <div class="fe-tile-name${ha}" data-action="${openAction}" ${attr} title="${name}">${name}</div>
-        <div class="fe-tile-meta"><span class="fe-tile-size">${esc(this._sizeText(item))}</span><span class="fe-tile-time">${esc(item.time)}</span></div>
+        <div class="fe-tile-meta"><span class="fe-tile-size"${this._sizeSlot(item)}>${esc(this._sizeText(item))}</span><span class="fe-tile-time">${esc(item.time)}</span></div>
         <div class="fe-tile-menu">
           <button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="${esc(this._t("moreOptions"))}" aria-label="${esc(this._t("moreOptions"))}"><ha-icon class="fe-ico" icon="mdi:dots-vertical"></ha-icon></button>
         </div>
@@ -984,6 +1003,97 @@ class HaFileExplorerPanel extends HTMLElement {
     return item.size ? formatSize(item.size) : "";
   }
 
+  /** Marks a blank folder size as "still to be measured", with its own path. */
+  _sizeSlot(item) {
+    // Nothing to measure while the size column is hidden.
+    if (!this._showSize || item.type !== "dir" || item.size) return "";
+    return ` data-size="${esc(joinPath(splitPath(this._path), item.name))}"`;
+  }
+
+  /**
+   * Folder sizes are measured lazily: only the rows that scrolled into view are
+   * asked for, two at a time. The listing itself stays one `scandir` pass, which
+   * is what made opening a directory slow in the first place.
+   */
+  _watchFolderSizes(list) {
+    if (!this._showSize) return;
+    const slots = [...list.querySelectorAll("[data-size]")];
+    if (!slots.length) return;
+    let pending = false;
+    slots.forEach((el) => {
+      const cached = this._cachedSize(el.dataset.size);
+      if (cached) this._paintSize(el, cached);
+      else pending = true;
+    });
+    if (!pending) return;
+    if (typeof IntersectionObserver !== "function") {
+      this._queueSizes(slots.map((el) => el.dataset.size));
+      return;
+    }
+    this._sizeObserver = new IntersectionObserver(
+      (entries) => {
+        const keys = entries
+          .filter((entry) => entry.isIntersecting)
+          .map((entry) => {
+            this._sizeObserver.unobserve(entry.target);
+            return entry.target.dataset.size;
+          });
+        if (keys.length) this._queueSizes(keys);
+      },
+      // The list scrolls inside .fe-body, so that is the viewport to watch.
+      { root: this.shadowRoot.querySelector(".fe-body"), rootMargin: "240px 0px" }
+    );
+    slots.forEach((el) => {
+      if (!this._cachedSize(el.dataset.size)) this._sizeObserver.observe(el);
+    });
+  }
+
+  /** Cached folder size, if it is still fresh enough to trust. */
+  _cachedSize(key) {
+    const entry = this._sizes.get(key);
+    if (!entry || Date.now() - entry.at > FOLDER_SIZE_TTL_MS) return null;
+    return entry;
+  }
+
+  _paintSize(el, entry) {
+    if (entry.size) el.textContent = entry.size_name || formatSize(entry.size);
+  }
+
+  _queueSizes(keys) {
+    keys.forEach((key) => {
+      if (!key || this._cachedSize(key) || this._sizePending.has(key)) return;
+      this._sizePending.add(key);
+      this._sizeQueue.push(key);
+    });
+    this._runSizes();
+  }
+
+  /** Two walkers at a time keeps a pi from stuttering on big folders. */
+  _runSizes() {
+    while (this._sizeActive < 2 && this._sizeQueue.length) {
+      const key = this._sizeQueue.shift();
+      this._sizeActive += 1;
+      this._api
+        .size(key)
+        .then((entry) => {
+          // The API answers an error as {code, msg}; treat it as "no size".
+          if (!entry || typeof entry.size !== "number") throw new Error("no size");
+          this._sizes.set(key, { ...entry, at: Date.now() });
+          const value = `${CSS.escape(key)}`;
+          this.shadowRoot.querySelectorAll(`[data-size="${value}"]`).forEach((el) => this._paintSize(el, entry));
+        })
+        .catch(() => {
+          // Unreadable folder: remember it as "no size" so it is not asked twice.
+          this._sizes.set(key, { size: 0, size_name: "", at: Date.now() });
+        })
+        .finally(() => {
+          this._sizePending.delete(key);
+          this._sizeActive -= 1;
+          this._runSizes();
+        });
+    }
+  }
+
   /**
    * Grid template for the details rows: built from the columns that are
    * actually visible, so a hidden one never leaves an empty track behind.
@@ -992,7 +1102,7 @@ class HaFileExplorerPanel extends HTMLElement {
     const app = this.shadowRoot.querySelector("#app");
     const width = app ? app.clientWidth : 0;
     const columns = ["22px", "minmax(0, 1fr)"];
-    if (this._showTime) columns.push(width < 760 ? "112px" : "148px");
+    if (this._showTime) columns.push(width < 760 ? "124px" : "156px");
     if (this._showSize) columns.push(width < 520 ? "70px" : width < 760 ? "84px" : "110px");
     columns.push(width < 520 ? "28px" : width < 760 ? "30px" : "32px");
     return columns.join(" ");
@@ -2076,7 +2186,7 @@ class HaFileExplorerPanel extends HTMLElement {
       case "download-folder": {
         const path = node.dataset.path || "";
         if (path) {
-          this._confirmDownload(path, splitPath(path).pop() || this._t("haRoot"));
+          this._confirmDownload(path, splitPath(path).pop() || this._t("haRoot"), true);
         }
         break;
       }
@@ -2158,12 +2268,7 @@ class HaFileExplorerPanel extends HTMLElement {
         break;
       case "preview-download":
         if (this._preview) {
-          const path = this._preview.path;
-          this._api
-            .download(path)
-            .catch((err) =>
-              this._toast(err.message || this._t("requestFailed"), "error")
-            );
+          this._confirmDownload(this._preview.path, this._preview.name);
         }
         break;
       case "retry-load":
@@ -2182,7 +2287,11 @@ class HaFileExplorerPanel extends HTMLElement {
         this._showUpload(true);
         break;
       case "download-current":
-        this._confirmDownload(this._path, parts[parts.length - 1] || this._t("haRoot"));
+        this._confirmDownload(
+          this._path,
+          parts[parts.length - 1] || this._t("haRoot"),
+          true
+        );
         break;
       case "rename-current":
         this._showRename(this._path, parts[parts.length - 1] || this._t("haRoot"), true);
@@ -2499,10 +2608,10 @@ class HaFileExplorerPanel extends HTMLElement {
     }
   }
 
-  _confirmDownload(path, name) {
+  _confirmDownload(path, name, isDir = false) {
     this._showDialog({
       title: this._t("download"),
-      content: `<p>${esc(this._t("downloadConfirm", name))}</p>`,
+      content: `<p>${esc(this._t(isDir ? "downloadConfirmFolder" : "downloadConfirm", name))}</p>`,
       confirmText: this._t("download"),
       onConfirm: async () => {
         await this._download(path);
@@ -2511,9 +2620,7 @@ class HaFileExplorerPanel extends HTMLElement {
   }
 
   _downloadItem(name, type) {
-    const path = joinPath(splitPath(this._path), name);
-    if (type === "dir") this._confirmDownload(path, name);
-    else this._download(path);
+    this._confirmDownload(joinPath(splitPath(this._path), name), name, type === "dir");
   }
 
   _showUpload(directory) {

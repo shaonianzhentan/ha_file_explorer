@@ -36,9 +36,9 @@ export const styles = `
 
   /* Windows 11 shell: Segoe UI Variable first, with HA's stack as fallback. */
   --fe-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", var(--ha-font-family-body, "Roboto", "Microsoft YaHei", system-ui, sans-serif);
-  --fe-font-m: var(--ha-font-size-m, 14px);
-  --fe-font-s: var(--ha-font-size-s, 13px);
-  --fe-font-xs: var(--ha-font-size-xs, 12px);
+  --fe-font-m: max(15px, var(--ha-font-size-m, 14px));
+  --fe-font-s: max(14px, var(--ha-font-size-s, 13px));
+  --fe-font-xs: max(13px, var(--ha-font-size-xs, 12px));
   --fe-font-xl: var(--ha-font-size-xl, 20px);
   --fe-radius-card: 8px;
   --fe-radius-control: 4px;
@@ -457,7 +457,7 @@ ha-icon.fe-row-ico { --mdc-icon-size: 22px; }
    font/padding/scroll box so the two layers never drift apart. */
 .fe-code-wrap { position: relative; flex: 1; min-width: 0; overflow: hidden; }
 .fe-hl, textarea.fe-code {
-  position: absolute; inset: 0; margin: 0; padding: 12px; border: 0;
+  position: absolute; inset: 0; margin: 0; padding: 12px 24px 12px 20px; border: 0;
   font: 13px/20px ui-monospace, SFMono-Regular, Consolas, monospace;
   white-space: pre; tab-size: 2; overflow: hidden;
 }
@@ -596,10 +596,10 @@ textarea.fe-code::selection { color: transparent; background: color-mix(in srgb,
 }
 .fe-preview-ico { color: #c9d2e0; }
 .fe-preview-name {
-  font-size: 14px; font-weight: 600; max-width: 46%;
+  font-size: var(--fe-font-m); font-weight: 600; max-width: 46%;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.fe-preview-meta { font-size: 12px; opacity: 0.72; white-space: nowrap; }
+.fe-preview-meta { font-size: var(--fe-font-xs); opacity: 0.72; white-space: nowrap; }
 .fe-preview-bar .fe-spacer { flex: 1; }
 .fe-preview-bar .fe-icon-btn { color: #f2f4f8; }
 .fe-preview-bar .fe-icon-btn:hover,

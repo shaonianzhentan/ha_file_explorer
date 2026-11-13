@@ -9,8 +9,9 @@ from __future__ import annotations
 import io
 import os
 import shutil
+import stat as stat_module
+import time
 import zipfile
-from datetime import datetime
 from pathlib import Path
 
 
@@ -109,25 +110,38 @@ def _mode_string(mode: int) -> str:
     return kind + bits
 
 
-def get_dir_list(directory: str) -> list[dict]:
-    """List a directory, folders first and then files, both by name."""
+def get_dir_list(directory: str, with_sizes: bool = False) -> list[dict]:
+    """List a directory, folders first and then files, both by name.
+
+    Folder sizes are **not** computed by default: one `os.walk` per subfolder
+    turned a listing of the config root into walking everything below it
+    (`.storage`, `www`, `backups`, a multi-GB recorder database...) on every
+    open, which is what made the panel feel slow. One `scandir` pass is all it
+    takes now; the info dialog still reports an exact recursive size on demand.
+    Pass `with_sizes=True` to ask for the old (expensive) behaviour.
+    """
     items: list[dict] = []
     with os.scandir(directory) as entries:
         for entry in entries:
             try:
                 stat = entry.stat()
-                is_dir = entry.is_dir()
-                size = get_dir_size(entry.path) if is_dir else stat.st_size
+                is_dir = stat_module.S_ISDIR(stat.st_mode)
+                if is_dir:
+                    size = get_dir_size(entry.path) if with_sizes else 0
+                else:
+                    size = stat.st_size
                 items.append(
                     {
                         "name": entry.name,
                         "path": entry.name,
-                        "time": datetime.fromtimestamp(stat.st_mtime).strftime(
-                            "%Y-%m-%d %H:%M:%S"
+                        # localtime + manual format beats datetime.fromtimestamp
+                        # for a few hundred entries.
+                        "time": time.strftime(
+                            "%Y-%m-%d %H:%M:%S", time.localtime(stat.st_mtime)
                         ),
                         "type": "dir" if is_dir else "file",
                         "size": size,
-                        "size_name": format_size(size),
+                        "size_name": format_size(size) if size else "",
                     }
                 )
             except OSError:

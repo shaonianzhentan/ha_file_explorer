@@ -11,7 +11,9 @@ from homeassistant.components.http import HomeAssistantView
 from .file_api import (
     delete_file,
     dir_to_zip,
+    format_size,
     get_dir_list,
+    get_dir_size,
     get_item_info,
     load_content,
     mkdir,
@@ -227,10 +229,23 @@ class HttpApi(HomeAssistantView):
                 )
                 return self.json({"code": 0, "data": data})
 
+            if action == "size":
+                # One folder's recursive size, asked for lazily by the panel as
+                # rows scroll into view. Never part of the listing itself.
+                if not path.is_dir():
+                    return self._error("目录不存在", 404)
+                size = await hass.async_add_executor_job(get_dir_size, str(path))
+                return self.json({"size": size, "size_name": format_size(size)})
+
             if action == "list":
                 if not path.is_dir():
                     return self._error("目录不存在", 404)
-                data = await hass.async_add_executor_job(get_dir_list, str(path))
+                # Recursive folder sizes are opt-in: they cost one full tree
+                # walk per folder and are not needed to render the list.
+                with_sizes = request.query.get("sizes") in ("1", "true")
+                data = await hass.async_add_executor_job(
+                    get_dir_list, str(path), with_sizes
+                )
                 return self.json(data)
 
             return self._error("未知操作")

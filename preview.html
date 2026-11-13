@@ -201,7 +201,7 @@ body {
   --fe-selected: rgba(var(--rgb-primary-color, 3, 169, 244), .14);
   --fe-selected: color-mix(in srgb, var(--fe-accent) 14%, transparent);
   --fe-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", var(--ha-font-family-body, "Roboto", "Microsoft YaHei", system-ui, sans-serif);
-  --fe-font-m: 14px; --fe-font-s: 13px; --fe-font-xs: 12px; --fe-font-xl: 20px;
+  --fe-font-m: 15px; --fe-font-s: 14px; --fe-font-xs: 13px; --fe-font-xl: 20px;
   --fe-radius-card: 8px; --fe-radius-control: 4px; --fe-radius-dialog: 8px;
   --fe-card-border: 1px solid var(--fe-line);
   --fe-card-shadow: none;
@@ -450,7 +450,7 @@ body {
 }
 .fe-code-wrap { position: relative; flex: 1; min-width: 0; overflow: hidden; }
 .fe-hl, textarea.fe-code {
-  position: absolute; inset: 0; margin: 0; padding: 12px; border: 0;
+  position: absolute; inset: 0; margin: 0; padding: 12px 24px 12px 20px; border: 0;
   font: 13px/20px ui-monospace, SFMono-Regular, Consolas, monospace;
   white-space: pre; tab-size: 2; overflow: hidden;
 }
@@ -529,8 +529,8 @@ textarea.fe-code::selection { color: transparent; background: color-mix(in srgb,
 
 .fe-preview { position: absolute; inset: 0; pointer-events: auto; display: flex; flex-direction: column; background: rgba(12, 14, 18, 0.82); }
 .fe-preview-bar { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; padding: 8px 8px 8px 14px; color: #f2f4f8; background: rgba(0, 0, 0, 0.35); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
-.fe-preview-name { font-size: 14px; font-weight: 600; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fe-preview-meta { font-size: 12px; opacity: 0.72; white-space: nowrap; }
+.fe-preview-name { font-size: var(--fe-font-m); font-weight: 600; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fe-preview-meta { font-size: var(--fe-font-xs); opacity: 0.72; white-space: nowrap; }
 .fe-preview-bar .fe-spacer { flex: 1; }
 .fe-preview-bar .fe-icon-btn { color: #f2f4f8; }
 .fe-preview-bar .fe-icon-btn:hover, .fe-preview-bar .fe-icon-btn:active { background: rgba(255, 255, 255, 0.16); }
@@ -798,6 +798,85 @@ function resolveDir(path) {
   return node;
 }
 function sizeText(it) { return it.size_name || (it.size ? sizeName(it.size) : ""); }
+
+/** 空白尺寸的文件夹：把该测的路径记在格子上，滚进视口才去问后端。 */
+function sizeSlot(it) {
+  // 尺寸列隐藏时不做无谓的标记。
+  if (!state.showSize || it.type !== "dir" || it.size) return "";
+  return ` data-size="${esc(pathOf(it.name))}"`;
+}
+function pathOf(name) { return state.path ? `${state.path}/${name}` : name; }
+
+function watchFolderSizes(list) {
+  if (!state.showSize) return;
+  const slots = [...list.querySelectorAll("[data-size]")];
+  if (!slots.length) return;
+  let pending = false;
+  slots.forEach((el) => {
+    const cached = cachedSize(el.dataset.size);
+    if (cached) paintSize(el, cached);
+    else pending = true;
+  });
+  if (!pending) return;
+  if (typeof IntersectionObserver !== "function") {
+    queueSizes(slots.map((el) => el.dataset.size));
+    return;
+  }
+  state.sizeObserver = new IntersectionObserver(
+    (entries) => {
+      const keys = entries
+        .filter((entry) => entry.isIntersecting)
+        .map((entry) => {
+          state.sizeObserver.unobserve(entry.target);
+          return entry.target.dataset.size;
+        });
+      if (keys.length) queueSizes(keys);
+    },
+    // 列表在 .fe-body 里滚动，就盯着它；多留 240px 提前量。
+    { root: document.querySelector(".fe-body"), rootMargin: "240px 0px" }
+  );
+  slots.forEach((el) => {
+    if (!cachedSize(el.dataset.size)) state.sizeObserver.observe(el);
+  });
+}
+
+function cachedSize(key) {
+  const entry = state.sizes.get(key);
+  if (!entry || Date.now() - entry.at > FOLDER_SIZE_TTL_MS) return null;
+  return entry;
+}
+
+function paintSize(el, entry) {
+  if (!entry.size) return;
+  el.textContent = entry.size_name || sizeName(entry.size);
+  entry.size_name = entry.size_name || sizeName(entry.size);
+}
+
+function queueSizes(keys) {
+  keys.forEach((key) => {
+    if (!key || cachedSize(key) || state.sizePending.has(key)) return;
+    state.sizePending.add(key);
+    state.sizeQueue.push(key);
+  });
+  runSizes();
+}
+
+/** 一次两个，别把大目录一起压上来。 */
+function runSizes() {
+  while (state.sizeActive < 2 && state.sizeQueue.length) {
+    const key = state.sizeQueue.shift();
+    state.sizeActive += 1;
+    mockDirSize(key, (entry) => {
+      state.sizes.set(key, { ...entry, at: Date.now() });
+      document
+        .querySelectorAll(`[data-size="${CSS.escape(key)}"]`)
+        .forEach((el) => paintSize(el, entry));
+      state.sizePending.delete(key);
+      state.sizeActive -= 1;
+      runSizes();
+    });
+  }
+}
 function dirSize(node) {
   let total = 0;
   for (const name in node.children || {}) {
@@ -806,12 +885,22 @@ function dirSize(node) {
   }
   return total;
 }
+/* 量出来的文件夹大小 30s 内可复用：只有往里写东西才会变，每次进目录都重走一遍太浪费。 */
+const FOLDER_SIZE_TTL_MS = 30000;
+/* 演示：模拟后端 /api/ha_file_explorer/size（对一个目录做一次递归统计） */
+function mockDirSize(path, done) {
+  setTimeout(() => {
+    const node = resolveDir(path);
+    done({ size: node ? dirSize(node) : 0 });
+  }, 260);
+}
 function listDir(path) {
   const node = resolveDir(path);
   const folders = [], files = [];
   for (const name in node.children) {
     const item = node.children[name];
-    const size = item.type === "dir" ? dirSize(item) : item.size ?? 0;
+    // 与真实后端一致：列表不带递归大小，文件夹大小按需另取（懒计算）。
+    const size = item.type === "dir" ? 0 : item.size ?? 0;
     (item.type === "dir" ? folders : files).push({
       name, type: item.type, time: NOW, size, size_name: size ? sizeName(size) : "",
     });
@@ -831,10 +920,16 @@ const state = {
   // null = 跟随宽度：PC 平铺、移动端列表；手动点视图开关会覆盖它。
   viewMode: null,
   // 显示选项：日期默认不显示，用户可在「查看方式」里打开。
-  showSize: readPref("showSize", true),
+  showSize: readPref("showSize", false),
   showTime: readPref("showTime", false),
   viewMenu: null,
   editor: { name: "", value: "", dirty: false },
+  // 文件夹大小懒计算：只算滚进视口的行，进新目录就清空重来。
+  sizes: new Map(),
+  sizeObserver: null,
+  sizeQueue: [],
+  sizePending: new Set(),
+  sizeActive: 0,
 };
 /** 与面板一致：偏好存 localStorage，读写失败就用默认值。 */
 function readPref(name, fallback) {
@@ -1000,6 +1095,13 @@ function visibleItems() {
   return state.items.filter((it) => !q || it.name.toLowerCase().includes(q));
 }
 function renderList() {
+  // 新的列表让上一轮的懒计算作废。
+  if (state.sizeObserver) {
+    state.sizeObserver.disconnect();
+    state.sizeObserver = null;
+  }
+  state.sizeQueue.length = 0;
+  state.sizePending.clear();
   if (state.rowMenu && state.filter && !visibleItems().some((it) => it.name === state.rowMenu.name)) {
     state.rowMenu = null;
     syncMenuLayer();
@@ -1018,12 +1120,13 @@ function renderList() {
     : state.filter.trim()
       ? `<div class="fe-empty">${ic("file")}<div>没有匹配的项目</div><div class="fe-empty-actions">${topBtn("clear-search", "clear", "清除搜索")}</div></div>`
       : `<div class="fe-empty">${ic("folderOpen")}<div>当前目录下暂无内容，可直接新建或上传。</div><div class="fe-empty-actions">${topBtn("new-file", "plusFile", "新建文件")}${topBtn("new-folder", "plusFolder", "新建文件夹")}${topBtn("upload-files", "plusUpload", "上传文件")}</div></div>`;
+  watchFolderSizes(list);
 }
 /** 列宽跟着显示选项走，隐藏的列不会留下空轨道。 */
 function rowColumns() {
   const w = (document.querySelector("#feApp") || {}).clientWidth || 0;
   const cols = ["22px", "minmax(0, 1fr)"];
-  if (state.showTime) cols.push(w < 760 ? "112px" : "148px");
+  if (state.showTime) cols.push(w < 760 ? "124px" : "156px");
   if (state.showSize) cols.push(w < 520 ? "70px" : w < 760 ? "84px" : "110px");
   cols.push(w < 520 ? "28px" : w < 760 ? "30px" : "32px");
   return cols.join(" ");
@@ -1121,7 +1224,7 @@ function rowFile(it) {
     ${rowIcon(it, iconCls(it, "fe-row-ico"))}
     <div class="fe-row-name${haClass(it)}" data-action="${openAction}" ${attr}>${esc(it.name)}</div>
     <div class="fe-row-time">${esc(it.time)}</div>
-    <div class="fe-row-size">${esc(sizeText(it))}</div>
+    <div class="fe-row-size"${sizeSlot(it)}>${esc(sizeText(it))}</div>
     <div class="fe-row-menu"><button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="更多操作" aria-label="更多操作">${ic("moreVertical")}</button></div>
   </div>`;
 }
@@ -1136,7 +1239,7 @@ function tileFile(it) {
   return `<div class="fe-tile${isDir ? " is-dir" : ""}${open ? " menu-open" : ""}" ${attr}${isDir ? ` data-action="open-dir"` : ""}>
     ${rowIcon(it, iconCls(it, "fe-tile-ico"))}
     <div class="fe-tile-name${haClass(it)}" data-action="${openAction}" ${attr} title="${esc(it.name)}">${esc(it.name)}</div>
-    <div class="fe-tile-meta"><span class="fe-tile-size">${esc(sizeText(it))}</span><span class="fe-tile-time">${esc(it.time)}</span></div>
+    <div class="fe-tile-meta"><span class="fe-tile-size"${sizeSlot(it)}>${esc(sizeText(it))}</span><span class="fe-tile-time">${esc(it.time)}</span></div>
     <div class="fe-tile-menu"><button class="fe-icon-btn fe-row-menu-btn" data-action="row-menu" ${attr} title="更多操作" aria-label="更多操作">${ic("moreVertical")}</button></div>
   </div>`;
 }
@@ -1400,7 +1503,12 @@ function formatDoc() {
 
 /* ---------------- 对话框 / 菜单 ---------------- */
 function showDialog(html) { $("dialogLayer").innerHTML = html; $("dialogLayer").classList.add("show"); }
-function closeDialog() { state.dialog = null; $("dialogLayer").classList.remove("show"); $("dialogLayer").innerHTML = ""; }
+function closeDialog() {
+  state.dialog = null;
+  // 预览和对话框共用一个层：关掉对话框要把底下的预览还回来。
+  if (state.preview) { renderPreview(); return; }
+  $("dialogLayer").classList.remove("show"); $("dialogLayer").innerHTML = "";
+}
 function openCreate(kind) {
   state.dialog = { kind, value: "" };
   const isDir = kind === "folder";
@@ -1746,6 +1854,10 @@ function confirmDialog() {
     closeDialog(); toast("已重命名为 " + name);
     status(`PUT /api/ha_file_explorer/rename  { path: "${joinPath(state.path, dlg.old)}", new_path: "${joinPath(state.path, name)}" }`);
     load();
+  } else if (dlg.kind === "download") {
+    closeDialog();
+    toast(dlg.type === "dir" ? `已将 ${dlg.name} 打包为 zip（演示）` : `已开始下载 ${dlg.name}（演示）`);
+    status(`GET /api/ha_file_explorer/download?path=${dlg.path}`);
   } else if (dlg.kind === "delete") {
     delete resolveDir(state.path).children[dlg.name];
     closeDialog(); toast("已删除 " + dlg.name);
@@ -2311,14 +2423,22 @@ function recordDemoVideo() {
   });
   return demoVideoPromise;
 }
+/* 下载统一先确认：文件一次、文件夹（打包成 zip）一次。 */
+function openDownloadConfirm(name, path, type) {
+  state.dialog = { kind: "download", name, path, type };
+  showDialog(`<div class="fe-backdrop" data-action="backdrop"><div class="fe-dialog">
+    <h3>${type === "dir" ? "下载文件夹" : "下载文件"}</h3>
+    <div class="fe-dialog-body"><p>确定要下载${type === "dir" ? "文件夹" : "文件"} <b>${esc(name)}</b> 吗？</p>
+      <p class="hint">${type === "dir" ? "会先在服务端打包成 zip 再下载。" : `地址：${esc(path)}`}</p></div>
+    <div class="fe-dialog-footer"><button class="fe-btn" data-action="dialog-cancel">取消</button><button class="fe-btn primary" data-action="dialog-confirm">下载</button></div>
+  </div></div>`);
+}
 function download(name, type) {
-  toast(type === "dir" ? `已将 ${name} 打包为 zip（演示）` : `已开始下载 ${name}（演示）`);
-  status(`GET /api/ha_file_explorer/download?path=${joinPath(state.path, name)}`);
+  openDownloadConfirm(name, joinPath(state.path, name), type);
 }
 function downloadFolderAt(path) {
   if (!path) return;
-  toast(`已将 ${path} 打包为 zip（演示）`);
-  status(`GET /api/ha_file_explorer/download?path=${path}`);
+  openDownloadConfirm(path.split("/").pop() || "HA", path, "dir");
 }
 function renameFolderAt(path) {
   if (!path) return;
@@ -2436,15 +2556,15 @@ function onAction(action, node, e) {
     case "preview-open": toast(`在新窗口打开 ${state.preview ? state.preview.name : ""}（演示）`); break;
     case "preview-download":
       if (state.preview) {
-        toast(`已开始下载 ${state.preview.name}（演示）`);
-        status(`GET /api/ha_file_explorer/download?path=${joinPath(state.path, state.preview.name)}`);
+        const path = joinPath(state.path, state.preview.name);
+        openDownloadConfirm(state.preview.name, path, "file");
       }
       break;
     case "new-file": openCreate("file"); break;
     case "new-folder": openCreate("folder"); break;
     case "upload-files": openUpload(false); break;
     case "upload-folder": openUpload(true); break;
-    case "download-current": download(state.path.split("/").pop(), "dir"); break;
+    case "download-current": download(state.path.split("/").pop() || "HA", "dir"); break;
     case "rename-current": renameCurrent(); break;
     case "delete-current": deleteCurrent(); break;
     case "download-item": download(name, node.dataset.type); break;

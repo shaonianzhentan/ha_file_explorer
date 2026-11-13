@@ -122,6 +122,9 @@ const STRINGS = {
     downloadConfirm(name) {
       return `Download "${name}"?`;
     },
+    downloadConfirmFolder(name) {
+      return `Download "${name}"? It is packed into a zip first.`;
+    },
     deleteConfirm(name) {
       return `Delete "${name}"? This cannot be undone.`;
     },
@@ -250,6 +253,9 @@ const STRINGS = {
     downloadConfirm(name) {
       return `确定下载【${name}】？`;
     },
+    downloadConfirmFolder(name) {
+      return `确定下载文件夹【${name}】？会先打包成 zip。`;
+    },
     deleteConfirm(name) {
       return `确定删除【${name}】？此操作不可恢复。`;
     },
@@ -377,6 +383,9 @@ const STRINGS = {
     },
     downloadConfirm(name) {
       return `Скачать «${name}»?`;
+    },
+    downloadConfirmFolder(name) {
+      return `Скачать папку «${name}»? Сначала она будет упакована в zip.`;
     },
     deleteConfirm(name) {
       return `Удалить «${name}»? Это действие нельзя отменить.`;
