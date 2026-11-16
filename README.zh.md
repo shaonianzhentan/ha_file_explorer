@@ -42,12 +42,14 @@
 
 - [x] 原生 HA 自定义面板（ES module 加载，不使用 iframe）
 - [x] 跟随 HA 主题（亮色 / 暗色）
-- [x] 跟随 HA 语言（简体中文 / English / Русский）
+- [x] 跟随 HA 语言（简体中文 / 繁體中文 / English / Русский）
 - [x] 可切换 HA 侧边栏，并展示项目详情（大小、时间、权限、路径）
 
 ## 预览
 
-![pic](https://github.com/shaonianzhentan/image/raw/main/ha_file_explorer/ha_file_explorer.png)
+![pic](https://github.com/shaonianzhentan/image/raw/main/ha_file_explorer/1.png)
+
+![pic](https://github.com/shaonianzhentan/image/raw/main/ha_file_explorer/2.png)
 
 ## 如果这个项目对你有帮助，请我喝杯<del style="font-size: 14px;">咖啡</del>奶茶吧😘
 |  |支付宝|微信|

@@ -263,6 +263,136 @@ const STRINGS = {
       return `${count} 个文件`;
     },
   },
+  "zh-Hant": {
+    title: "檔案管理",
+    file: "檔案",
+    folder: "資料夾",
+    files: "檔案",
+    haRoot: "HA",
+    home: "HA",
+    up: "上一級",
+    refresh: "重新整理",
+    gridView: "磚塊",
+    listView: "清單",
+    filterPlaceholder: "依名稱篩選",
+    searchPlaceholder: "搜尋檔案",
+    clearSearch: "清除搜尋",
+    showHideSidebar: "顯示/隱藏 Home Assistant 側邊欄",
+    hintTouch: "點擊檔案列右側選單可編輯、預覽、下載、重新命名或刪除。",
+    moreOptions: "更多選項",
+    loading: "載入中…",
+    loadFailed: "目錄載入失敗",
+    retry: "重試",
+    noResults: "沒有符合的項目",
+    viewOptions: "檢視方式",
+    showSize: "顯示檔案大小",
+    showTime: "顯示修改時間",
+    dropHint: "放開即可上傳到目前資料夾",
+    confirmUpload: "確認上傳",
+    queueTitle(count) { return `上傳佇列（${count}）`; },
+    queueAdded(added, total) { return `已加入 ${added} 項，佇列共 ${total} 項`; },
+    queueFolderMeta(files, size) { return `${files} 個檔案 · ${size}`; },
+    queueTotal(rows, size) { return `共 ${rows} 項 · ${size}`; },
+    queueUpload: "全部上傳",
+    queueClear: "清空佇列",
+    queueProgress(done, total) { return `正在上傳 ${done}/${total}`; },
+    queueOpen(count) { return `上傳佇列（${count}）`; },
+    folderUnreadable: "這個瀏覽器沒有把拖入的資料夾展開。請改用 ⋯ → 上傳資料夾 選擇該資料夾。",
+    folderUnreadableSome(count) { return `已略過 ${count} 個無法讀取的資料夾，請用 ⋯ → 上傳資料夾。`; },
+    remove: "移除",
+    uploadTarget: "上傳到",
+    upload: "上傳",
+    uploadTotal(total, size) { return `共 ${total} 個檔案 · ${size}`; },
+    emptyHint: "目前目錄下暫無檔案，可點擊上方按鈕新增或上傳。",
+    emptyFiles: "暫無檔案",
+    newFile: "新增檔案",
+    newFolder: "新增資料夾",
+    uploadFiles: "上傳檔案",
+    uploadFolder: "上傳資料夾",
+    downloadFolder: "下載資料夾",
+    renameFolder: "重新命名資料夾",
+    deleteFolder: "刪除資料夾",
+    open: "開啟",
+    save: "儲存",
+    format: "格式化",
+    formatDone: "已格式化",
+    formatNoChange: "格式已經是規範的",
+    formatUnsupported: "這種檔案類型不支援格式化",
+    lintOk: "格式正常",
+    lintPyOk: "空白正常",
+    lintIssues(count) { return `${count} 處提示`; },
+    lintLine(line, message) { return `第 ${line} 行：${message}`; },
+    lintSyntax(message) { return `格式有問題（${message}）`; },
+    lintTabIndent: "縮排裡用了 tab（格式化會換成空格）",
+    lintTrailingSpace: "行尾有多餘空格",
+    lintQuote: "引號沒有成對閉合",
+    lintOddIndent(indent) { return `縮排 ${indent} 空格不是 2 的倍數`; },
+    lintNoColonSpace(key) { return `「${key}:」後面少了空格`; },
+    lintDuplicateKey(key, line) { return `鍵「${key}」重複（首次在第 ${line} 行）`; },
+    lintFinalNewline: "檔案末尾缺少換行",
+    lintMixedIndent: "縮排裡 tab 和空格混用（格式化不會動縮排）",
+    cancel: "取消",
+    confirm: "確定",
+    close: "關閉",
+    rename: "重新命名",
+    delete: "刪除",
+    edit: "編輯",
+    download: "下載",
+    preview: "預覽",
+    previewFit: "適合視窗",
+    previewActual: "原始大小",
+    previewOpen: "新視窗開啟",
+    previewPrev: "上一張",
+    previewNext: "下一張",
+    previewLoading: "圖片載入中…",
+    previewFailed: "檔案無法預覽",
+    previewPlay: "播放",
+    currentName: "目前名稱",
+    info: "資訊",
+    infoTitle: "檔案資訊",
+    infoType: "類型",
+    infoSize: "佔用空間",
+    infoContents: "內容",
+    infoFiles: "個檔案",
+    infoFolders: "個資料夾",
+    infoCreated: "建立時間",
+    infoModified: "修改時間",
+    infoAccessed: "存取時間",
+    infoPermission: "權限",
+    infoPath: "位置",
+    infoUnknown: "未知",
+    infoLoading: "正在讀取資訊…",
+    readOnly: "唯讀",
+    readWrite: "可讀可寫",
+    overwriteHint: "注意：相同名稱的檔案會被覆蓋。",
+    unsupportedEdit: "該檔案格式不支援文字編輯。",
+    saved: "儲存成功",
+    savedError: "儲存失敗",
+    requestFailed: "請求失敗",
+    noFiles: "請先選擇檔案",
+    version: "版本",
+    author: "作者",
+    link: "專案連結",
+    unsaved: "有未儲存的修改，確定放棄嗎？",
+    newName(type) {
+      return `新${type}名稱`;
+    },
+    uploadSuccess(total, success) {
+      return `成功上傳 ${success} 個檔案，共 ${total} 個`;
+    },
+    downloadConfirm(name) {
+      return `確定下載「${name}」？`;
+    },
+    downloadConfirmFolder(name) {
+      return `確定下載資料夾「${name}」？會先打包成 zip。`;
+    },
+    deleteConfirm(name) {
+      return `確定刪除「${name}」？此動作無法復原。`;
+    },
+    items(count) {
+      return `${count} 個檔案`;
+    },
+  },
   ru: {
     title: "Файловый менеджер",
     file: "файл",
@@ -397,9 +527,22 @@ const STRINGS = {
 };
 
 function languageOf(hass) {
-  const language = (hass && hass.language) || navigator.language || "en";
-  if (language.toLowerCase().startsWith("zh")) return "zh";
-  if (language.toLowerCase().startsWith("ru")) return "ru";
+  const raw = (hass && hass.language) || navigator.language || "en";
+  const language = raw.toLowerCase().replace(/_/g, "-");
+  if (language.startsWith("zh")) {
+    // Home Assistant / browsers use these tags for Traditional Chinese.
+    if (
+      language.startsWith("zh-hant") ||
+      language.startsWith("zh-cht") ||
+      language.startsWith("zh-tw") ||
+      language.startsWith("zh-hk") ||
+      language.startsWith("zh-mo")
+    ) {
+      return "zh-Hant";
+    }
+    return "zh";
+  }
+  if (language.startsWith("ru")) return "ru";
   return "en";
 }
 

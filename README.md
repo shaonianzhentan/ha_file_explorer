@@ -43,12 +43,15 @@ After installation, restart home assistant, refresh the page and search for `ha_
 
 - [x] native Home Assistant custom panel (ES module, no iframe)
 - [x] follows the active HA theme (light / dark)
-- [x] follows the Home Assistant language (English / 简体中文 / Русский)
+- [x] follows the Home Assistant language (English / 简体中文 / 繁體中文 / Русский)
 - [x] can toggle the HA sidebar, and shows item details (size, dates, permissions, path)
 
 ## Screenshot
 
-![pic](https://cdn.jsdelivr.net/gh/shaonianzhentan/image@main/ha_file_explorer/ha_file_explorer.png)
+![pic](https://github.com/shaonianzhentan/image/raw/main/ha_file_explorer/1.png)
+
+![pic](https://github.com/shaonianzhentan/image/raw/main/ha_file_explorer/2.png)
+
 
 ## If this project is helpful to you, please donate a cup of <del style="font-size: 14px;">coffee</del> milk tea 😘
 | |Paypal|Alipay|WeChat|
