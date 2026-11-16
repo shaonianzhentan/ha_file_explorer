@@ -1,14 +1,14 @@
 {
   "domain": "ha_file_explorer",
   "name": "文件管理",
-  "version": "2026.11.16.1",
-  "config_flow": true,
-  "iot_class": "local_polling",
-  "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
-  "requirements": [],
-  "dependencies": ["frontend", "http"],
   "codeowners": [
     "@shaonianzhentan"
   ],
-  "issue_tracker": "https://github.com/shaonianzhentan/ha_file_explorer/issues"
+  "config_flow": true,
+  "dependencies": ["frontend", "http"],
+  "documentation": "https://github.com/shaonianzhentan/ha_file_explorer",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/shaonianzhentan/ha_file_explorer/issues",
+  "requirements": [],
+  "version": "2026.11.16.1"
 }
