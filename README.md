@@ -11,11 +11,13 @@ file explorer for home assistant
 
 English | [简体中文](README.zh.md)
 
+<!-- ha-marketplace:exclude-start -->
 ## Installation
 
 After installation, restart home assistant, refresh the page and search for `ha_file_explorer` in the integration
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
+<!-- ha-marketplace:exclude-end -->
 
 ## Features
 

@@ -8,5 +8,6 @@
   "dependencies": ["frontend"],
   "codeowners": [
     "@shaonianzhentan"
-  ]
+  ],
+  "issue_tracker": "https://github.com/shaonianzhentan/ha_file_explorer/issues"
 }
