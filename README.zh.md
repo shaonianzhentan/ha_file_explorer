@@ -10,11 +10,13 @@
 
 [English](README.md) | 简体中文
 
+<!-- ha-marketplace:exclude-start -->
 ## 安装
 
 安装完成重启HA，刷新一下页面，在集成里搜索`文件管理`即可
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_file_explorer)
+<!-- ha-marketplace:exclude-end -->
 
 ## 功能
 
