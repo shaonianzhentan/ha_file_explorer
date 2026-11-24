@@ -12,7 +12,7 @@ from .manifest import manifest
 
 DOMAIN = manifest.domain
 
-DATA_SCHEMA = vol.Schema({vol.Required("require_admin", default=False): bool})
+DATA_SCHEMA = vol.Schema({vol.Required("require_admin", default=True): bool})
 
 
 class SimpleConfigFlow(ConfigFlow, domain=DOMAIN):
