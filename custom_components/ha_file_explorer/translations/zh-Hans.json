@@ -15,30 +15,80 @@
         }
     },
     "exceptions": {
-        "admin_required": "需要管理员权限",
-        "path_outside_config": "路径不在 Home Assistant 配置目录内",
-        "file_not_found": "文件不存在",
-        "dir_not_found": "目录不存在",
-        "format_not_supported": "该文件格式不支持在线预览",
-        "video_too_large": "视频超过 100 MB，请下载后播放",
-        "image_too_large": "图片超过 32 MB，请下载后查看",
-        "invalid_domain": "域名不合法",
-        "no_local_brand": "没有本地品牌图",
-        "unknown_action": "未知操作",
-        "read_failed": "读取失败：{err}",
-        "invalid_params": "参数错误",
-        "name_exists": "已存在相同名称",
-        "create_success": "创建成功",
-        "cannot_overwrite_root": "不能覆盖配置根目录",
-        "operation_success": "操作成功",
-        "operation_failed": "操作失败：{err}",
-        "no_file_received": "没有收到文件",
-        "upload_success": "上传成功",
-        "upload_failed": "上传失败：{err}",
-        "save_success": "保存成功",
-        "save_failed": "保存失败：{err}",
-        "cannot_delete_root": "不能删除配置根目录",
-        "delete_success": "删除成功",
-        "delete_failed": "删除失败：{err}"
+        "admin_required": {
+            "message": "需要管理员权限"
+        },
+        "path_outside_config": {
+            "message": "路径不在 Home Assistant 配置目录内"
+        },
+        "file_not_found": {
+            "message": "文件不存在"
+        },
+        "dir_not_found": {
+            "message": "目录不存在"
+        },
+        "format_not_supported": {
+            "message": "该文件格式不支持在线预览"
+        },
+        "video_too_large": {
+            "message": "视频超过 100 MB，请下载后播放"
+        },
+        "image_too_large": {
+            "message": "图片超过 32 MB，请下载后查看"
+        },
+        "invalid_domain": {
+            "message": "域名不合法"
+        },
+        "no_local_brand": {
+            "message": "没有本地品牌图"
+        },
+        "unknown_action": {
+            "message": "未知操作"
+        },
+        "read_failed": {
+            "message": "读取失败：{err}"
+        },
+        "invalid_params": {
+            "message": "参数错误"
+        },
+        "name_exists": {
+            "message": "已存在相同名称"
+        },
+        "create_success": {
+            "message": "创建成功"
+        },
+        "cannot_overwrite_root": {
+            "message": "不能覆盖配置根目录"
+        },
+        "operation_success": {
+            "message": "操作成功"
+        },
+        "operation_failed": {
+            "message": "操作失败：{err}"
+        },
+        "no_file_received": {
+            "message": "没有收到文件"
+        },
+        "upload_success": {
+            "message": "上传成功"
+        },
+        "upload_failed": {
+            "message": "上传失败：{err}"
+        },
+        "save_success": {
+            "message": "保存成功"
+        },
+        "save_failed": {
+            "message": "保存失败：{err}"
+        },
+        "cannot_delete_root": {
+            "message": "不能删除配置根目录"
+        },
+        "delete_success": {
+            "message": "删除成功"
+        },
+        "delete_failed": {
+            "message": "删除失败：{err}"
+        }
     }
 }

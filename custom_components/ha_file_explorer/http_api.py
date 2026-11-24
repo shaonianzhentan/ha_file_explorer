@@ -153,9 +153,10 @@ class HttpApi(HomeAssistantView):
                 hass, hass.config.language, "exceptions", [DOMAIN]
             )
             request["fe_translations"] = table
-        template = table.get(
-            f"component.{DOMAIN}.exceptions.{key}",
-            DEFAULT_MSGS.get(key, key),
+        template = (
+            table.get(f"component.{DOMAIN}.exceptions.{key}.message")
+            or table.get(f"component.{DOMAIN}.exceptions.{key}")
+            or DEFAULT_MSGS.get(key, key)
         )
         if kwargs:
             try:

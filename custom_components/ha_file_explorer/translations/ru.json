@@ -15,30 +15,80 @@
     }
   },
   "exceptions": {
-    "admin_required": "Требуются права администратора",
-    "path_outside_config": "Путь находится вне каталога конфигурации Home Assistant",
-    "file_not_found": "Файл не найден",
-    "dir_not_found": "Каталог не найден",
-    "format_not_supported": "Этот формат файла не поддерживается для онлайн-просмотра",
-    "video_too_large": "Видео больше 100 МБ, скачайте его для воспроизведения",
-    "image_too_large": "Изображение больше 32 МБ, скачайте его для просмотра",
-    "invalid_domain": "Недопустимый домен интеграции",
-    "no_local_brand": "Локальное изображение бренда не найдено",
-    "unknown_action": "Неизвестное действие",
-    "read_failed": "Ошибка чтения: {err}",
-    "invalid_params": "Неверные параметры",
-    "name_exists": "Элемент с таким именем уже существует",
-    "create_success": "Создано успешно",
-    "cannot_overwrite_root": "Нельзя перезаписать корневой каталог конфигурации",
-    "operation_success": "Операция выполнена успешно",
-    "operation_failed": "Ошибка операции: {err}",
-    "no_file_received": "Файл не получен",
-    "upload_success": "Загружено успешно",
-    "upload_failed": "Ошибка загрузки: {err}",
-    "save_success": "Сохранено успешно",
-    "save_failed": "Ошибка сохранения: {err}",
-    "cannot_delete_root": "Нельзя удалить корневой каталог конфигурации",
-    "delete_success": "Удалено успешно",
-    "delete_failed": "Ошибка удаления: {err}"
+    "admin_required": {
+      "message": "Требуются права администратора"
+    },
+    "path_outside_config": {
+      "message": "Путь находится вне каталога конфигурации Home Assistant"
+    },
+    "file_not_found": {
+      "message": "Файл не найден"
+    },
+    "dir_not_found": {
+      "message": "Каталог не найден"
+    },
+    "format_not_supported": {
+      "message": "Этот формат файла не поддерживается для онлайн-просмотра"
+    },
+    "video_too_large": {
+      "message": "Видео больше 100 МБ, скачайте его для воспроизведения"
+    },
+    "image_too_large": {
+      "message": "Изображение больше 32 МБ, скачайте его для просмотра"
+    },
+    "invalid_domain": {
+      "message": "Недопустимый домен интеграции"
+    },
+    "no_local_brand": {
+      "message": "Локальное изображение бренда не найдено"
+    },
+    "unknown_action": {
+      "message": "Неизвестное действие"
+    },
+    "read_failed": {
+      "message": "Ошибка чтения: {err}"
+    },
+    "invalid_params": {
+      "message": "Неверные параметры"
+    },
+    "name_exists": {
+      "message": "Элемент с таким именем уже существует"
+    },
+    "create_success": {
+      "message": "Создано успешно"
+    },
+    "cannot_overwrite_root": {
+      "message": "Нельзя перезаписать корневой каталог конфигурации"
+    },
+    "operation_success": {
+      "message": "Операция выполнена успешно"
+    },
+    "operation_failed": {
+      "message": "Ошибка операции: {err}"
+    },
+    "no_file_received": {
+      "message": "Файл не получен"
+    },
+    "upload_success": {
+      "message": "Загружено успешно"
+    },
+    "upload_failed": {
+      "message": "Ошибка загрузки: {err}"
+    },
+    "save_success": {
+      "message": "Сохранено успешно"
+    },
+    "save_failed": {
+      "message": "Ошибка сохранения: {err}"
+    },
+    "cannot_delete_root": {
+      "message": "Нельзя удалить корневой каталог конфигурации"
+    },
+    "delete_success": {
+      "message": "Удалено успешно"
+    },
+    "delete_failed": {
+      "message": "Ошибка удаления: {err}"
+    }
   }
 }
