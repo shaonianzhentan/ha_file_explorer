@@ -106,8 +106,24 @@ class HttpApi(HomeAssistantView):
     def _error(self, msg: str, status: int = 400) -> web.Response:
         return self.json({"code": 1, "msg": msg}, status_code=status)
 
+    def _deny_non_admin(self, request: web.Request) -> web.Response | None:
+        """Reject any request whose user is not a Home Assistant admin.
+
+        The panel can be hidden from non-admins, but the REST API is a separate
+        route. Without this check any authenticated user could read or overwrite
+        config files such as secrets.yaml and .storage credentials, so admin is
+        required on every operation regardless of the panel setting.
+        """
+        user = request.get("hass_user")
+        if user is None or not user.is_admin:
+            return self._error("需要管理员权限", 403)
+        return None
+
     async def get(self, request: web.Request, action: str) -> web.Response:
         """List a directory, read a text file, preview media, get info or download."""
+        denied = self._deny_non_admin(request)
+        if denied is not None:
+            return denied
         try:
             path = _resolve(request, request.query.get("path"))
         except ValueError as err:
@@ -254,6 +270,9 @@ class HttpApi(HomeAssistantView):
 
     async def put(self, request: web.Request, action: str) -> web.Response:
         """Create a file/folder or rename an existing one."""
+        denied = self._deny_non_admin(request)
+        if denied is not None:
+            return denied
         hass = request.app["hass"]
         try:
             body = await request.json()
@@ -295,6 +314,9 @@ class HttpApi(HomeAssistantView):
 
     async def post(self, request: web.Request, action: str) -> web.Response:
         """Upload a file (multipart) or save text content (JSON)."""
+        denied = self._deny_non_admin(request)
+        if denied is not None:
+            return denied
         # aiohttp copies the application limit into the request when it is
         # created. Raise it for this upload only, before the body is read.
         request._client_max_size = MAX_UPLOAD_SIZE
@@ -330,6 +352,9 @@ class HttpApi(HomeAssistantView):
 
     async def delete(self, request: web.Request, action: str) -> web.Response:
         """Delete a file or folder."""
+        denied = self._deny_non_admin(request)
+        if denied is not None:
+            return denied
         hass = request.app["hass"]
         try:
             path = _resolve(request, request.query.get("path"))
