@@ -7,6 +7,7 @@ from urllib.parse import quote
 
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
+from homeassistant.helpers.translation import async_get_translations
 
 from .file_api import (
     delete_file,
@@ -35,6 +36,36 @@ BRAND_DOMAIN = re.compile(r"^[a-z0-9_]+$")
 # Local brand art a custom integration may ship in custom_components/<domain>/brand/.
 BRAND_FILES_DARK = ("dark_icon.png", "icon.png")
 BRAND_FILES_LIGHT = ("icon.png",)
+
+# Chinese fallbacks for the translation keys below, used when the user's
+# language has no translations for this integration (e.g. before a reload).
+DEFAULT_MSGS = {
+    "path_outside_config": "路径不在 Home Assistant 配置目录内",
+    "admin_required": "需要管理员权限",
+    "file_not_found": "文件不存在",
+    "dir_not_found": "目录不存在",
+    "format_not_supported": "该文件格式不支持在线预览",
+    "video_too_large": "视频超过 100 MB，请下载后播放",
+    "image_too_large": "图片超过 32 MB，请下载后查看",
+    "invalid_domain": "域名不合法",
+    "no_local_brand": "没有本地品牌图",
+    "unknown_action": "未知操作",
+    "read_failed": "读取失败：{err}",
+    "invalid_params": "参数错误",
+    "name_exists": "已存在相同名称",
+    "create_success": "创建成功",
+    "cannot_overwrite_root": "不能覆盖配置根目录",
+    "operation_success": "操作成功",
+    "operation_failed": "操作失败：{err}",
+    "no_file_received": "没有收到文件",
+    "upload_success": "上传成功",
+    "upload_failed": "上传失败：{err}",
+    "save_success": "保存成功",
+    "save_failed": "保存失败：{err}",
+    "cannot_delete_root": "不能删除配置根目录",
+    "delete_success": "删除成功",
+    "delete_failed": "删除失败：{err}",
+}
 
 # Image extensions the panel can preview in its dialog, mapped to the MIME type
 # the proxy answers with. Keep in sync with IMAGE_MIME in www/modules/format.js.
@@ -81,11 +112,14 @@ def _config_root(request: web.Request) -> Path:
 
 
 def _resolve(request: web.Request, relative: str | None) -> Path:
-    """Resolve a config-relative path, rejecting anything outside the config dir."""
+    """Resolve a config-relative path, rejecting anything outside the config dir.
+
+    Raises ValueError whose message is a translation key from DEFAULT_MSGS.
+    """
     root = _config_root(request)
     target = (root / (relative or "").replace("\\", "/").lstrip("/")).resolve()
     if target != root and root not in target.parents:
-        raise ValueError("路径不在 Home Assistant 配置目录内")
+        raise ValueError("path_outside_config")
     return target
 
 
@@ -106,35 +140,72 @@ class HttpApi(HomeAssistantView):
     def _error(self, msg: str, status: int = 400) -> web.Response:
         return self.json({"code": 1, "msg": msg}, status_code=status)
 
-    def _deny_non_admin(self, request: web.Request) -> web.Response | None:
-        """Reject any request whose user is not a Home Assistant admin.
+    async def _msg(self, request: web.Request, key: str, **kwargs: object) -> str:
+        """Translate a key via the user's HA language, with a Chinese fallback.
 
-        The panel can be hidden from non-admins, but the REST API is a separate
-        route. Without this check any authenticated user could read or overwrite
-        config files such as secrets.yaml and .storage credentials, so admin is
-        required on every operation regardless of the panel setting.
+        The fetched table is cached on the request so one call handles several
+        messages without re-reading the translation files.
         """
+        table = request.get("fe_translations")
+        if table is None:
+            hass = request.app["hass"]
+            table = await async_get_translations(
+                hass, hass.config.language, "exceptions", [DOMAIN]
+            )
+            request["fe_translations"] = table
+        template = table.get(
+            f"component.{DOMAIN}.exceptions.{key}",
+            DEFAULT_MSGS.get(key, key),
+        )
+        if kwargs:
+            try:
+                return template.format(**kwargs)
+            except (KeyError, IndexError, ValueError):
+                return template
+        return template
+
+    def _admin_required(self, request: web.Request) -> bool:
+        """Whether the require_admin config option is enabled.
+
+        Mirrors the panel visibility option: when it is on, non-admins cannot
+        open the panel either, so the API enforces admin too. Defaults to
+        requiring admin if the config entry cannot be found (fail closed).
+        """
+        hass = request.app["hass"]
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            return bool(entry.data.get("require_admin", False))
+        return True
+
+    async def _deny_non_admin(self, request: web.Request) -> web.Response | None:
+        """Reject non-admins when the require_admin option is enabled.
+
+        When require_admin is off any authenticated user is allowed through,
+        matching the panel being visible to everyone. The path is still always
+        confined to the config directory by _resolve.
+        """
+        if not self._admin_required(request):
+            return None
         user = request.get("hass_user")
         if user is None or not user.is_admin:
-            return self._error("需要管理员权限", 403)
+            return self._error(await self._msg(request, "admin_required"), 403)
         return None
 
     async def get(self, request: web.Request, action: str) -> web.Response:
         """List a directory, read a text file, preview media, get info or download."""
-        denied = self._deny_non_admin(request)
+        denied = await self._deny_non_admin(request)
         if denied is not None:
             return denied
         try:
             path = _resolve(request, request.query.get("path"))
-        except ValueError as err:
-            return self._error(str(err))
+        except ValueError:
+            return self._error(await self._msg(request, "path_outside_config"))
 
         hass = request.app["hass"]
 
         try:
             if action == "content":
                 if not path.is_file():
-                    return self._error("文件不存在", 404)
+                    return self._error(await self._msg(request, "file_not_found"), 404)
                 data = await hass.async_add_executor_job(load_content, str(path))
                 return self.json({"code": 0, "data": data})
 
@@ -148,7 +219,7 @@ class HttpApi(HomeAssistantView):
                     content = await hass.async_add_executor_job(read_file, str(path))
                     content_type = "application/octet-stream"
                 else:
-                    return self._error("文件不存在", 404)
+                    return self._error(await self._msg(request, "file_not_found"), 404)
                 return web.Response(
                     body=content,
                     headers={
@@ -166,16 +237,18 @@ class HttpApi(HomeAssistantView):
                 # (HA auth is a bearer header, so an <img src=/api/...> would
                 # 401 anyway).
                 if not path.is_file():
-                    return self._error("文件不存在", 404)
+                    return self._error(await self._msg(request, "file_not_found"), 404)
                 suffix = path.suffix.lower()
                 content_type = IMAGE_TYPES.get(suffix) or VIDEO_TYPES.get(suffix)
                 if not content_type:
-                    return self._error("该文件格式不支持在线预览")
+                    return self._error(
+                        await self._msg(request, "format_not_supported")
+                    )
                 size = path.stat().st_size
                 if suffix in VIDEO_TYPES:
                     if size > MAX_PREVIEW_VIDEO_SIZE:
                         return self._error(
-                            "视频超过 100 MB，请下载后播放", 413
+                            await self._msg(request, "video_too_large"), 413
                         )
                     # Streamed straight off disk: a 100 MB clip must not be
                     # copied into the event loop's memory for every play.
@@ -192,7 +265,7 @@ class HttpApi(HomeAssistantView):
                     )
                 if size > MAX_PREVIEW_SIZE:
                     return self._error(
-                        "图片超过 32 MB，请下载后查看", 413
+                        await self._msg(request, "image_too_large"), 413
                     )
                 content = await hass.async_add_executor_job(read_file, str(path))
                 return web.Response(
@@ -214,14 +287,16 @@ class HttpApi(HomeAssistantView):
                 # fast path, this is the offline one.
                 domain = (request.query.get("domain") or "").strip()
                 if not BRAND_DOMAIN.match(domain):
-                    return self._error("域名不合法")
+                    return self._error(await self._msg(request, "invalid_domain"))
                 dark = request.query.get("dark") in ("1", "true")
                 try:
                     brand_dir = _resolve(
                         request, f"custom_components/{domain}/brand"
                     )
-                except ValueError as err:
-                    return self._error(str(err))
+                except ValueError:
+                    return self._error(
+                        await self._msg(request, "path_outside_config")
+                    )
                 for name in BRAND_FILES_DARK if dark else BRAND_FILES_LIGHT:
                     icon = brand_dir / name
                     if icon.is_file():
@@ -233,13 +308,13 @@ class HttpApi(HomeAssistantView):
                                 "X-Content-Type-Options": "nosniff",
                             },
                         )
-                return self._error("没有本地品牌图", 404)
+                return self._error(await self._msg(request, "no_local_brand"), 404)
 
             if action == "info":
                 # Details for the panel's info dialog. A folder reports its
                 # recursive size/counts, which can take a moment on big trees.
                 if not path.exists():
-                    return self._error("文件不存在", 404)
+                    return self._error(await self._msg(request, "file_not_found"), 404)
                 data = await hass.async_add_executor_job(
                     get_item_info, str(path)
                 )
@@ -249,13 +324,13 @@ class HttpApi(HomeAssistantView):
                 # One folder's recursive size, asked for lazily by the panel as
                 # rows scroll into view. Never part of the listing itself.
                 if not path.is_dir():
-                    return self._error("目录不存在", 404)
+                    return self._error(await self._msg(request, "dir_not_found"), 404)
                 size = await hass.async_add_executor_job(get_dir_size, str(path))
                 return self.json({"size": size, "size_name": format_size(size)})
 
             if action == "list":
                 if not path.is_dir():
-                    return self._error("目录不存在", 404)
+                    return self._error(await self._msg(request, "dir_not_found"), 404)
                 # Recursive folder sizes are opt-in: they cost one full tree
                 # walk per folder and are not needed to render the list.
                 with_sizes = request.query.get("sizes") in ("1", "true")
@@ -264,57 +339,59 @@ class HttpApi(HomeAssistantView):
                 )
                 return self.json(data)
 
-            return self._error("未知操作")
+            return self._error(await self._msg(request, "unknown_action"))
         except (OSError, UnicodeDecodeError) as err:
-            return self._error(f"读取失败：{err}")
+            return self._error(await self._msg(request, "read_failed", err=err))
 
     async def put(self, request: web.Request, action: str) -> web.Response:
         """Create a file/folder or rename an existing one."""
-        denied = self._deny_non_admin(request)
+        denied = await self._deny_non_admin(request)
         if denied is not None:
             return denied
         hass = request.app["hass"]
         try:
             body = await request.json()
             if not isinstance(body, dict):
-                raise ValueError("参数错误")
+                raise ValueError("invalid_params")
             path = _resolve(request, body.get("path"))
-        except (ValueError, TypeError) as err:
-            return self._error(f"参数错误：{err}")
+        except (ValueError, TypeError):
+            return self._error(await self._msg(request, "invalid_params"))
 
         try:
             if action == "create":
                 if path == _config_root(request) or path.exists():
-                    return self._error("已存在相同名称")
+                    return self._error(await self._msg(request, "name_exists"))
                 act = body.get("act")
                 if act == "file":
                     await hass.async_add_executor_job(save_content, str(path), "")
                 elif act == "folder":
                     await hass.async_add_executor_job(mkdir, str(path))
                 else:
-                    return self._error("未知操作")
-                return self._ok("创建成功")
+                    return self._error(await self._msg(request, "unknown_action"))
+                return self._ok(await self._msg(request, "create_success"))
 
             if action == "rename":
                 new_path = _resolve(request, body.get("new_path"))
                 if not path.exists():
-                    return self._error("文件不存在", 404)
+                    return self._error(await self._msg(request, "file_not_found"), 404)
                 if new_path == _config_root(request):
-                    return self._error("不能覆盖配置根目录")
+                    return self._error(
+                        await self._msg(request, "cannot_overwrite_root")
+                    )
                 if new_path.exists():
-                    return self._error("已存在相同名称")
+                    return self._error(await self._msg(request, "name_exists"))
                 await hass.async_add_executor_job(
                     rename_file, str(path), str(new_path)
                 )
-                return self._ok("操作成功")
+                return self._ok(await self._msg(request, "operation_success"))
 
-            return self._error("未知操作")
+            return self._error(await self._msg(request, "unknown_action"))
         except (ValueError, OSError) as err:
-            return self._error(f"操作失败：{err}")
+            return self._error(await self._msg(request, "operation_failed", err=err))
 
     async def post(self, request: web.Request, action: str) -> web.Response:
         """Upload a file (multipart) or save text content (JSON)."""
-        denied = self._deny_non_admin(request)
+        denied = await self._deny_non_admin(request)
         if denied is not None:
             return denied
         # aiohttp copies the application limit into the request when it is
@@ -328,41 +405,41 @@ class HttpApi(HomeAssistantView):
                 reader = await request.multipart()
                 field = await reader.next()
                 if field is None:
-                    return self._error("没有收到文件")
+                    return self._error(await self._msg(request, "no_file_received"))
                 data = await field.read()
                 await hass.async_add_executor_job(write_file, str(path), data)
-                return self._ok("上传成功")
+                return self._ok(await self._msg(request, "upload_success"))
             except (ValueError, OSError, TypeError, web.HTTPException) as err:
-                return self._error(f"上传失败：{err}")
+                return self._error(await self._msg(request, "upload_failed", err=err))
 
         if action == "save":
             try:
                 body = await request.json()
                 if not isinstance(body, dict):
-                    raise ValueError("参数错误")
+                    raise ValueError("invalid_params")
                 path = _resolve(request, body.get("path"))
                 await hass.async_add_executor_job(
                     save_content, str(path), body.get("data", "")
                 )
-                return self._ok("保存成功")
+                return self._ok(await self._msg(request, "save_success"))
             except (ValueError, OSError, TypeError) as err:
-                return self._error(f"保存失败：{err}")
+                return self._error(await self._msg(request, "save_failed", err=err))
 
-        return self._error("未知操作")
+        return self._error(await self._msg(request, "unknown_action"))
 
     async def delete(self, request: web.Request, action: str) -> web.Response:
         """Delete a file or folder."""
-        denied = self._deny_non_admin(request)
+        denied = await self._deny_non_admin(request)
         if denied is not None:
             return denied
         hass = request.app["hass"]
         try:
             path = _resolve(request, request.query.get("path"))
             if path == _config_root(request):
-                return self._error("不能删除配置根目录")
+                return self._error(await self._msg(request, "cannot_delete_root"))
             if not path.exists():
-                return self._error("文件不存在", 404)
+                return self._error(await self._msg(request, "file_not_found"), 404)
             await hass.async_add_executor_job(delete_file, str(path))
-            return self._ok("删除成功")
+            return self._ok(await self._msg(request, "delete_success"))
         except (ValueError, OSError) as err:
-            return self._error(f"删除失败：{err}")
+            return self._error(await self._msg(request, "delete_failed", err=err))
