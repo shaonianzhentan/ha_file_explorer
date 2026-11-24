@@ -13,5 +13,32 @@
     "abort": {
       "single_instance_allowed": "Single Instance Allowed."
     }
+  },
+  "exceptions": {
+    "admin_required": "Administrator permission required",
+    "path_outside_config": "Path is outside the Home Assistant config directory",
+    "file_not_found": "File not found",
+    "dir_not_found": "Directory not found",
+    "format_not_supported": "This file format cannot be previewed online",
+    "video_too_large": "Video exceeds 100 MB, please download it to play",
+    "image_too_large": "Image exceeds 32 MB, please download it to view",
+    "invalid_domain": "Invalid integration domain",
+    "no_local_brand": "No local brand image found",
+    "unknown_action": "Unknown action",
+    "read_failed": "Failed to read: {err}",
+    "invalid_params": "Invalid parameters",
+    "name_exists": "An item with the same name already exists",
+    "create_success": "Created successfully",
+    "cannot_overwrite_root": "Cannot overwrite the config root directory",
+    "operation_success": "Operation successful",
+    "operation_failed": "Operation failed: {err}",
+    "no_file_received": "No file received",
+    "upload_success": "Uploaded successfully",
+    "upload_failed": "Upload failed: {err}",
+    "save_success": "Saved successfully",
+    "save_failed": "Save failed: {err}",
+    "cannot_delete_root": "Cannot delete the config root directory",
+    "delete_success": "Deleted successfully",
+    "delete_failed": "Delete failed: {err}"
   }
 }
